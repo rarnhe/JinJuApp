@@ -4,6 +4,7 @@
 #include <UIAutomation.h>
 #include <dwmapi.h>
 #include <gdiplus.h>
+#include <wincodec.h>
 #include <wrl/client.h>
 #include <algorithm>
 #include <cmath>
@@ -25,6 +26,25 @@ namespace jinju
 {
 constexpr wchar_t kClass[] = L"JinJuApp";
 constexpr UINT_PTR QuoteTimer = 1, AnimationTimer = 2, GeometryTimer = 3;
+constexpr UINT ShellForegroundChanged = WM_APP + 1;
+static HWND eventTarget = nullptr;
+static void CALLBACK ForegroundChanged(HWINEVENTHOOK, DWORD, HWND, LONG, LONG, DWORD, DWORD)
+{
+    if (eventTarget) PostMessageW(eventTarget, ShellForegroundChanged, 0, 0);
+}
+// Restore only when Explorer has actually covered the overlay. No hide/show,
+// activation, move, resize or surface reconstruction is necessary.
+bool RestoreOverlayOrder(HWND overlay, HWND taskbar)
+{
+    if (!IsWindowVisible(overlay) || !taskbar) return false;
+    for (HWND above = GetWindow(overlay, GW_HWNDPREV); above; above = GetWindow(above, GW_HWNDPREV))
+    {
+        if (above == taskbar)
+            return SetWindowPos(overlay, HWND_TOPMOST, 0, 0, 0, 0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER) != FALSE;
+    }
+    return false;
+}
 DWORD OverlayStyles()
 {
     return WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
@@ -723,14 +743,15 @@ static bool CaptureDesktopBackground(Dib &dst, RECT strip)
     // Compositor-only surfaces frequently return black or an untouched buffer.
     // Fall back to the original image instead of displaying that failure.
     bool usable = false;
+    bool untouched = false;
     for (int y = 0; y < dst.h; ++y)
         for (int x = 0; x < dst.w; ++x)
         {
             uint32_t rgb = capture.pixels[static_cast<size_t>(sy + y) * w + sx + x] & 0xffffff;
-            if (rgb != 0 && rgb != 0xff00ff)
-                usable = true;
+            if (rgb == 0xff00ff) untouched = true;
+            if (rgb != 0 && rgb != 0xff00ff) usable = true;
         }
-    if (!usable)
+    if (!usable || untouched)
         return false;
     for (int y = 0; y < dst.h; ++y)
         for (int x = 0; x < dst.w; ++x)
@@ -801,8 +822,6 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         file = fallback;
         resolved = true;
     }
-    if (!resolved)
-        return CaptureDesktopBackground(dst, strip);
 
     RECT area = mi.rcMonitor;
     if (position == DWPOS_SPAN)
@@ -826,7 +845,7 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
     }
     // CachedFiles contains Explorer's already scaled wallpaper for a monitor.
     // Prefer a matching-size cache only when the source path is unavailable.
-    if (file.empty() && !cached.empty())
+    if (!resolved && !cached.empty())
     {
         auto dir = std::filesystem::path(cached).parent_path() / L"CachedFiles";
         std::error_code ec;
@@ -852,7 +871,7 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
                                                newest.wstring(), DWPOS_STRETCH, background))
             return true;
     }
-    bool ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
+    bool ok = resolved && RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
     if (!ok && !fallback.empty() && fallback != file)
     {
         file = fallback;
@@ -884,6 +903,12 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
                static_cast<int>(position), strip.left, strip.top, strip.right, strip.bottom, colored, n,
                static_cast<unsigned>(minRGB), static_cast<unsigned>(maxRGB));
     OutputDebugStringW(log);
+    if (GetEnvironmentVariableW(L"JINJU_DIAGNOSTICS", nullptr, 0))
+    {
+        std::wofstream diagnostics(std::filesystem::path(ExePath()).replace_extension(L".wallpaper.log"),
+                                  std::ios::app);
+        diagnostics << L"source=" << file << L" " << log;
+    }
     return true;
 }
 
@@ -900,16 +925,39 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
     if (file.empty())
         return true;
 
-    Gdiplus::Bitmap source(file.c_str());
-    if (source.GetLastStatus() != Gdiplus::Ok || !source.GetWidth() || !source.GetHeight() ||
-        source.GetWidth() > INT_MAX || source.GetHeight() > INT_MAX)
+    // Decode with Windows Imaging Component. The 32bpp BGRA converter
+    // defines alpha for opaque JPEG/BMP instead of relying on GDI+ padding.
+    struct ComScope
+    {
+        HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+        ~ComScope() { if (SUCCEEDED(hr)) CoUninitialize(); }
+    } com;
+    if (FAILED(com.hr) && com.hr != RPC_E_CHANGED_MODE)
         return false;
-    const int iw = static_cast<int>(source.GetWidth());
-    const int ih = static_cast<int>(source.GetHeight());
-    Gdiplus::Rect bounds(0, 0, iw, ih);
-    // Request an explicit 32bpp ARGB conversion even for JPEG/24-bit BMP.
-    Gdiplus::BitmapData data{};
-    if (source.LockBits(&bounds, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &data) != Gdiplus::Ok)
+    ComPtr<IWICImagingFactory> factory;
+    if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
+                               IID_PPV_ARGS(factory.GetAddressOf()))))
+        return false;
+    ComPtr<IWICBitmapDecoder> decoder;
+    if (FAILED(factory->CreateDecoderFromFilename(file.c_str(), nullptr, GENERIC_READ,
+                                                 WICDecodeMetadataCacheOnLoad, &decoder)))
+        return false;
+    ComPtr<IWICBitmapFrameDecode> source;
+    if (FAILED(decoder->GetFrame(0, &source)))
+        return false;
+    UINT sw=0, sh=0;
+    if (FAILED(source->GetSize(&sw, &sh)) || !sw || !sh ||
+        static_cast<uint64_t>(sw)*sh > 64*1024*1024)
+        return false;
+    const int iw=static_cast<int>(sw), ih=static_cast<int>(sh);
+    ComPtr<IWICFormatConverter> converter;
+    if (FAILED(factory->CreateFormatConverter(&converter)) ||
+        FAILED(converter->Initialize(source.Get(), GUID_WICPixelFormat32bppBGRA,
+                                    WICBitmapDitherTypeNone, nullptr, 0, WICBitmapPaletteTypeCustom)))
+        return false;
+    std::vector<uint32_t> decoded(static_cast<size_t>(sw)*sh);
+    if (FAILED(converter->CopyPixels(nullptr, sw*4, static_cast<UINT>(decoded.size()*4),
+                                    reinterpret_cast<BYTE*>(decoded.data()))))
         return false;
 
     const double aw = area.right - area.left;
@@ -932,9 +980,7 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
     auto sample = [&](int x, int y) {
         x = std::clamp(x, 0, iw - 1);
         y = std::clamp(y, 0, ih - 1);
-        const auto *row = reinterpret_cast<const uint32_t *>(static_cast<const BYTE *>(data.Scan0) +
-                                                             static_cast<ptrdiff_t>(y) * data.Stride);
-        return row[x];
+        return decoded[static_cast<size_t>(y)*iw+x];
     };
     auto opaque = [&](uint32_t p) {
         const unsigned a = p >> 24;
@@ -975,7 +1021,7 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
             pixel = 0xff000000u | (channel(16) << 16) | (channel(8) << 8) | channel(0);
         }
     }
-    return source.UnlockBits(&data) == Gdiplus::Ok;
+    return true;
 }
 static HFONT MakeFont(UINT dpi)
 {
@@ -1251,6 +1297,10 @@ struct App
         if (active && (!previous.empty() || (frame && textWidth > frame->w - 2 * Pad())))
             SetTimer(hwnd, AnimationTimer, 15, nullptr);
     }
+    void RepairOrder()
+    {
+        if (active) RestoreOverlayOrder(hwnd, FindWindowW(L"Shell_TrayWnd", nullptr));
+    }
     void Refresh(bool wallpaper = false)
     {
         auto snapshot = geometry.Get();
@@ -1264,6 +1314,7 @@ struct App
             Hide();
             return;
         }
+        RepairOrder();
         if (!target)
         {
             // A transient accessibility failure while clicking the taskbar must
@@ -1338,6 +1389,30 @@ struct App
             previous.clear();
     }
 };
+bool TestOverlayOrder()
+{
+    HINSTANCE instance = GetModuleHandleW(nullptr);
+    HWND overlay = CreateWindowExW(OverlayStyles(), L"STATIC", L"", WS_POPUP,
+                                    20,20,160,45,nullptr,nullptr,instance,nullptr);
+    HWND tray = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW,
+                                 L"STATIC", L"", WS_POPUP,20,20,160,45,nullptr,nullptr,instance,nullptr);
+    if (!overlay || !tray)
+    {
+        if (overlay) DestroyWindow(overlay);
+        if (tray) DestroyWindow(tray);
+        return false;
+    }
+    ShowWindow(overlay, SW_SHOWNOACTIVATE);
+    SetWindowPos(tray, HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE|SWP_SHOWWINDOW);
+    RECT before{},after{};
+    GetWindowRect(overlay,&before);
+    const bool repaired=RestoreOverlayOrder(overlay,tray);
+    GetWindowRect(overlay,&after);
+    const bool stable=!RestoreOverlayOrder(overlay,tray);
+    DestroyWindow(tray);
+    DestroyWindow(overlay);
+    return repaired && stable && SameRect(before,after);
+}
 bool TestRenderPipeline()
 {
     App app;
@@ -1395,6 +1470,9 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     if (a && a->hwnd)
         switch (msg)
         {
+        case ShellForegroundChanged:
+            a->RepairOrder();
+            return 0;
         case WM_TIMER:
             if (wp == QuoteTimer)
                 a->Change();
@@ -1487,6 +1565,9 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
                 result = 1;
             else
             {
+                eventTarget = app.hwnd;
+                HWINEVENTHOOK foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
+                    nullptr, ForegroundChanged, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
                 SetTimer(app.hwnd, QuoteTimer, 180000, nullptr);
                 SetTimer(app.hwnd, GeometryTimer, 250, nullptr);
                 app.Refresh();
@@ -1497,6 +1578,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
                     TranslateMessage(&msg);
                     DispatchMessageW(&msg);
                 }
+                if (foregroundHook) UnhookWinEvent(foregroundHook);
+                eventTarget = nullptr;
                 if (status == -1)
                     result = 1;
                 if (IsWindow(app.hwnd))

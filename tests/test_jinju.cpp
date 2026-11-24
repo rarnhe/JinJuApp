@@ -123,6 +123,7 @@ int main(int argc, char **argv)
         else if (name == "render_pipeline")
         {
             CHECK(TestRenderPipeline());
+            CHECK(TestOverlayOrder());
         }
         else if (name == "quotes")
         {
