@@ -129,7 +129,7 @@ if ($LogDirectory) {
 
 $lines.Add("")
 $lines.Add("## 覆盖范围")
-$lines.Add("真实编译 main.cpp，验证动态空闲矩形、动画时间边界、预乘像素、壁纸实际 BGRA 输出、非零屏幕坐标取样、原版 GDI 字形合成、分层窗口样式及 Start 边框重叠 7px、左边距 0px、窄间距、同名 TXT 创建及 UTF-8 解析。")
+$lines.Add("真实编译 main.cpp，验证动态空闲矩形、动画时间边界、预乘像素、壁纸实际 BGRA 输出、非零屏幕坐标取样、原版 GDI 字形合成、分层窗口样式及 居中 Start 边框重叠 7px、靠左应用组右边界零间距及托盘重叠 7px、动态宽度、窄间距、同名 TXT 创建及 UTF-8 解析。")
 $lines.Add("")
 $lines.Add("实际 Explorer UIA、壁纸镂空视觉、鼠标穿透、全屏与多屏/DPI 仍需交互式人工验证；不计入自动通过数。")
 

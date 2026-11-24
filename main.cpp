@@ -461,12 +461,32 @@ std::optional<RECT> StartStrip(RECT bar, RECT start)
         return {};
     return RECT{bar.left, bar.top, right, bar.bottom};
 }
+// Left-aligned taskbar: end of the application group to the first tray icon.
+std::optional<RECT> LeftStrip(RECT bar, RECT start, RECT tray, const std::vector<RECT> &controls)
+{
+    RECT first{}, notification{};
+    if (!IntersectRect(&first, &bar, &start) || !IntersectRect(&notification, &bar, &tray))
+        return {};
+    LONG left = first.right;
+    for (const auto &control : controls)
+    {
+        RECT item{};
+        if (IntersectRect(&item, &bar, &control) && item.left >= first.left &&
+            item.right <= notification.left)
+            left = std::max(left, item.right);
+    }
+    const LONG right = std::min(bar.right, notification.left + 7);
+    if (left >= right)
+        return {};
+    return RECT{left, bar.top, right, bar.bottom};
+}
 struct Anchors
 {
     RECT bar;
     std::vector<RECT> items;
     bool start = false, task = false, tray = false;
     std::optional<RECT> startRect;
+    std::optional<RECT> trayRect;
 };
 static BOOL CALLBACK AnchorProc(HWND hwnd, LPARAM lp)
 {
@@ -487,6 +507,8 @@ static BOOL CALLBACK AnchorProc(HWND hwnd, LPARAM lp)
         a.items.push_back(i);
     if (start)
         a.startRect = i;
+    if (tray)
+        a.trayRect = i;
     a.start |= start;
     a.task |= task;
     a.tray |= tray;
@@ -601,7 +623,36 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
     const auto start = s.startRect ? s.startRect : a.startRect;
     if (!start)
         return {};
-    auto result = StartStrip(bar, *start);
+    // TaskbarAl is the user's Windows 11 alignment setting (0=left, 1=center).
+    // Fall back to the physical Start position on Windows 10 / missing setting.
+    DWORD alignment = 0;
+    DWORD bytes = sizeof(alignment);
+    const LSTATUS status = RegGetValueW(HKEY_CURRENT_USER,
+        L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        L"TaskbarAl", RRF_RT_REG_DWORD, nullptr, &alignment, &bytes);
+    const bool centered = status == ERROR_SUCCESS ? alignment != 0 :
+        start->left - bar.left > Scale(48, dpi);
+    std::optional<RECT> result;
+    if (centered)
+    {
+        result = StartStrip(bar, *start);
+    }
+    else if (a.trayRect)
+    {
+        // Use actual UIA child bounds, not MSTaskListWClass's potentially
+        // oversized container. The leftmost visible tray control determines
+        // the right boundary; the native tray rectangle is a fallback.
+        RECT trayEdge = *a.trayRect;
+        LONG firstTray = bar.right;
+        for (const auto &item : s.items)
+        {
+            if (item.left >= a.trayRect->left && item.right <= a.trayRect->right)
+                firstTray = std::min(firstTray, item.left);
+        }
+        if (firstTray < bar.right)
+            trayEdge.left = firstTray;
+        result = LeftStrip(bar, *start, trayEdge, s.items);
+    }
     if (result)
     {
         result->bottom = std::max(result->top + 1, result->bottom - 2);
