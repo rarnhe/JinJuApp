@@ -1,3 +1,5 @@
-# Native XAML experiment
+# Native XAML test report
 
-Pending Windows build and CTest. Live Explorer visual verification required.
+Build: failure
+CTest: skipped
+Live Explorer visual test: not performed
