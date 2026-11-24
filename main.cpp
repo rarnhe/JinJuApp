@@ -627,11 +627,10 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
     // Fall back to the physical Start position on Windows 10 / missing setting.
     DWORD alignment = 0;
     DWORD bytes = sizeof(alignment);
-    const LSTATUS status = RegGetValueW(HKEY_CURRENT_USER,
-        L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        L"TaskbarAl", RRF_RT_REG_DWORD, nullptr, &alignment, &bytes);
-    const bool centered = status == ERROR_SUCCESS ? alignment != 0 :
-        start->left - bar.left > Scale(48, dpi);
+    const LSTATUS status =
+        RegGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                     L"TaskbarAl", RRF_RT_REG_DWORD, nullptr, &alignment, &bytes);
+    const bool centered = status == ERROR_SUCCESS ? alignment != 0 : start->left - bar.left > Scale(48, dpi);
     std::optional<RECT> result;
     if (centered)
     {

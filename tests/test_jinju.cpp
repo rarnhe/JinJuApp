@@ -26,16 +26,18 @@ int main(int argc, char **argv)
             auto centered = StartStrip(b, {700, 1000, 748, 1080});
             CHECK(centered && centered->left == 0 && centered->right == 707);
             auto left = LeftStrip(b, {0, 1000, 48, 1080}, {1700, 1000, 1920, 1080},
-                                  {{48, 1000, 96, 1080}, {96, 1000, 144, 1080},
-                                   {144, 1000, 192, 1080}, {1700, 1000, 1750, 1080}});
+                                  {{48, 1000, 96, 1080},
+                                   {96, 1000, 144, 1080},
+                                   {144, 1000, 192, 1080},
+                                   {1700, 1000, 1750, 1080}});
             CHECK(left && left->left == 192 && left->right == 1707);
-            auto opened = LeftStrip(b, {0, 1000, 48, 1080}, {1700, 1000, 1920, 1080},
-                                    {{48, 1000, 240, 1080}});
+            auto opened =
+                LeftStrip(b, {0, 1000, 48, 1080}, {1700, 1000, 1920, 1080}, {{48, 1000, 240, 1080}});
             CHECK(opened && opened->left == 240 && opened->right == 1707);
             auto closed = LeftStrip(b, {0, 1000, 48, 1080}, {1700, 1000, 1920, 1080}, {});
             CHECK(closed && closed->left == 48 && closed->right == 1707);
-            auto narrowLeft = LeftStrip(b, {0,1000,48,1080}, {1700,1000,1920,1080},
-                                        {{48,1000,1700,1080}});
+            auto narrowLeft =
+                LeftStrip(b, {0, 1000, 48, 1080}, {1700, 1000, 1920, 1080}, {{48, 1000, 1700, 1080}});
             CHECK(narrowLeft && narrowLeft->left == 1700 && narrowLeft->right == 1707);
             auto negative = StartStrip({-1920, 1000, 0, 1080}, {-1200, 1000, -1152, 1080});
             CHECK(negative && negative->left == -1920 && negative->right == -1193);
