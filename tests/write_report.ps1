@@ -1,5 +1,5 @@
 param(
-    [string]$BuildDirectory = "out/test",
+    [string]$BuildDirectory = "out/build/x64-release",
     [string]$Configure = "success",
     [string]$Build = "success",
     [string]$Test = "success",

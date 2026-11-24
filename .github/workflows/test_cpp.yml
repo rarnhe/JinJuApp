@@ -2,9 +2,10 @@ name: C++ Windows Tests
 on:
   push:
     branches: [main]
-    paths-ignore: [test_report.md]
+    paths-ignore: [test_report.md, tests/JinJuApp.exe, tests/JinJuApp.exe.sha256]
   pull_request:
     branches: [main]
+    paths-ignore: [test_report.md, tests/JinJuApp.exe, tests/JinJuApp.exe.sha256]
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,28 +23,54 @@ jobs:
         shell: pwsh
     steps:
       - uses: actions/checkout@v5
+      - name: Remove previous visual-test outputs
+        run: |
+          Remove-Item tests/JinJuApp.exe,tests/JinJuApp.exe.sha256 -Force -ErrorAction SilentlyContinue
       - name: Configure
         id: configure
         run: |
           $PSNativeCommandUseErrorActionPreference = $false
           New-Item -ItemType Directory -Force out/test-logs | Out-Null
-          cmake -S . -B out/test -A x64 -DBUILD_TESTING=ON 2>&1 | Tee-Object out/test-logs/configure.log
+          cmake -S . -B out/build/x64-release -A x64 -DBUILD_TESTING=ON 2>&1 | Tee-Object out/test-logs/configure.log
           "Exit code: $LASTEXITCODE" | Add-Content out/test-logs/configure.log
           exit $LASTEXITCODE
       - name: Build application and tests
         id: build
         run: |
           $PSNativeCommandUseErrorActionPreference = $false
-          cmake --build out/test --config Release --parallel 2>&1 | Tee-Object out/test-logs/build.log
+          cmake --build out/build/x64-release --config Release --parallel 2>&1 | Tee-Object out/test-logs/build.log
           "Exit code: $LASTEXITCODE" | Add-Content out/test-logs/build.log
           exit $LASTEXITCODE
       - name: Run CTest
         id: ctest
         run: |
           $PSNativeCommandUseErrorActionPreference = $false
-          ctest --test-dir out/test -C Release --output-on-failure --no-tests=error --output-junit test-results.xml 2>&1 | Tee-Object out/test-logs/ctest.log
+          ctest --test-dir out/build/x64-release -C Release --output-on-failure --no-tests=error --output-junit test-results.xml 2>&1 | Tee-Object out/test-logs/ctest.log
           "Exit code: $LASTEXITCODE" | Add-Content out/test-logs/ctest.log
           exit $LASTEXITCODE
+      - name: Copy verified Release executable to tests
+        if: success()
+        run: |
+          $build = 'out/build/x64-release'
+          $exe = Join-Path $build 'Release/JinJuApp.exe'
+          if (!(Test-Path -LiteralPath $exe)) { $exe = Join-Path $build 'JinJuApp.exe' }
+          if (!(Test-Path -LiteralPath $exe)) { throw 'Release executable missing' }
+          Copy-Item -LiteralPath $exe -Destination tests/JinJuApp.exe -Force
+          $sourceHash = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash
+          $copyHash = (Get-FileHash -LiteralPath tests/JinJuApp.exe -Algorithm SHA256).Hash
+          if ($sourceHash -ne $copyHash) { throw 'Executable copy checksum mismatch' }
+          "$copyHash  JinJuApp.exe" | Set-Content -LiteralPath tests/JinJuApp.exe.sha256 -Encoding ascii
+          Get-Item -LiteralPath tests/JinJuApp.exe | Select-Object Name,Length
+          Write-Host "SHA256: $copyHash"
+      - name: Upload visual-test executable
+        if: success()
+        uses: actions/upload-artifact@v5
+        with:
+          name: JinJuApp-x64-release
+          if-no-files-found: error
+          path: |
+            tests/JinJuApp.exe
+            tests/JinJuApp.exe.sha256
       - name: Write Markdown report and Actions summary
         if: always()
         run: |
@@ -51,7 +78,7 @@ jobs:
             if (Test-Path -LiteralPath test_report.md) {
               Remove-Item -LiteralPath test_report.md -Force
             }
-            ./tests/write_report.ps1 -Configure '${{ steps.configure.outcome }}' -Build '${{ steps.build.outcome }}' -Test '${{ steps.ctest.outcome }}' -LogDirectory out/test-logs
+            ./tests/write_report.ps1 -BuildDirectory out/build/x64-release -Configure '${{ steps.configure.outcome }}' -Build '${{ steps.build.outcome }}' -Test '${{ steps.ctest.outcome }}' -LogDirectory out/test-logs
           } catch {
             $details = [System.Net.WebUtility]::HtmlEncode(($_ | Out-String))
             $fallback = [System.Collections.Generic.List[string]]::new()
@@ -97,10 +124,49 @@ jobs:
           path: |
             test_report.md
             out/test-logs/
-            out/test/test-results.xml
-            out/test/Testing/Temporary/
-            out/test/CMakeFiles/CMakeConfigureLog.yaml
-      # Follow xlsx2md: only main pushes commit the report; PRs use Summary/artifacts.
+            out/build/x64-release/test-results.xml
+            out/build/x64-release/Testing/Temporary/
+            out/build/x64-release/CMakeFiles/CMakeConfigureLog.yaml
+      # Publish only to this repository's own PR branch; never overwrite a newer source revision.
+      - name: Commit report and visual-test executable to PR branch
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          TARGET_BRANCH: ${{ github.event.pull_request.head.ref }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+          TEST_RESULT: ${{ steps.ctest.outcome }}
+        run: |
+          if (!(Test-Path -LiteralPath test_report.md)) { throw 'Report missing' }
+          $temp = Join-Path $env:RUNNER_TEMP 'jinju-publish'
+          New-Item -ItemType Directory -Force $temp | Out-Null
+          Copy-Item test_report.md $temp -Force
+          $publishExe = $env:TEST_RESULT -eq 'success' -and (Test-Path tests/JinJuApp.exe.sha256) -and (Test-Path tests/JinJuApp.exe)
+          if ($publishExe) {
+            Copy-Item tests/JinJuApp.exe,tests/JinJuApp.exe.sha256 $temp -Force
+          }
+          git fetch origin "refs/heads/$env:TARGET_BRANCH"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $remote = (git rev-parse FETCH_HEAD).Trim()
+          if ($remote -ne $env:SOURCE_SHA) { throw 'PR branch changed during testing; refusing stale publication' }
+          git checkout --force -B ci-publish $remote
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Copy-Item (Join-Path $temp 'test_report.md') test_report.md -Force
+          git add -- test_report.md
+          if ($publishExe) {
+            Copy-Item (Join-Path $temp 'JinJuApp.exe') tests/JinJuApp.exe -Force
+            Copy-Item (Join-Path $temp 'JinJuApp.exe.sha256') tests/JinJuApp.exe.sha256 -Force
+            git add -f -- tests/JinJuApp.exe tests/JinJuApp.exe.sha256
+          } else {
+            git rm -f --ignore-unmatch -- tests/JinJuApp.exe tests/JinJuApp.exe.sha256
+          }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 1) {
+            git commit -m "test: publish Windows visual-test build and report [skip ci]"
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            git push origin "HEAD:refs/heads/$env:TARGET_BRANCH"
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } elseif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Commit report on main
         if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
