@@ -1,9 +1,9 @@
 # C++ Windows 测试报告
 
 - 状态：通过 (Passed)
-- 时间（UTC）：2026-11-24 12:13:59
-- 测试源码基准提交：e7e4a19dc9c3ebe5512dd6ad66a0e638d0a8aa1f
-- 执行记录：https://github.com/rarnhe/JinJuApp/actions/runs/45391377250
+- 时间（UTC）：2026-11-24 12:21:23
+- 测试源码基准提交：a68646da711e47ee09a1566df78de69953664447
+- 执行记录：https://github.com/rarnhe/JinJuApp/actions/runs/45392599052
 - 平台：Windows / MSVC / C++20 / Win32 + Windows SDK
 - 阶段：Configure=success / Build=success / CTest=success
 - 统计：通过 7 / 失败 0 / 跳过 0 / 共 7
