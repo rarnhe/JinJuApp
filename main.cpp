@@ -451,11 +451,22 @@ static bool Fullscreen(HWND strip, RECT bar)
         return false;
     return SameRect(r, mi.rcMonitor, 2);
 }
+std::optional<RECT> StartStrip(RECT bar, RECT start)
+{
+    RECT clipped{};
+    if (!IntersectRect(&clipped, &bar, &start))
+        return {};
+    LONG right = std::min(bar.right, clipped.left + 7);
+    if (right <= bar.left)
+        return {};
+    return RECT{bar.left, bar.top, right, bar.bottom};
+}
 struct Anchors
 {
     RECT bar;
     std::vector<RECT> items;
     bool start = false, task = false, tray = false;
+    std::optional<RECT> startRect;
 };
 static BOOL CALLBACK AnchorProc(HWND hwnd, LPARAM lp)
 {
@@ -474,6 +485,7 @@ static BOOL CALLBACK AnchorProc(HWND hwnd, LPARAM lp)
     // Task-list HWND can cover the entire available region, not just buttons.
     if (!task || i.right - i.left < (a.bar.right - a.bar.left) / 2)
         a.items.push_back(i);
+    if (start) a.startRect = i;
     a.start |= start;
     a.task |= task;
     a.tray |= tray;
@@ -483,6 +495,8 @@ struct UiaScan
 {
     std::vector<RECT> items;
     int buttons = 0, visited = 0;
+    std::optional<RECT> startRect;
+    std::optional<RECT> firstButton;
     bool complete = true;
 };
 static void ScanUia(IUIAutomationTreeWalker *walker, IUIAutomationElement *node, RECT bar, UiaScan &out,
@@ -513,7 +527,19 @@ static void ScanUia(IUIAutomationTreeWalker *walker, IUIAutomationElement *node,
     {
         out.items.push_back(i);
         if (type == UIA_ButtonControlTypeId || type == UIA_SplitButtonControlTypeId)
+        {
             ++out.buttons;
+            BSTR id = nullptr;
+            BSTR name = nullptr;
+            node->get_CurrentAutomationId(&id);
+            node->get_CurrentName(&name);
+            const bool isStart = (id && (!_wcsicmp(id, L"StartButton") || !_wcsicmp(id, L"Start"))) ||
+                (name && (!_wcsicmp(name, L"Start") || !wcscmp(name, L"开始") || !wcscmp(name, L"開始")));
+            if (isStart) out.startRect = i;
+            if (!out.firstButton || i.left < out.firstButton->left) out.firstButton = i;
+            SysFreeString(id);
+            SysFreeString(name);
+        }
     }
     ComPtr<IUIAutomationElement> child;
     if (FAILED(walker->GetFirstChildElement(node, &child)))
@@ -568,8 +594,77 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
     // Do not guess free space if the accessibility provider failed.
     if (!s.complete || s.buttons < 2 || !a.tray)
         return {};
-    a.items.insert(a.items.end(), s.items.begin(), s.items.end());
-    return FreeStrip(bar, std::move(a.items), 7, 0);
+    const auto start = s.startRect ? s.startRect : a.startRect;
+    if (!start) return {};
+    auto result = StartStrip(bar, *start);
+    if (result)
+    {
+        result->bottom = std::max(result->top + 1, result->bottom - 2);
+        result->top = std::max(result->top, result->bottom - Scale(45, dpi));
+    }
+    return result;
+}
+// Explorer's desktop background is a separate window below the taskbar.
+// Capture only that window, not the composed screen or taskbar. Some Windows
+// builds do not support PrintWindow for this surface; the image sampler remains
+// a fallback. Do not change Explorer's parent, styles or visibility.
+static BOOL CALLBACK FindDesktopBackground(HWND window, LPARAM param)
+{
+    auto &result = *reinterpret_cast<HWND *>(param);
+    wchar_t cls[32]{};
+    GetClassNameW(window, cls, 32);
+    if (wcscmp(cls, L"WorkerW") && wcscmp(cls, L"Progman"))
+        return TRUE;
+    if (!IsWindowVisible(window) || FindWindowExW(window, nullptr, L"SHELLDLL_DefView", nullptr))
+        return TRUE;
+    RECT rect{};
+    if (!GetWindowRect(window, &rect) || rect.right-rect.left < GetSystemMetrics(SM_CXSCREEN) ||
+        rect.bottom-rect.top < GetSystemMetrics(SM_CYSCREEN))
+        return TRUE;
+    result = window;
+    return FALSE;
+}
+static bool CaptureDesktopBackground(Dib &dst, RECT strip)
+{
+    HWND desktop = nullptr;
+    EnumWindows(FindDesktopBackground, reinterpret_cast<LPARAM>(&desktop));
+    if (!desktop)
+        return false;
+    RECT rect{};
+    if (!GetClientRect(desktop, &rect))
+        return false;
+    POINT origin{};
+    if (!ClientToScreen(desktop, &origin))
+        return false;
+    const int w = rect.right, h = rect.bottom;
+    const int sx = strip.left-origin.x, sy = strip.top-origin.y;
+    if (w <= 0 || h <= 0 || static_cast<uint64_t>(w)*h > 64*1024*1024 ||
+        sx < 0 || sy < 0 || sx+dst.w > w || sy+dst.h > h)
+        return false;
+    Dib capture(w,h);
+    if (!capture)
+        return false;
+    std::fill_n(capture.pixels, static_cast<size_t>(w)*h, 0x00ff00ffu);
+    if (!PrintWindow(desktop, capture.dc, PW_CLIENTONLY | 2))
+        return false;
+    GdiFlush();
+    // Compositor-only surfaces frequently return black or an untouched buffer.
+    // Fall back to the original image instead of displaying that failure.
+    bool usable = false;
+    for (int y=0; y<dst.h; ++y)
+        for (int x=0; x<dst.w; ++x)
+        {
+            uint32_t rgb = capture.pixels[static_cast<size_t>(sy+y)*w+sx+x] & 0xffffff;
+            if (rgb != 0 && rgb != 0xff00ff) usable = true;
+        }
+    if (!usable)
+        return false;
+    for (int y=0; y<dst.h; ++y)
+        for (int x=0; x<dst.w; ++x)
+            dst.pixels[static_cast<size_t>(y)*dst.w+x] =
+                0xff000000u | (capture.pixels[static_cast<size_t>(sy+y)*w+sx+x]&0xffffff);
+    OutputDebugStringW(L"JinJuApp: sampled Explorer desktop background window.\n");
+    return true;
 }
 // Resolve the actual wallpaper for the monitor; never capture the composed
 // screen, since that would copy the taskbar and our own text back into itself.
@@ -634,7 +729,7 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         resolved = true;
     }
     if (!resolved)
-        return false;
+        return CaptureDesktopBackground(dst, strip);
 
     RECT area = mi.rcMonitor;
     if (position == DWPOS_SPAN)
@@ -645,16 +740,29 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         area.bottom = area.top + GetSystemMetrics(SM_CYVIRTUALSCREEN);
     }
 
+    // Explorer caches its currently displayed primary wallpaper here.
+    // Use it only as an alternate source, not as a replacement for a
+    // successfully resolved nonblack per-monitor image.
+    std::wstring cached;
+    if (mi.dwFlags & MONITORINFOF_PRIMARY)
+    {
+        wchar_t appdata[32768]{};
+        DWORD len = GetEnvironmentVariableW(L"APPDATA", appdata, 32768);
+        if (len && len < 32768)
+            cached = std::wstring(appdata) + L"\\Microsoft\\Windows\\Themes\\TranscodedWallpaper";
+    }
     bool ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
     if (!ok && !fallback.empty() && fallback != file)
     {
         file = fallback;
         ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
     }
+    if (!ok && !cached.empty() && cached != file)
+        ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, cached, position, background);
     if (!ok)
     {
-        OutputDebugStringW(L"JinJuApp: wallpaper decoding failed; hiding strip.\n");
-        return false;
+        OutputDebugStringW(L"JinJuApp: wallpaper decoding failed; trying desktop surface.\n");
+        return CaptureDesktopBackground(dst, strip);
     }
     // Useful in DebugView / Visual Studio without writing an extra user file.
     uint32_t minRGB = 0xffffff, maxRGB = 0;
@@ -667,6 +775,8 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         maxRGB = std::max(maxRGB, rgb);
         colored += rgb != 0;
     }
+    if (!colored && CaptureDesktopBackground(dst, strip))
+        return true;
     wchar_t log[256]{};
     swprintf_s(log,
                L"JinJuApp wallpaper: position=%d rect=(%ld,%ld,%ld,%ld) nonblack=%zu/%zu range=%06X..%06X\n",
@@ -890,12 +1000,14 @@ struct App
     int textWidth = 0, lastX = INT_MIN, lastA = -1;
     std::unique_ptr<Dib> mask, frame, wall;
     HFONT font = nullptr;
-    GlyphMask currentMask, previousMask;
     ULONGLONG lastTick = 0;
     double animationMs = 0;
     bool wallpaperDirty = false;
     unsigned missingGeometry = 0;
     ULONGLONG lastWallpaperPoll = 0;
+    bool positioned = false;
+    std::optional<RECT> pendingGeometry;
+    unsigned geometryStable = 0;
     ~App()
     {
         if (font)
@@ -949,8 +1061,6 @@ struct App
         if (!font)
             return false;
         textWidth = Measure(current);
-        currentMask = RasterText(current, font, textWidth + Scale(4, dpi), h);
-        previousMask = {};
         previous.clear();
         start = lastTick = GetTickCount64();
         animationMs = 0;
@@ -958,39 +1068,31 @@ struct App
         lastA = -1;
         return PaintWallpaper(*wall, strip, desktop.Get());
     }
-    void Layer(const std::wstring &s, const GlyphMask &cached, Frame f, double weight)
+    void Layer(const std::wstring &text, Frame f, double weight)
     {
-        if (s.empty() || weight <= 0 || f.alpha <= 0 || s.size() > INT_MAX)
+        if (text.empty() || f.alpha <= 0 || weight <= 0 || text.size() > INT_MAX)
             return;
-        const unsigned opacity = static_cast<unsigned>(std::lround(255 * f.alpha * weight));
-        const bool useCache = !cached.coverage.empty();
-        if (!useCache)
-        {
-            mask->clear();
-            auto old = SelectObject(mask->dc, font);
-            RECT background{0, 0, mask->w, mask->h};
-            FillRect(mask->dc, &background, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
-            SetBkMode(mask->dc, OPAQUE);
-            SetBkColor(mask->dc, RGB(0, 0, 0));
-            SetTextColor(mask->dc, RGB(255, 255, 255));
-            RECT bounds{f.x, 0, f.x + mask->w, mask->h};
-            DrawTextW(mask->dc, s.c_str(), static_cast<int>(s.size()), &bounds,
-                      DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_NOCLIP);
-            SelectObject(mask->dc, old);
-            GdiFlush();
-        }
-        const int left = useCache ? std::max(Pad(), f.x) : Pad();
-        const int right = useCache ? std::min(mask->w - Pad(), f.x + cached.w) : mask->w - Pad();
+        auto old = SelectObject(mask->dc, font);
+        RECT background{0, 0, mask->w, mask->h};
+        FillRect(mask->dc, &background, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
+        SetBkMode(mask->dc, OPAQUE);
+        SetBkColor(mask->dc, RGB(0, 0, 0));
+        SetTextColor(mask->dc, RGB(255, 255, 255));
+        RECT bounds{f.x, 0, f.x + mask->w, mask->h};
+        DrawTextW(mask->dc, text.c_str(), static_cast<int>(text.size()), &bounds,
+                  DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_NOCLIP);
+        SelectObject(mask->dc, old);
+        GdiFlush();
+        const unsigned alpha = static_cast<unsigned>(std::lround(255 * std::clamp(f.alpha * weight, 0.0, 1.0)));
         for (int y = 0; y < mask->h; ++y)
         {
-            for (int x = left; x < right; ++x)
+            for (int x = Pad(); x < mask->w - Pad(); ++x)
             {
                 const size_t i = static_cast<size_t>(y) * mask->w + x;
-                const unsigned c = useCache ? cached.coverage[static_cast<size_t>(y) * cached.w + x - f.x]
-                                            : ((mask->pixels[i] >> 16) & 255);
-                if (!c)
+                const unsigned coverage = (mask->pixels[i] >> 16) & 255;
+                if (!coverage)
                     continue;
-                const unsigned a = (c * opacity + 127) / 255;
+                const unsigned a = (coverage * alpha + 127) / 255;
                 const unsigned total = std::min(255u, (frame->pixels[i] >> 24) + a);
                 frame->pixels[i] = WallpaperPixel(wall->pixels[i], total, 1);
             }
@@ -1017,22 +1119,25 @@ struct App
         if (!force && previous.empty() && f.x == lastX && aq == lastA)
             return;
         frame->clear();
-        Layer(previous, previousMask, oldFrame, 1 - blend);
-        Layer(current, currentMask, f, blend);
+        Layer(previous, oldFrame, 1 - blend);
+        Layer(current, f, blend);
         POINT dest{strip.left, strip.top}, src{};
         SIZE size{frame->w, frame->h};
         BLENDFUNCTION bf{AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
-        if (!UpdateLayeredWindow(hwnd, nullptr, &dest, &size, frame->dc, &src, 0, &bf, ULW_ALPHA))
+        GdiFlush();
+        DwmFlush();
+        if (!UpdateLayeredWindow(hwnd, nullptr, positioned ? nullptr : &dest, positioned ? nullptr : &size,
+                                 frame->dc, &src, 0, &bf, ULW_ALPHA))
         {
             Hide();
             return;
         }
+        positioned = true;
         lastX = f.x;
         lastA = aq;
         if (blend >= 1)
         {
             previous.clear();
-            previousMask = {};
         }
         if (previous.empty() && textWidth <= frame->w - 2 * Pad())
             KillTimer(hwnd, AnimationTimer);
@@ -1064,11 +1169,24 @@ struct App
             return;
         }
         missingGeometry = 0;
+        if (active && !SameRect(strip, *target))
+        {
+            if (!pendingGeometry || !SameRect(*pendingGeometry, *target))
+            {
+                pendingGeometry = target;
+                geometryStable = 1;
+                return;
+            }
+            if (++geometryStable < 2) return;
+        }
+        pendingGeometry.reset();
+        geometryStable = 0;
         bool rebuild = !active || !SameRect(strip, *target) || dpi != d;
         bool refreshWallpaper = wallpaper || wallpaperDirty;
         wallpaperDirty = false;
         if (rebuild)
         {
+            positioned = false;
             strip = *target;
             dpi = d;
             if (!Rebuild())
@@ -1102,6 +1220,8 @@ struct App
         {
             if (above == taskbar)
             {
+                if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000) || (GetAsyncKeyState(VK_RBUTTON) & 0x8000))
+                    break;
                 SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
                 break;
@@ -1113,13 +1233,10 @@ struct App
         auto now = GetTickCount64();
         oldFrame = At(now);
         previous = current;
-        previousMask = std::move(currentMask);
         current = Next();
         start = changed = lastTick = now;
         animationMs = 0;
         textWidth = Measure(current);
-        if (mask)
-            currentMask = RasterText(current, font, textWidth + Scale(4, dpi), mask->h);
         lastX = INT_MIN;
         if (active)
         {
@@ -1170,6 +1287,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
             return MA_NOACTIVATE;
         case WM_POINTERACTIVATE:
             return PA_NOACTIVATE;
+        case WM_ACTIVATE:
+            return 0;
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;

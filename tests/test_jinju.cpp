@@ -23,6 +23,13 @@ int main(int argc, char **argv)
         if (name == "geometry")
         {
             RECT b{0, 1000, 1920, 1080};
+            auto centered = StartStrip(b, {700,1000,748,1080});
+            CHECK(centered && centered->left == 0 && centered->right == 707);
+            auto left = StartStrip(b, {0,1000,48,1080});
+            CHECK(left && left->left == 0 && left->right == 7);
+            auto negative = StartStrip({-1920,1000,0,1080}, {-1200,1000,-1152,1080});
+            CHECK(negative && negative->left == -1920 && negative->right == -1193);
+            CHECK(!StartStrip(b, {2000,1000,2048,1080}));
             auto r = FreeStrip(b, {{700, 1000, 1200, 1080}, {1700, 1000, 1920, 1080}}, 7, 0);
             CHECK(r && r->left == 7 && r->right == 693);
             r = FreeStrip(b, {{0, 1000, 600, 1080}, {1700, 1000, 1920, 1080}}, 7, 0);
