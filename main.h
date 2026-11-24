@@ -28,5 +28,6 @@ std::optional<RECT> StartStrip(RECT bar, RECT start);
 std::optional<RECT> LeftStrip(RECT bar, RECT start, RECT tray, const std::vector<RECT> &controls);
 DWORD OverlayStyles();
 bool TestGlyphComposition();
+bool TestRenderPipeline();
 bool SameRect(const RECT &a, const RECT &b, int tolerance = 0);
 } // namespace jinju

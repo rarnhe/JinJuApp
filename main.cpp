@@ -487,6 +487,7 @@ struct Anchors
     bool start = false, task = false, tray = false;
     std::optional<RECT> startRect;
     std::optional<RECT> trayRect;
+    std::optional<RECT> taskRect;
 };
 static BOOL CALLBACK AnchorProc(HWND hwnd, LPARAM lp)
 {
@@ -509,6 +510,8 @@ static BOOL CALLBACK AnchorProc(HWND hwnd, LPARAM lp)
         a.startRect = i;
     if (tray)
         a.trayRect = i;
+    if (task)
+        a.taskRect = i;
     a.start |= start;
     a.task |= task;
     a.tray |= tray;
@@ -546,7 +549,7 @@ static void ScanUia(IUIAutomationTreeWalker *walker, IUIAutomationElement *node,
                    type == UIA_TabItemControlTypeId || type == UIA_EditControlTypeId ||
                    type == UIA_CheckBoxControlTypeId || type == UIA_HyperlinkControlTypeId ||
                    type == UIA_TextControlTypeId || type == UIA_ComboBoxControlTypeId;
-    if (depth && hit && control)
+    if (depth && hit && control && i.right - i.left < (bar.right - bar.left) / 2)
     {
         out.items.push_back(i);
         if (type == UIA_ButtonControlTypeId || type == UIA_SplitButtonControlTypeId)
@@ -618,11 +621,10 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
     else
         s.complete = false;
     // Do not guess free space if the accessibility provider failed.
-    if (!s.complete || s.buttons < 2 || !a.tray)
-        return {};
-    const auto start = s.startRect ? s.startRect : a.startRect;
-    if (!start)
-        return {};
+    const auto start = s.startRect ? s.startRect : (a.startRect ? a.startRect : s.firstButton);
+    if (!start && !a.taskRect)
+        return FreeStrip(bar, a.items, 7, 0);
+    const RECT startBounds = start ? *start : *a.taskRect;
     // TaskbarAl is the user's Windows 11 alignment setting (0=left, 1=center).
     // Fall back to the physical Start position on Windows 10 / missing setting.
     DWORD alignment = 0;
@@ -630,11 +632,11 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
     const LSTATUS status =
         RegGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                      L"TaskbarAl", RRF_RT_REG_DWORD, nullptr, &alignment, &bytes);
-    const bool centered = status == ERROR_SUCCESS ? alignment != 0 : start->left - bar.left > Scale(48, dpi);
+    const bool centered = status == ERROR_SUCCESS ? alignment != 0 : startBounds.left - bar.left > Scale(48, dpi);
     std::optional<RECT> result;
     if (centered)
     {
-        result = StartStrip(bar, *start);
+        result = StartStrip(bar, startBounds);
     }
     else if (a.trayRect)
     {
@@ -650,7 +652,21 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
         }
         if (firstTray < bar.right)
             trayEdge.left = firstTray;
-        result = LeftStrip(bar, *start, trayEdge, s.items);
+        std::vector<RECT> items;
+        for (const auto &item : s.items)
+            if (item.right - item.left < (bar.right - bar.left) / 2 && item.right <= a.trayRect->left)
+                items.push_back(item);
+        if (a.taskRect && a.taskRect->right <= a.trayRect->left &&
+            a.taskRect->right - a.taskRect->left < (bar.right - bar.left) / 2)
+            items.push_back(*a.taskRect);
+        result = LeftStrip(bar, startBounds, trayEdge, items);
+    }
+    // A tiny or failed anchor result must not replace a usable free strip.
+    if (!result || result->right - result->left <= 4)
+    {
+        auto occupied = a.items;
+        occupied.insert(occupied.end(), s.items.begin(), s.items.end());
+        result = FreeStrip(bar, occupied, 7, 0);
     }
     if (result)
     {
@@ -806,6 +822,28 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         DWORD len = GetEnvironmentVariableW(L"APPDATA", appdata, 32768);
         if (len && len < 32768)
             cached = std::wstring(appdata) + L"\\Microsoft\\Windows\\Themes\\TranscodedWallpaper";
+    }
+    // CachedFiles contains Explorer's already scaled wallpaper for a monitor.
+    // Prefer a matching-size cache only when the source path is unavailable.
+    if (file.empty() && !cached.empty())
+    {
+        auto dir = std::filesystem::path(cached).parent_path() / L"CachedFiles";
+        std::error_code ec;
+        std::filesystem::path newest;
+        std::filesystem::file_time_type latest{};
+        for (std::filesystem::directory_iterator it(dir, ec), end; !ec && it != end; it.increment(ec))
+        {
+            if (!it->is_regular_file(ec)) continue;
+            Gdiplus::Bitmap image(it->path().c_str());
+            if (image.GetLastStatus() != Gdiplus::Ok ||
+                image.GetWidth() != static_cast<UINT>(mi.rcMonitor.right-mi.rcMonitor.left) ||
+                image.GetHeight() != static_cast<UINT>(mi.rcMonitor.bottom-mi.rcMonitor.top)) continue;
+            auto time = it->last_write_time(ec);
+            if (!ec && (newest.empty() || time > latest)) { newest = it->path(); latest = time; }
+        }
+        if (!newest.empty() && RasterWallpaper(dst.pixels, dst.w, dst.h, strip, mi.rcMonitor,
+                                               newest.wstring(), DWPOS_STRETCH, background))
+            return true;
     }
     bool ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
     if (!ok && !fallback.empty() && fallback != file)
@@ -1062,6 +1100,7 @@ struct App
     unsigned missingGeometry = 0;
     ULONGLONG lastWallpaperPoll = 0;
     bool positioned = false;
+    bool wallpaperReady = false;
     std::optional<RECT> pendingGeometry;
     unsigned geometryStable = 0;
     ~App()
@@ -1118,11 +1157,13 @@ struct App
             return false;
         textWidth = Measure(current);
         previous.clear();
-        start = lastTick = GetTickCount64();
-        animationMs = 0;
+        lastTick = GetTickCount64();
         lastX = INT_MIN;
         lastA = -1;
-        return PaintWallpaper(*wall, strip, desktop.Get());
+        wallpaperReady = PaintWallpaper(*wall, strip, desktop.Get());
+        if (!wallpaperReady)
+            OutputDebugStringW(L"JinJuApp: wallpaper unavailable; using readable temporary text color.\n");
+        return true;
     }
     void Layer(const std::wstring &text, Frame f, double weight)
     {
@@ -1151,7 +1192,8 @@ struct App
                     continue;
                 const unsigned a = (coverage * alpha + 127) / 255;
                 const unsigned total = std::min(255u, (frame->pixels[i] >> 24) + a);
-                frame->pixels[i] = WallpaperPixel(wall->pixels[i], total, 1);
+                const uint32_t rgb = wallpaperReady ? wall->pixels[i] : 0xeeeeeeu;
+                frame->pixels[i] = WallpaperPixel(rgb, total, 1);
             }
         }
     }
@@ -1182,8 +1224,7 @@ struct App
         SIZE size{frame->w, frame->h};
         BLENDFUNCTION bf{AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
         GdiFlush();
-        DwmFlush();
-        if (!UpdateLayeredWindow(hwnd, nullptr, positioned ? nullptr : &dest, positioned ? nullptr : &size,
+        if (!UpdateLayeredWindow(hwnd, nullptr, &dest, &size,
                                  frame->dc, &src, 0, &bf, ULW_ALPHA))
         {
             Hide();
@@ -1260,31 +1301,16 @@ struct App
             if (!active)
                 return;
             if (!IsWindowVisible(hwnd))
-                ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+                SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0,
+                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
             Animate();
         }
         else if (refreshWallpaper && wall)
         {
-            if (!PaintWallpaper(*wall, strip, desktop.Get()))
-            {
-                Hide();
-                return;
-            }
+            wallpaperReady = PaintWallpaper(*wall, strip, desktop.Get());
             Render(true);
         }
-        // Only repair Z order when the taskbar actually moved above us.
-        // A periodic unconditional HWND_TOPMOST call can cause visible flicker.
-        for (HWND above = GetWindow(hwnd, GW_HWNDPREV); above; above = GetWindow(above, GW_HWNDPREV))
-        {
-            if (above == taskbar)
-            {
-                if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000) || (GetAsyncKeyState(VK_RBUTTON) & 0x8000))
-                    break;
-                SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0,
-                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
-                break;
-            }
-        }
+
     }
     void Change()
     {
@@ -1307,6 +1333,44 @@ struct App
             previous.clear();
     }
 };
+bool TestRenderPipeline()
+{
+    App app;
+    app.strip = {20,20,180,65};
+    app.current = L"Long marquee text for Windows rendering regression test";
+    app.mask = std::make_unique<Dib>(160,45);
+    app.frame = std::make_unique<Dib>(160,45);
+    app.wall = std::make_unique<Dib>(160,45);
+    app.font = MakeFont(96);
+    if (!app.font || !*app.mask || !*app.frame || !*app.wall) return false;
+    app.textWidth = app.Measure(app.current);
+    if (app.textWidth <= 156) return false;
+    std::fill_n(app.wall->pixels, 160*45, 0xff35a9ef);
+    app.wallpaperReady = true;
+    app.frame->clear();
+    app.Layer(app.current, {2,1}, 1);
+    std::vector<uint32_t> first(app.frame->pixels, app.frame->pixels+160*45);
+    bool ink=false, clear=false;
+    for (auto p:first)
+    {
+        if ((p>>24)==255 && (p&0xffffff)==0x35a9ef) ink=true;
+        if (p==0) clear=true;
+    }
+    if (!ink || !clear) return false;
+    app.frame->clear();
+    app.Layer(app.current, {-25,1}, 1);
+    if (std::equal(first.begin(),first.end(),app.frame->pixels)) return false;
+    HWND window=CreateWindowExW(OverlayStyles(), L"STATIC", L"", WS_POPUP,
+                               20,20,160,45,nullptr,nullptr,GetModuleHandleW(nullptr),nullptr);
+    if (!window) return false;
+    POINT dst{20,20}, src{};
+    SIZE size{160,45};
+    BLENDFUNCTION blend{AC_SRC_OVER,0,255,AC_SRC_ALPHA};
+    GdiFlush();
+    bool ok=UpdateLayeredWindow(window,nullptr,&dst,&size,app.frame->dc,&src,0,&blend,ULW_ALPHA)!=FALSE;
+    DestroyWindow(window);
+    return ok;
+}
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
     if (msg == WM_NCCREATE)

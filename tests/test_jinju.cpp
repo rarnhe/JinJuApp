@@ -120,6 +120,10 @@ int main(int argc, char **argv)
             std::filesystem::remove(file);
             Gdiplus::GdiplusShutdown(token);
         }
+        else if (name == "render_pipeline")
+        {
+            CHECK(TestRenderPipeline());
+        }
         else if (name == "quotes")
         {
             auto v = ParseLines("\xef\xbb\xbf"
