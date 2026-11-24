@@ -1,0 +1,150 @@
+param(
+    [string]$BuildDirectory = "out/build/x64-release",
+    [string]$Configure = "success",
+    [string]$Build = "success",
+    [string]$Test = "success",
+    [string]$OutputPath = "test_report.md",
+    [string]$LogDirectory = ""
+)
+$ErrorActionPreference = "Stop"
+$cases = @()
+$junitError = ""
+$junit = Join-Path $BuildDirectory "test-results.xml"
+if (Test-Path -LiteralPath $junit) {
+    try {
+        [xml]$document = Get-Content -LiteralPath $junit -Raw
+        $cases = @($document.SelectNodes("//testcase"))
+    } catch {
+        $junitError = $_.Exception.Message
+    }
+}
+$failed = @($cases | Where-Object { $_.SelectSingleNode("failure") -or $_.SelectSingleNode("error") })
+$skipped = @($cases | Where-Object { $_.SelectSingleNode("skipped") })
+$passed = [Math]::Max(0, $cases.Count - $failed.Count - $skipped.Count)
+$ok = $Configure -eq "success" -and $Build -eq "success" -and $Test -eq "success" -and $cases.Count -gt 0 -and $failed.Count -eq 0 -and $skipped.Count -eq 0
+$status = if ($ok) { "通过 (Passed)" } else { "失败或未完整执行 (Failed)" }
+
+$revision = "unknown"
+$revisionError = ""
+try {
+    $revisionOutput = & git rev-parse HEAD 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        $revision = ($revisionOutput | Out-String).Trim()
+    } else {
+        $revisionError = ($revisionOutput | Out-String).Trim()
+    }
+} catch {
+    $revisionError = $_.Exception.Message
+}
+$run = if ($env:GITHUB_RUN_ID) { "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID" } else { "本地 Windows 执行（含当前工作区测试改动）" }
+
+$lines = [System.Collections.Generic.List[string]]::new()
+@(
+    "# C++ Windows 测试报告", "",
+    "- 状态：$status",
+    "- 时间（UTC）：$([DateTime]::UtcNow.ToString('yyyy-MM-dd HH:mm:ss'))",
+    "- 测试源码基准提交：$revision",
+    "- 执行记录：$run",
+    "- 平台：Windows / MSVC / C++20 / Win32 + Windows SDK",
+    "- 阶段：Configure=$Configure / Build=$Build / CTest=$Test",
+    "- 统计：通过 $passed / 失败 $($failed.Count) / 跳过 $($skipped.Count) / 共 $($cases.Count)", ""
+) | ForEach-Object { $lines.Add($_) }
+if ($revisionError) {
+    $lines.Add("- Git revision 读取错误：$([System.Net.WebUtility]::HtmlEncode($revisionError))")
+}
+$lines.Add("## GitHub Actions 阶段状态")
+$lines.Add("")
+$lines.Add("| 阶段 | 结果 |")
+$lines.Add("| --- | --- |")
+$phaseStates = [ordered]@{ Configure = $Configure; Build = $Build; CTest = $Test }
+foreach ($phase in $phaseStates.Keys) {
+    $lines.Add("| $phase | $($phaseStates[$phase]) |")
+}
+$lines.Add("")
+$lines.Add("## 测试用例结果")
+$lines.Add("")
+$lines.Add("| 测试 | 结果 |")
+$lines.Add("| --- | --- |")
+foreach ($case in $cases) {
+    $outcome = if ($case.SelectSingleNode("failure") -or $case.SelectSingleNode("error")) { "失败" } elseif ($case.SelectSingleNode("skipped")) { "跳过" } else { "通过" }
+    $lines.Add("| $($case.name) | $outcome |")
+}
+if ($cases.Count -eq 0) { $lines.Add("| 未获得 CTest JUnit 结果 | 未执行 |") }
+
+$lines.Add("")
+$lines.Add("## 失败详情")
+if ($failed.Count -eq 0 -and !$ok) {
+    $lines.Add("没有可解析的 CTest 用例级错误；整体失败原因请查看下面的阶段输出。")
+}
+foreach ($case in $failed) {
+    $lines.Add("")
+    $lines.Add("### $($case.name)")
+    $lines.Add("<pre>")
+    $lines.Add([System.Net.WebUtility]::HtmlEncode($case.InnerText))
+    $lines.Add("</pre>")
+}
+if ($junitError) {
+    $lines.Add("")
+    $lines.Add("CTest JUnit 文件读取失败：")
+    $lines.Add("<pre>$([System.Net.WebUtility]::HtmlEncode($junitError))</pre>")
+}
+
+if ($LogDirectory) {
+    $phaseLogs = [ordered]@{ Configure = "configure"; Build = "build"; CTest = "ctest" }
+    foreach ($phase in $phaseLogs.Keys) {
+        $outcome = $phaseStates[$phase]
+        if ($outcome -eq "success") { continue }
+        $log = Join-Path $LogDirectory "$($phaseLogs[$phase]).log"
+        $output = ""
+        $readError = ""
+        if (Test-Path -LiteralPath $log) {
+            try {
+                $output = (Get-Content -LiteralPath $log -Tail 80) -join [Environment]::NewLine
+            } catch {
+                $readError = $_.Exception.Message
+            }
+        }
+        $exitMatch = [regex]::Match($output, '(?im)^\s*Exit code:\s*(-?\d+)\s*$')
+        $lines.Add("")
+        $lines.Add("### $phase 阶段输出")
+        if ($outcome -eq "failure") {
+            if ($exitMatch.Success) {
+                $code = $exitMatch.Groups[1].Value
+                $lines.Add("GitHub Actions 错误：Error: Process completed with exit code $code.")
+            } else {
+                $lines.Add("GitHub Actions 阶段失败；未能从日志中读取进程退出码。")
+            }
+        } else {
+            $lines.Add("阶段状态：$outcome（该阶段可能未启动或被取消）。")
+        }
+        if ($output) {
+            $lines.Add("<pre>$([System.Net.WebUtility]::HtmlEncode($output))</pre>")
+        } elseif ($readError) {
+            $lines.Add("<pre>读取日志失败：$([System.Net.WebUtility]::HtmlEncode($readError))</pre>")
+        } else {
+            $lines.Add("日志文件不存在：$log")
+        }
+    }
+}
+
+$lines.Add("")
+$lines.Add("## 覆盖范围")
+$lines.Add("真实编译 main.cpp，验证动态空闲矩形、动画时间边界、预乘像素、壁纸实际 BGRA 输出、非零屏幕坐标取样、原版 GDI 字形合成、实际 App::Layer 滚动像素变化及 UpdateLayeredWindow 提交、实际双窗口 Z 序恢复、owned popup 堆叠及 WIC 解码、分层窗口样式及 居中 Start 边框重叠 7px、靠左应用组右边界零间距及托盘重叠 7px、动态宽度、窄间距、同名 TXT 创建及 UTF-8 解析。")
+$lines.Add("")
+$lines.Add("新增按 Z 序逐像素覆盖、区域裁剪、无窗口白色测试。visibility 测试：双屏全屏状态、最小化/隐藏窗口过滤；不再识别或特殊处理 Win+D / Win+Tab。
+
+实际 Explorer UIA、窗口取色视觉、鼠标穿透、全屏与多屏/DPI 仍需交互式人工验证；不计入自动通过数。")
+
+$content = $lines -join [Environment]::NewLine
+$outputDirectory = Split-Path -Parent $OutputPath
+if ($outputDirectory -and !(Test-Path -LiteralPath $outputDirectory)) {
+    New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null
+}
+Set-Content -LiteralPath $OutputPath -Value $content -Encoding utf8
+if ($env:GITHUB_STEP_SUMMARY) {
+    try {
+        Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $content -Encoding utf8
+    } catch {
+        Write-Warning "The Markdown report was saved, but Actions Summary could not be updated: $($_.Exception.Message)"
+    }
+}

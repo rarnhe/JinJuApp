@@ -1,0 +1,6 @@
+add_executable(jinju_tests test_jinju.cpp ../main.cpp ../main.h)
+target_compile_definitions(jinju_tests PRIVATE JINJU_TEST)
+jinju_target(jinju_tests)
+foreach(case geometry animation pixels render_pipeline window_pixels visibility quotes)
+  add_test(NAME ${case} COMMAND jinju_tests ${case})
+endforeach()

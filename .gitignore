@@ -1,4 +1,6 @@
-/target/
-.trae/
-.vscode/
-*.log
+out/
+build/
+.vs/
+*.exe
+*.pdb
+*.obj
