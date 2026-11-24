@@ -129,9 +129,9 @@ if ($LogDirectory) {
 
 $lines.Add("")
 $lines.Add("## 覆盖范围")
-$lines.Add("真实编译 main.cpp，验证动态空闲矩形、动画时间边界、预乘像素、同名 TXT 创建与空文件退出、UTF-8 单行解析。
+$lines.Add("真实编译 main.cpp，验证动态空闲矩形、动画时间边界、预乘像素、壁纸实际 BGRA 输出、同名 TXT 创建及 UTF-8 解析。")
 $lines.Add("")
-$lines.Add("实际 Explorer UIA、壁纸镂空视觉、全屏与多屏/DPI 仍需交互式人工验证；不计入自动通过数。
+$lines.Add("实际 Explorer UIA、壁纸镂空视觉、鼠标穿透、全屏与多屏/DPI 仍需交互式人工验证；不计入自动通过数。")
 
 $content = $lines -join [Environment]::NewLine
 $outputDirectory = Split-Path -Parent $OutputPath

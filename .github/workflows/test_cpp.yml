@@ -26,6 +26,10 @@ jobs:
       - name: Remove previous visual-test outputs
         run: |
           Remove-Item tests/JinJuApp.exe,tests/JinJuApp.exe.sha256 -Force -ErrorAction SilentlyContinue
+      - name: Format C++ sources
+        run: |
+          clang-format -i --style=file main.cpp main.h tests/test_jinju.cpp
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Configure
         id: configure
         run: |
@@ -72,6 +76,7 @@ jobs:
             tests/JinJuApp.exe
             tests/JinJuApp.exe.sha256
       - name: Write Markdown report and Actions summary
+        id: report
         if: always()
         run: |
           try {
@@ -106,6 +111,7 @@ jobs:
             }
             $fallback | Set-Content -LiteralPath test_report.md -Encoding utf8
             Write-Warning "The detailed report writer failed; a fallback test_report.md was written."
+            exit 1
           }
           if (!(Test-Path -LiteralPath test_report.md) -or (Get-Item -LiteralPath test_report.md).Length -eq 0) {
             @(
@@ -134,12 +140,13 @@ jobs:
           TARGET_BRANCH: ${{ github.event.pull_request.head.ref }}
           SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
           TEST_RESULT: ${{ steps.ctest.outcome }}
+          REPORT_RESULT: ${{ steps.report.outcome }}
         run: |
           if (!(Test-Path -LiteralPath test_report.md)) { throw 'Report missing' }
           $temp = Join-Path $env:RUNNER_TEMP 'jinju-publish'
           New-Item -ItemType Directory -Force $temp | Out-Null
-          Copy-Item test_report.md $temp -Force
-          $publishExe = $env:TEST_RESULT -eq 'success' -and (Test-Path tests/JinJuApp.exe.sha256) -and (Test-Path tests/JinJuApp.exe)
+          Copy-Item test_report.md,main.cpp,main.h,tests/test_jinju.cpp $temp -Force
+          $publishExe = $env:TEST_RESULT -eq 'success' -and $env:REPORT_RESULT -eq 'success' -and (Test-Path tests/JinJuApp.exe.sha256) -and (Test-Path tests/JinJuApp.exe)
           if ($publishExe) {
             Copy-Item tests/JinJuApp.exe,tests/JinJuApp.exe.sha256 $temp -Force
           }
@@ -150,7 +157,10 @@ jobs:
           git checkout --force -B ci-publish $remote
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Copy-Item (Join-Path $temp 'test_report.md') test_report.md -Force
-          git add -- test_report.md
+          Copy-Item (Join-Path $temp 'main.cpp') main.cpp -Force
+          Copy-Item (Join-Path $temp 'main.h') main.h -Force
+          Copy-Item (Join-Path $temp 'test_jinju.cpp') tests/test_jinju.cpp -Force
+          git add -- test_report.md main.cpp main.h tests/test_jinju.cpp
           if ($publishExe) {
             Copy-Item (Join-Path $temp 'JinJuApp.exe') tests/JinJuApp.exe -Force
             Copy-Item (Join-Path $temp 'JinJuApp.exe.sha256') tests/JinJuApp.exe.sha256 -Force

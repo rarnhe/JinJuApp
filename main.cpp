@@ -16,6 +16,10 @@
 #include <climits>
 #include <cwchar>
 #include <utility>
+#include <thread>
+#include <mutex>
+#include <atomic>
+#include <chrono>
 using Microsoft::WRL::ComPtr;
 namespace jinju {
 constexpr wchar_t kClass[]=L"JinJuApp";
@@ -345,82 +349,245 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation* uia,RECT& bar,UINT& dpi){
  // Do not guess free space if the accessibility provider failed.
  if(!s.complete||s.buttons<2||!a.tray)return {};
  a.items.insert(a.items.end(),s.items.begin(),s.items.end());
- return FreeStrip(bar,std::move(a.items),Scale(10,dpi),Scale(120,dpi));
+ return FreeStrip(bar,std::move(a.items),Scale(6,dpi),Scale(120,dpi));
 }
-static bool PaintWallpaper(Dib& dst,RECT strip,IDesktopWallpaper* desktop){
- if(!desktop)return false;
- HMONITOR m=MonitorFromRect(&strip,MONITOR_DEFAULTTONEAREST);MONITORINFO mi{sizeof(mi)};if(!GetMonitorInfoW(m,&mi))return false;
- UINT count=0;if(FAILED(desktop->GetMonitorDevicePathCount(&count)))return false;
- LPWSTR id=nullptr;
- for(UINT i=0;i<count;++i){LPWSTR p=nullptr;RECT r{};if(SUCCEEDED(desktop->GetMonitorDevicePathAt(i,&p))&&p&&SUCCEEDED(desktop->GetMonitorRECT(p,&r))&&SameRect(r,mi.rcMonitor)){id=p;break;}CoTaskMemFree(p);}
- if(!id)return false;LPWSTR path=nullptr;HRESULT hr=desktop->GetWallpaper(id,&path);CoTaskMemFree(id);
- if(FAILED(hr)){CoTaskMemFree(path);return false;}
- COLORREF color=0;desktop->GetBackgroundColor(&color);DESKTOP_WALLPAPER_POSITION pos=DWPOS_FILL;desktop->GetPosition(&pos);
- GdiFlush();Gdiplus::Graphics g(dst.dc);g.Clear(Gdiplus::Color(255,GetRValue(color),GetGValue(color),GetBValue(color)));
- if(path&&*path){
-  Gdiplus::Image image(path);CoTaskMemFree(path);path=nullptr;if(image.GetLastStatus()!=Gdiplus::Ok||!image.GetWidth()||!image.GetHeight())return false;
-  RECT area=mi.rcMonitor;
-  if(pos==DWPOS_SPAN){area.left=GetSystemMetrics(SM_XVIRTUALSCREEN);area.top=GetSystemMetrics(SM_YVIRTUALSCREEN);area.right=area.left+GetSystemMetrics(SM_CXVIRTUALSCREEN);area.bottom=area.top+GetSystemMetrics(SM_CYVIRTUALSCREEN);}
-  double aw=area.right-area.left,ah=area.bottom-area.top,iw=image.GetWidth(),ih=image.GetHeight(),w=iw,h=ih;
-  g.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
-  if(pos==DWPOS_TILE){Gdiplus::TextureBrush brush(&image,Gdiplus::WrapModeTile);brush.TranslateTransform(static_cast<float>(area.left-strip.left),static_cast<float>(area.top-strip.top));if(g.FillRectangle(&brush,0,0,dst.w,dst.h)!=Gdiplus::Ok)return false;}
-  else{if(pos==DWPOS_STRETCH){w=aw;h=ah;}else if(pos!=DWPOS_CENTER){double scale=pos==DWPOS_FIT?std::min(aw/iw,ah/ih):std::max(aw/iw,ah/ih);w=iw*scale;h=ih*scale;}
-   Gdiplus::RectF target(static_cast<float>(area.left-strip.left+(aw-w)/2),static_cast<float>(area.top-strip.top+(ah-h)/2),static_cast<float>(w),static_cast<float>(h));
-   if(g.DrawImage(&image,target)!=Gdiplus::Ok)return false;
-  }
- }
- CoTaskMemFree(path);g.Flush(Gdiplus::FlushIntentionSync);GdiFlush();return true;
+// Render into a GDI+ bitmap backed by explicit BGRA memory, not a Graphics
+// created from a memory HDC. Graphics(HDC) can target a temporary surface.
+static bool PaintWallpaper(Dib& dst, RECT strip, IDesktopWallpaper* desktop) {
+    if (!desktop) return false;
+    HMONITOR monitor = MonitorFromRect(&strip, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi{sizeof(mi)};
+    if (!GetMonitorInfoW(monitor, &mi)) return false;
+    UINT count = 0;
+    if (FAILED(desktop->GetMonitorDevicePathCount(&count))) return false;
+    LPWSTR id = nullptr;
+    for (UINT i = 0; i < count; ++i) {
+        LPWSTR p = nullptr;
+        RECT r{};
+        if (SUCCEEDED(desktop->GetMonitorDevicePathAt(i, &p)) && p &&
+            SUCCEEDED(desktop->GetMonitorRECT(p, &r)) && SameRect(r, mi.rcMonitor)) {
+            id = p;
+            break;
+        }
+        CoTaskMemFree(p);
+    }
+    if (!id) return false;
+    LPWSTR path = nullptr;
+    HRESULT hr = desktop->GetWallpaper(id, &path);
+    CoTaskMemFree(id);
+    if (FAILED(hr)) {
+        CoTaskMemFree(path);
+        return false;
+    }
+    std::wstring file = path ? path : L"";
+    CoTaskMemFree(path);
+    COLORREF color = GetSysColor(COLOR_BACKGROUND);
+    desktop->GetBackgroundColor(&color);
+    DESKTOP_WALLPAPER_POSITION pos = DWPOS_FILL;
+    desktop->GetPosition(&pos);
+    RECT area = mi.rcMonitor;
+    if (pos == DWPOS_SPAN) {
+        area.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
+        area.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
+        area.right = area.left + GetSystemMetrics(SM_CXVIRTUALSCREEN);
+        area.bottom = area.top + GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    }
+    return RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, pos, color);
 }
+
+bool RasterWallpaper(uint32_t* pixels, int width, int height, RECT strip, RECT area,
+                     const std::wstring& file, int position, COLORREF background) {
+    if (!pixels || width <= 0 || height <= 0 || area.right <= area.left ||
+        area.bottom <= area.top) return false;
+    GdiFlush();
+    Gdiplus::Bitmap bitmap(width, height, width * 4, PixelFormat32bppARGB,
+                           reinterpret_cast<BYTE*>(pixels));
+    if (bitmap.GetLastStatus() != Gdiplus::Ok) return false;
+    {
+        Gdiplus::Graphics g(&bitmap);
+        if (g.GetLastStatus() != Gdiplus::Ok ||
+            g.Clear(Gdiplus::Color(255, GetRValue(background), GetGValue(background),
+                                   GetBValue(background))) != Gdiplus::Ok) return false;
+        if (!file.empty()) {
+            Gdiplus::Image image(file.c_str());
+            if (image.GetLastStatus() != Gdiplus::Ok || !image.GetWidth() ||
+                !image.GetHeight()) return false;
+            double aw = area.right - area.left, ah = area.bottom - area.top;
+            double iw = image.GetWidth(), ih = image.GetHeight(), w = iw, h = ih;
+            g.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
+            if (position == DWPOS_TILE) {
+                Gdiplus::TextureBrush brush(&image, Gdiplus::WrapModeTile);
+                brush.TranslateTransform(static_cast<float>(area.left-strip.left),
+                                         static_cast<float>(area.top-strip.top));
+                if (g.FillRectangle(&brush, 0, 0, width, height) != Gdiplus::Ok) return false;
+            } else {
+                if (position == DWPOS_STRETCH) { w = aw; h = ah; }
+                else if (position != DWPOS_CENTER) {
+                    double scale = position == DWPOS_FIT ? std::min(aw/iw, ah/ih) :
+                                                           std::max(aw/iw, ah/ih);
+                    w = iw * scale;
+                    h = ih * scale;
+                }
+                Gdiplus::RectF target(
+                    static_cast<float>(area.left-strip.left+(aw-w)/2),
+                    static_cast<float>(area.top-strip.top+(ah-h)/2),
+                    static_cast<float>(w), static_cast<float>(h));
+                if (g.DrawImage(&image, target) != Gdiplus::Ok) return false;
+            }
+        }
+        g.Flush(Gdiplus::FlushIntentionSync);
+    }
+    // Explicit LockBits copy also handles GDI+ implementations which internally
+    // stage the provided buffer instead of updating it synchronously.
+    Gdiplus::Rect bounds(0, 0, width, height);
+    Gdiplus::BitmapData data{};
+    if (bitmap.LockBits(&bounds, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB,
+                        &data) != Gdiplus::Ok) return false;
+    std::vector<uint32_t> copy(static_cast<size_t>(width)*height);
+    for (int y=0; y<height; ++y) {
+        const auto* row = reinterpret_cast<const uint32_t*>(
+            static_cast<const BYTE*>(data.Scan0) + static_cast<ptrdiff_t>(y)*data.Stride);
+        std::copy_n(row, width, copy.data()+static_cast<size_t>(y)*width);
+    }
+    if (bitmap.UnlockBits(&data) != Gdiplus::Ok) return false;
+    std::copy(copy.begin(), copy.end(), pixels);
+    return true;
+}
+static HFONT MakeFont(UINT dpi) {
+    NONCLIENTMETRICSW metrics{sizeof(metrics)};
+    LOGFONTW lf{};
+    if (SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0, dpi))
+        lf = metrics.lfMessageFont;
+    else
+        wcscpy_s(lf.lfFaceName, L"Microsoft YaHei UI");
+    lf.lfHeight = -MulDiv(13, static_cast<int>(dpi), 72);
+    lf.lfWidth = 0;
+    lf.lfWeight = FW_LIGHT;
+    lf.lfQuality = ANTIALIASED_QUALITY;
+    return CreateFontIndirectW(&lf);
+}
+struct GlyphMask {
+    int w=0, h=0;
+    std::vector<uint8_t> coverage;
+};
+static GlyphMask RasterText(const std::wstring& text, HFONT font, int width, int height) {
+    GlyphMask out;
+    if (width <= 0 || height <= 0 || text.empty() || text.size()>INT_MAX) return out;
+    // Limit the cached bitmap to a reasonable size; extremely long custom
+    // lines use the original clipped GDI rendering fallback.
+    if (static_cast<uint64_t>(width)*height > 16*1024*1024) return out;
+    Dib dib(width,height);
+    if (!dib) return out;
+    dib.clear();
+    auto old=SelectObject(dib.dc,font);
+    SetBkMode(dib.dc,TRANSPARENT);
+    SetTextColor(dib.dc,RGB(255,255,255));
+    RECT bounds{0,0,width,height};
+    DrawTextW(dib.dc,text.c_str(),static_cast<int>(text.size()),&bounds,
+              DT_SINGLELINE|DT_VCENTER|DT_NOPREFIX|DT_NOCLIP);
+    SelectObject(dib.dc,old);
+    GdiFlush();
+    out.w=width;out.h=height;
+    out.coverage.resize(static_cast<size_t>(width)*height);
+    for(size_t i=0;i<out.coverage.size();++i)
+        out.coverage[i]=static_cast<uint8_t>((dib.pixels[i]>>16)&255);
+    return out;
+}
+struct GeometrySnapshot { RECT bar{}; UINT dpi=96; std::optional<RECT> target; };
+struct GeometryWorker {
+ std::mutex mutex;
+ GeometrySnapshot snapshot;
+ std::jthread thread;
+ void Start(){thread=std::jthread([this](std::stop_token stop){
+  HRESULT hr=CoInitializeEx(nullptr,COINIT_MULTITHREADED);
+  if(FAILED(hr))return;
+  {ComPtr<IUIAutomation> uia; CoCreateInstance(CLSID_CUIAutomation,nullptr,CLSCTX_INPROC_SERVER,IID_PPV_ARGS(uia.GetAddressOf()));
+   while(!stop.stop_requested()){
+    GeometrySnapshot next; next.target=TaskbarStrip(uia.Get(),next.bar,next.dpi);
+    {std::lock_guard lock(mutex); snapshot=next;}
+    for(int i=0;i<10&&!stop.stop_requested();++i)std::this_thread::sleep_for(std::chrono::milliseconds(50));
+   }
+  }CoUninitialize();
+ });}
+ GeometrySnapshot Get(){std::lock_guard lock(mutex);return snapshot;}
+};
 struct App{
- HWND hwnd=nullptr;ComPtr<IUIAutomation> uia;ComPtr<IDesktopWallpaper> desktop;
+ HWND hwnd=nullptr;GeometryWorker geometry;ComPtr<IDesktopWallpaper> desktop;
  std::vector<std::wstring> quotes;std::vector<size_t> bag;size_t cursor=0;std::mt19937 rng{std::random_device{}()};
  std::wstring current,previous;RECT strip{};UINT dpi=96;bool active=false;
  ULONGLONG start=0,changed=0;Frame oldFrame{0,1};int textWidth=0,lastX=INT_MIN,lastA=-1;
  std::unique_ptr<Dib> mask,frame,wall;HFONT font=nullptr;
+ GlyphMask currentMask, previousMask;
+ ULONGLONG lastTick=0; double animationMs=0;
+ bool wallpaperDirty=false;
  ~App(){if(font)DeleteObject(font);}
  std::wstring Next(){if(cursor==bag.size()){bag.resize(quotes.size());std::iota(bag.begin(),bag.end(),0);std::shuffle(bag.begin(),bag.end(),rng);cursor=0;if(bag.size()>1&&quotes[bag[0]]==current)std::swap(bag[0],bag[1]);}return quotes[bag[cursor++]];}
- int Pad()const{return Scale(15,dpi);}
+ int Pad()const{return Scale(2,dpi);}
  int Measure(const std::wstring& s){if(!mask||!font||s.size()>INT_MAX)return 0;auto old=SelectObject(mask->dc,font);SIZE z{};GetTextExtentPoint32W(mask->dc,s.c_str(),static_cast<int>(s.size()),&z);SelectObject(mask->dc,old);return z.cx;}
- Frame At(ULONGLONG now)const{return Marquee(strip.right-strip.left,textWidth,Pad(),45.0*dpi/96.0,static_cast<double>(now-start));}
+ Frame At(ULONGLONG /*now*/)const{return Marquee(strip.right-strip.left,textWidth,Pad(),45.0*dpi/96.0,animationMs);}
  bool Rebuild(){
   int w=strip.right-strip.left,h=strip.bottom-strip.top;if(w<=0||h<=0)return false;
   mask=std::make_unique<Dib>(w,h);frame=std::make_unique<Dib>(w,h);wall=std::make_unique<Dib>(w,h);if(!*mask||!*frame||!*wall)return false;
-  if(font)DeleteObject(font);font=CreateFontW(-Scale(16,dpi),0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,ANTIALIASED_QUALITY,DEFAULT_PITCH,L"Segoe UI");if(!font)return false;
-  textWidth=Measure(current);previous.clear();start=GetTickCount64();lastX=INT_MIN;lastA=-1;return PaintWallpaper(*wall,strip,desktop.Get());
+  if(font)DeleteObject(font);font=MakeFont(dpi);if(!font)return false;
+  textWidth=Measure(current); currentMask=RasterText(current,font,textWidth+Scale(4,dpi),h); previousMask={}; previous.clear(); start=lastTick=GetTickCount64(); animationMs=0; lastX=INT_MIN;lastA=-1;return PaintWallpaper(*wall,strip,desktop.Get());
  }
- void Layer(const std::wstring& s,Frame f,double weight){
-  if(s.empty()||weight<=0||f.alpha<=0||s.size()>INT_MAX)return;
-  mask->clear();auto old=SelectObject(mask->dc,font);SetBkMode(mask->dc,TRANSPARENT);SetTextColor(mask->dc,RGB(255,255,255));TEXTMETRICW tm{};GetTextMetricsW(mask->dc,&tm);
-  RECT clip{Pad(),0,mask->w-Pad(),mask->h};ExtTextOutW(mask->dc,f.x,(mask->h-tm.tmHeight)/2,ETO_CLIPPED,&clip,s.c_str(),static_cast<UINT>(s.size()),nullptr);SelectObject(mask->dc,old);GdiFlush();
-  for(size_t i=0,n=static_cast<size_t>(mask->w)*mask->h;i<n;++i){unsigned a=static_cast<unsigned>(std::lround((mask->pixels[i]&255u)*f.alpha*weight));unsigned total=std::min(255u,(frame->pixels[i]>>24)+a);frame->pixels[i]=WallpaperPixel(wall->pixels[i],total,1);}
+ void Layer(const std::wstring& s, const GlyphMask& cached, Frame f, double weight) {
+    if (s.empty() || weight <= 0 || f.alpha <= 0 || s.size() > INT_MAX) return;
+    const unsigned opacity = static_cast<unsigned>(std::lround(255 * f.alpha * weight));
+    const bool useCache = !cached.coverage.empty();
+    if (!useCache) {
+        mask->clear();
+        auto old = SelectObject(mask->dc, font);
+        SetBkMode(mask->dc, TRANSPARENT);
+        SetTextColor(mask->dc, RGB(255,255,255));
+        RECT bounds{f.x,0,mask->w,mask->h};
+        DrawTextW(mask->dc,s.c_str(),static_cast<int>(s.size()),&bounds,
+                  DT_SINGLELINE|DT_VCENTER|DT_NOPREFIX|DT_NOCLIP);
+        SelectObject(mask->dc,old);
+        GdiFlush();
+    }
+    const int left = useCache ? std::max(Pad(), f.x) : Pad();
+    const int right = useCache ? std::min(mask->w-Pad(), f.x+cached.w) : mask->w-Pad();
+    for (int y=0; y<mask->h; ++y) {
+        for (int x=left; x<right; ++x) {
+            const size_t i=static_cast<size_t>(y)*mask->w+x;
+            const unsigned c=useCache ? cached.coverage[static_cast<size_t>(y)*cached.w+x-f.x] :
+                                       ((mask->pixels[i]>>16)&255);
+            if (!c) continue;
+            const unsigned a=(c*opacity+127)/255;
+            const unsigned total=std::min(255u,(frame->pixels[i]>>24)+a);
+            frame->pixels[i]=WallpaperPixel(wall->pixels[i],total,1);
+        }
+    }
  }
  void Hide(){active=false;KillTimer(hwnd,AnimationTimer);ShowWindow(hwnd,SW_HIDE);}
  void Render(bool force=false){
-  if(!active||!mask||!frame||!wall)return;auto now=GetTickCount64();auto f=At(now);double blend=previous.empty()?1:Crossfade(static_cast<double>(now-changed));int aq=static_cast<int>(std::lround(f.alpha*255));
+  if(!active||!mask||!frame||!wall)return;auto now=GetTickCount64(); animationMs+=static_cast<double>(std::min<ULONGLONG>(now-lastTick,250)); lastTick=now; auto f=At(now);double blend=previous.empty()?1:Crossfade(static_cast<double>(now-changed));int aq=static_cast<int>(std::lround(f.alpha*255));
   if(!force&&previous.empty()&&f.x==lastX&&aq==lastA)return;
-  frame->clear();Layer(previous,oldFrame,1-blend);Layer(current,f,blend);
+  frame->clear();Layer(previous,previousMask,oldFrame,1-blend);Layer(current,currentMask,f,blend);
   POINT dest{strip.left,strip.top},src{};SIZE size{frame->w,frame->h};BLENDFUNCTION bf{AC_SRC_OVER,0,255,AC_SRC_ALPHA};
   if(!UpdateLayeredWindow(hwnd,nullptr,&dest,&size,frame->dc,&src,0,&bf,ULW_ALPHA)){Hide();return;}
-  lastX=f.x;lastA=aq;if(blend>=1)previous.clear();if(previous.empty()&&textWidth<=frame->w-2*Pad())KillTimer(hwnd,AnimationTimer);
+  lastX=f.x;lastA=aq;if(blend>=1){previous.clear();previousMask={};}if(previous.empty()&&textWidth<=frame->w-2*Pad())KillTimer(hwnd,AnimationTimer);
  }
  void Animate(){if(active&&(!previous.empty()||(frame&&textWidth>frame->w-2*Pad())))SetTimer(hwnd,AnimationTimer,15,nullptr);}
  void Refresh(bool wallpaper=false){
-  RECT bar{};UINT d=96;auto target=TaskbarStrip(uia.Get(),bar,d);if(!target||Fullscreen(hwnd,bar)){Hide();return;}
-  bool rebuild=!active||!SameRect(strip,*target)||dpi!=d||wallpaper;
+  auto snapshot=geometry.Get();RECT bar=snapshot.bar;UINT d=snapshot.dpi;auto target=snapshot.target;if(!target||Fullscreen(hwnd,bar)){Hide();return;}
+  bool rebuild=!active||!SameRect(strip,*target)||dpi!=d||wallpaper||wallpaperDirty; wallpaperDirty=false;
   if(rebuild){strip=*target;dpi=d;if(!Rebuild()){Hide();return;}}
   active=true;if(rebuild){Render(true);if(!active)return;ShowWindow(hwnd,SW_SHOWNOACTIVATE);Animate();}
   SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
  }
- void Change(){auto now=GetTickCount64();oldFrame=At(now);previous=current;current=Next();start=changed=now;textWidth=Measure(current);lastX=INT_MIN;if(active){if(!IsWindowVisible(hwnd))ShowWindow(hwnd,SW_SHOWNOACTIVATE);Render(true);Animate();}else previous.clear();}
+ void Change(){auto now=GetTickCount64();oldFrame=At(now);previous=current;previousMask=std::move(currentMask);current=Next();start=changed=lastTick=now;animationMs=0;textWidth=Measure(current);if(mask)currentMask=RasterText(current,font,textWidth+Scale(4,dpi),mask->h);lastX=INT_MIN;if(active){if(!IsWindowVisible(hwnd))ShowWindow(hwnd,SW_SHOWNOACTIVATE);Render(true);Animate();}else previous.clear();}
 };
 static LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp){
  if(msg==WM_NCCREATE){auto cs=reinterpret_cast<CREATESTRUCTW*>(lp);SetWindowLongPtrW(hwnd,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(cs->lpCreateParams));}
  auto a=reinterpret_cast<App*>(GetWindowLongPtrW(hwnd,GWLP_USERDATA));
  if(a&&a->hwnd)switch(msg){
  case WM_TIMER:if(wp==QuoteTimer)a->Change();else if(wp==AnimationTimer)a->Render();else if(wp==GeometryTimer)a->Refresh();return 0;
- case WM_SETTINGCHANGE:case WM_DISPLAYCHANGE:case WM_DPICHANGED:a->Refresh(true);return 0;
+ case WM_SETTINGCHANGE:case WM_DISPLAYCHANGE:case WM_DPICHANGED:a->wallpaperDirty=true;return 0;
  case WM_NCHITTEST:return HTTRANSPARENT;
  case WM_MOUSEACTIVATE:return MA_NOACTIVATE;
+ case WM_POINTERACTIVATE:return PA_NOACTIVATE;
  case WM_DESTROY:PostQuitMessage(0);return 0;
  }
  return DefWindowProcW(hwnd,msg,wp,lp);
@@ -435,12 +602,13 @@ int WINAPI wWinMain(HINSTANCE instance,HINSTANCE,PWSTR,int){
  Gdiplus::GdiplusStartupInput gi;ULONG_PTR token=0;if(Gdiplus::GdiplusStartup(&token,&gi,nullptr)!=Gdiplus::Ok){CoUninitialize();CloseHandle(mutex);return 1;}
  int result=0;{
  App app;app.quotes=std::move(quotes);app.current=app.Next();app.start=GetTickCount64();
- CoCreateInstance(CLSID_CUIAutomation,nullptr,CLSCTX_INPROC_SERVER,IID_PPV_ARGS(app.uia.GetAddressOf()));CoCreateInstance(CLSID_DesktopWallpaper,nullptr,CLSCTX_ALL,IID_PPV_ARGS(app.desktop.GetAddressOf()));
+ app.geometry.Start();CoCreateInstance(CLSID_DesktopWallpaper,nullptr,CLSCTX_ALL,IID_PPV_ARGS(app.desktop.GetAddressOf()));
  WNDCLASSEXW wc{sizeof(wc)};wc.hInstance=instance;wc.lpfnWndProc=WndProc;wc.lpszClassName=kClass;
  if(!RegisterClassExW(&wc))result=1;else{
-  app.hwnd=CreateWindowExW(WS_EX_TOPMOST|WS_EX_LAYERED|WS_EX_TRANSPARENT|WS_EX_TOOLWINDOW|WS_EX_NOACTIVATE,kClass,L"JinJuApp",WS_POPUP,0,0,0,0,nullptr,nullptr,instance,&app);
+  app.hwnd=CreateWindowExW(WS_EX_TOPMOST|WS_EX_LAYERED|WS_EX_TRANSPARENT|WS_EX_TOOLWINDOW|WS_EX_NOACTIVATE,kClass,L"JinJuApp",WS_POPUP|WS_DISABLED,0,0,0,0,nullptr,nullptr,instance,&app);
   if(!app.hwnd)result=1;else{
-   SetTimer(app.hwnd,QuoteTimer,180000,nullptr);SetTimer(app.hwnd,GeometryTimer,500,nullptr);app.Refresh();
+ EnableWindow(app.hwnd,FALSE);
+   SetTimer(app.hwnd,QuoteTimer,180000,nullptr);SetTimer(app.hwnd,GeometryTimer,250,nullptr);app.Refresh();
    MSG msg{};BOOL status;while((status=GetMessageW(&msg,nullptr,0,0))>0){TranslateMessage(&msg);DispatchMessageW(&msg);}if(status==-1)result=1;if(IsWindow(app.hwnd))DestroyWindow(app.hwnd);
   }
  }}
