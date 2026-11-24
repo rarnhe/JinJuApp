@@ -29,9 +29,9 @@ int main(int argc, char **argv)
             CHECK(r && r->left == 607 && r->right == 1693);
             CHECK(!FreeStrip(b, {{0, 1000, 1850, 1080}}, 10, 120));
             CHECK(!FreeStrip(b, {}, 10, 120));
-            auto narrow = FreeStrip({0,0,100,40}, {{15,0,100,40}}, 7, 0);
+            auto narrow = FreeStrip({0, 0, 100, 40}, {{15, 0, 100, 40}}, 7, 0);
             CHECK(narrow && narrow->left == 7 && narrow->right == 8);
-            CHECK(!FreeStrip({0,0,100,40}, {{14,0,100,40}}, 7, 0));
+            CHECK(!FreeStrip({0, 0, 100, 40}, {{14, 0, 100, 40}}, 7, 0));
             r = FreeStrip({-1920, 1000, 0, 1080}, {{-1300, 1000, -1000, 1080}, {-200, 1000, 0, 1080}}, 10,
                           120);
             CHECK(r && r->left == -1910 && r->right == -1310);
@@ -92,9 +92,11 @@ int main(int argc, char **argv)
             CHECK((sample[2] & 0xffffff) == 0xff0000);
             CHECK((sample[3] & 0xffffff) == 0x00ff00);
             uint32_t bottom = 0;
-            CHECK(RasterWallpaper(&bottom, 1, 1, {101,201,102,202}, {100,200,102,202}, file.wstring(), DWPOS_FILL, RGB(0,0,0)));
+            CHECK(RasterWallpaper(&bottom, 1, 1, {101, 201, 102, 202}, {100, 200, 102, 202}, file.wstring(),
+                                  DWPOS_FILL, RGB(0, 0, 0)));
             CHECK((bottom & 0xffffff) == 0x00ff00);
-            CHECK((OverlayStyles() & (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE)) == (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE));
+            CHECK((OverlayStyles() & (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE)) ==
+                  (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE));
             CHECK(TestGlyphComposition());
             std::filesystem::remove(file);
             Gdiplus::GdiplusShutdown(token);

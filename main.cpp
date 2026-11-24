@@ -25,7 +25,10 @@ namespace jinju
 {
 constexpr wchar_t kClass[] = L"JinJuApp";
 constexpr UINT_PTR QuoteTimer = 1, AnimationTimer = 2, GeometryTimer = 3;
-DWORD OverlayStyles() { return WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE; }
+DWORD OverlayStyles()
+{
+    return WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
+}
 constexpr char kDefault[] = R"JINJU(千里之行，始于足下。
 九层之台，起于累土。
 合抱之木，生于毫末。
@@ -499,8 +502,7 @@ static void ScanUia(IUIAutomationTreeWalker *walker, IUIAutomationElement *node,
         out.complete = false;
         return;
     }
-    bool hit = !off && IntersectRect(&i, &bar, &r) &&
-               r.top + (r.bottom - r.top) / 2 >= bar.top &&
+    bool hit = !off && IntersectRect(&i, &bar, &r) && r.top + (r.bottom - r.top) / 2 >= bar.top &&
                r.top + (r.bottom - r.top) / 2 < bar.bottom;
     bool control = type == UIA_ButtonControlTypeId || type == UIA_SplitButtonControlTypeId ||
                    type == UIA_MenuItemControlTypeId || type == UIA_ListItemControlTypeId ||
@@ -619,8 +621,7 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
     if (mi.dwFlags & MONITORINFOF_PRIMARY)
     {
         std::vector<wchar_t> buffer(32768);
-        if (SystemParametersInfoW(SPI_GETDESKWALLPAPER, static_cast<UINT>(buffer.size()),
-                                  buffer.data(), 0))
+        if (SystemParametersInfoW(SPI_GETDESKWALLPAPER, static_cast<UINT>(buffer.size()), buffer.data(), 0))
         {
             fallback = buffer.data();
             if (!resolved && fallback.empty())
@@ -667,24 +668,23 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         colored += rgb != 0;
     }
     wchar_t log[256]{};
-    swprintf_s(log, L"JinJuApp wallpaper: position=%d rect=(%ld,%ld,%ld,%ld) nonblack=%zu/%zu range=%06X..%06X\n",
-               static_cast<int>(position), strip.left, strip.top, strip.right, strip.bottom,
-               colored, n, static_cast<unsigned>(minRGB), static_cast<unsigned>(maxRGB));
+    swprintf_s(log,
+               L"JinJuApp wallpaper: position=%d rect=(%ld,%ld,%ld,%ld) nonblack=%zu/%zu range=%06X..%06X\n",
+               static_cast<int>(position), strip.left, strip.top, strip.right, strip.bottom, colored, n,
+               static_cast<unsigned>(minRGB), static_cast<unsigned>(maxRGB));
     OutputDebugStringW(log);
     return true;
 }
 
 // All source and destination coordinates are physical screen pixels.
 // GDI+ only decodes the source; the actual wallpaper sampler is explicit.
-bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT area,
-                     const std::wstring &file, int position, COLORREF background)
+bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT area, const std::wstring &file,
+                     int position, COLORREF background)
 {
-    if (!pixels || width <= 0 || height <= 0 || area.right <= area.left ||
-        area.bottom <= area.top)
+    if (!pixels || width <= 0 || height <= 0 || area.right <= area.left || area.bottom <= area.top)
         return false;
     const uint32_t bg = 0xff000000u | (static_cast<uint32_t>(GetRValue(background)) << 16) |
-                        (static_cast<uint32_t>(GetGValue(background)) << 8) |
-                        GetBValue(background);
+                        (static_cast<uint32_t>(GetGValue(background)) << 8) | GetBValue(background);
     std::fill_n(pixels, static_cast<size_t>(width) * height, bg);
     if (file.empty())
         return true;
@@ -711,8 +711,7 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
     }
     else if (position != DWPOS_CENTER && position != DWPOS_TILE)
     {
-        const double scale = position == DWPOS_FIT ? std::min(aw / iw, ah / ih) :
-                                                     std::max(aw / iw, ah / ih);
+        const double scale = position == DWPOS_FIT ? std::min(aw / iw, ah / ih) : std::max(aw / iw, ah / ih);
         dw *= scale;
         dh *= scale;
     }
@@ -722,8 +721,8 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
     auto sample = [&](int x, int y) {
         x = std::clamp(x, 0, iw - 1);
         y = std::clamp(y, 0, ih - 1);
-        const auto *row = reinterpret_cast<const uint32_t *>(
-            static_cast<const BYTE *>(data.Scan0) + static_cast<ptrdiff_t>(y) * data.Stride);
+        const auto *row = reinterpret_cast<const uint32_t *>(static_cast<const BYTE *>(data.Scan0) +
+                                                             static_cast<ptrdiff_t>(y) * data.Stride);
         return row[x];
     };
     auto opaque = [&](uint32_t p) {
@@ -742,8 +741,8 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
             auto &pixel = pixels[static_cast<size_t>(y) * width + x];
             if (position == DWPOS_TILE)
             {
-                pixel = opaque(sample(wrap(strip.left + x - area.left, iw),
-                                      wrap(strip.top + y - area.top, ih)));
+                pixel =
+                    opaque(sample(wrap(strip.left + x - area.left, iw), wrap(strip.top + y - area.top, ih)));
                 continue;
             }
             if (sx < originX || sx >= originX + dw || sy < originY || sy >= originY + dh)
@@ -754,13 +753,13 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
             const int iy = static_cast<int>(std::floor(v));
             const double fx = u - ix, fy = v - iy;
             const uint32_t p00 = opaque(sample(ix, iy));
-            const uint32_t p10 = opaque(sample(ix+1, iy));
-            const uint32_t p01 = opaque(sample(ix, iy+1));
-            const uint32_t p11 = opaque(sample(ix+1, iy+1));
+            const uint32_t p10 = opaque(sample(ix + 1, iy));
+            const uint32_t p01 = opaque(sample(ix, iy + 1));
+            const uint32_t p11 = opaque(sample(ix + 1, iy + 1));
             auto channel = [&](unsigned shift) {
-                const double a = ((p00 >> shift) & 255) * (1-fx) + ((p10 >> shift) & 255) * fx;
-                const double b = ((p01 >> shift) & 255) * (1-fx) + ((p11 >> shift) & 255) * fx;
-                return static_cast<uint32_t>(std::lround(a*(1-fy) + b*fy));
+                const double a = ((p00 >> shift) & 255) * (1 - fx) + ((p10 >> shift) & 255) * fx;
+                const double b = ((p01 >> shift) & 255) * (1 - fx) + ((p11 >> shift) & 255) * fx;
+                return static_cast<uint32_t>(std::lround(a * (1 - fy) + b * fy));
             };
             pixel = 0xff000000u | (channel(16) << 16) | (channel(8) << 8) | channel(0);
         }
@@ -824,8 +823,10 @@ bool TestGlyphComposition()
     for (auto c : mask.coverage)
     {
         auto p = WallpaperPixel(0x42a9ef, c, 1);
-        if (!c) transparent |= p == 0;
-        if (c >= 240 && (p & 0xff) >= 224) ink = true;
+        if (!c)
+            transparent |= p == 0;
+        if (c >= 240 && (p & 0xff) >= 224)
+            ink = true;
     }
     return ink && transparent;
 }
@@ -1058,7 +1059,8 @@ struct App
         {
             // A transient accessibility failure while clicking the taskbar must
             // not make the overlay flash. Two seconds without data hides it.
-            if (++missingGeometry >= 8) Hide();
+            if (++missingGeometry >= 8)
+                Hide();
             return;
         }
         missingGeometry = 0;
@@ -1225,9 +1227,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
             result = 1;
         else
         {
-            app.hwnd = CreateWindowExW(
-                OverlayStyles(),
-                kClass, L"JinJuApp", WS_POPUP, 0, 0, 0, 0, nullptr, nullptr, instance, &app);
+            app.hwnd = CreateWindowExW(OverlayStyles(), kClass, L"JinJuApp", WS_POPUP, 0, 0, 0, 0, nullptr,
+                                       nullptr, instance, &app);
             if (!app.hwnd)
                 result = 1;
             else
