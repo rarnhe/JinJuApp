@@ -454,87 +454,99 @@ static int Scale(int x, UINT dpi)
 // Exclude the desktop background and taskbar from ordinary window sampling.
 static bool ShellBackground(HWND window)
 {
-    if (!window) return false;
-    if (window == GetDesktopWindow() || window == GetShellWindow()) return true;
+    if (!window)
+        return false;
+    if (window == GetDesktopWindow() || window == GetShellWindow())
+        return true;
     wchar_t cls[128]{};
     GetClassNameW(window, cls, 128);
-    return !wcscmp(cls,L"Progman") || !wcscmp(cls,L"WorkerW") ||
-           !wcscmp(cls,L"Shell_TrayWnd") || !wcscmp(cls,L"Shell_SecondaryTrayWnd") ||
-           !wcscmp(cls,L"SHELLDLL_DefView");
+    return !wcscmp(cls, L"Progman") || !wcscmp(cls, L"WorkerW") || !wcscmp(cls, L"Shell_TrayWnd") ||
+           !wcscmp(cls, L"Shell_SecondaryTrayWnd") || !wcscmp(cls, L"SHELLDLL_DefView");
 }
 static bool WindowCloaked(HWND w)
 {
-    DWORD cloak=0;
-    return SUCCEEDED(DwmGetWindowAttribute(w,DWMWA_CLOAKED,&cloak,sizeof(cloak))) && cloak;
+    DWORD cloak = 0;
+    return SUCCEEDED(DwmGetWindowAttribute(w, DWMWA_CLOAKED, &cloak, sizeof(cloak))) && cloak;
 }
 // Fullscreen detection is monitor-local and does not require foreground
 // ownership. Walk the actual Z order; a fullscreen window behind an ordinary
 // app on this monitor does not keep the overlay hidden forever.
 bool CoversMonitor(RECT window, RECT monitor, int tolerance)
 {
-    return window.left <= monitor.left+tolerance && window.top <= monitor.top+tolerance &&
-           window.right >= monitor.right-tolerance && window.bottom >= monitor.bottom-tolerance;
+    return window.left <= monitor.left + tolerance && window.top <= monitor.top + tolerance &&
+           window.right >= monitor.right - tolerance && window.bottom >= monitor.bottom - tolerance;
 }
 struct MonitorWindow
 {
     RECT bounds{};
-    bool visible=true;
-    bool minimized=false;
-    bool cloaked=false;
-    bool shell=false;
+    bool visible = true;
+    bool minimized = false;
+    bool cloaked = false;
+    bool shell = false;
 };
 bool MonitorHasFullscreen(RECT monitor, const std::vector<MonitorWindow> &windows)
 {
     // Windows are supplied from top to bottom. Require the fullscreen
     // candidate to be the top relevant window at the monitor's centre.
     // Non-overlapping windows (for example on a second display) have no effect.
-    const POINT centre{monitor.left+(monitor.right-monitor.left)/2,
-                       monitor.top+(monitor.bottom-monitor.top)/2};
-    for (const auto &w:windows)
+    const POINT centre{monitor.left + (monitor.right - monitor.left) / 2,
+                       monitor.top + (monitor.bottom - monitor.top) / 2};
+    for (const auto &w : windows)
     {
-        if (!w.visible || w.minimized || w.cloaked || w.shell) continue;
+        if (!w.visible || w.minimized || w.cloaked || w.shell)
+            continue;
         RECT hit{};
-        if (!IntersectRect(&hit,&monitor,&w.bounds)) continue;
-        if (CoversMonitor(w.bounds,monitor,2)) return true;
-        if (PtInRect(&w.bounds,centre)) return false;
+        if (!IntersectRect(&hit, &monitor, &w.bounds))
+            continue;
+        if (CoversMonitor(w.bounds, monitor, 2))
+            return true;
+        if (PtInRect(&w.bounds, centre))
+            return false;
     }
     return false;
 }
 struct FullscreenSearch
 {
-    HWND overlay=nullptr;
-    HWND tray=nullptr;
+    HWND overlay = nullptr;
+    HWND tray = nullptr;
     RECT monitor{};
     std::vector<MonitorWindow> windows;
 };
 static BOOL CALLBACK EnumerateFullscreen(HWND w, LPARAM l)
 {
-    auto &s=*reinterpret_cast<FullscreenSearch*>(l);
-    if (w==s.overlay || w==s.tray || !IsWindowVisible(w) || IsIconic(w) ||
-        WindowCloaked(w) || ShellBackground(w) || w==GetDesktopWindow() || w==GetShellWindow()) return TRUE;
-    const auto style=GetWindowLongPtrW(w,GWL_STYLE);
-    const auto ex=GetWindowLongPtrW(w,GWL_EXSTYLE);
-    if ((style&WS_CHILD) || (ex&WS_EX_TRANSPARENT) || (ex&WS_EX_TOOLWINDOW)) return TRUE;
+    auto &s = *reinterpret_cast<FullscreenSearch *>(l);
+    if (w == s.overlay || w == s.tray || !IsWindowVisible(w) || IsIconic(w) || WindowCloaked(w) ||
+        ShellBackground(w) || w == GetDesktopWindow() || w == GetShellWindow())
+        return TRUE;
+    const auto style = GetWindowLongPtrW(w, GWL_STYLE);
+    const auto ex = GetWindowLongPtrW(w, GWL_EXSTYLE);
+    if ((style & WS_CHILD) || (ex & WS_EX_TRANSPARENT) || (ex & WS_EX_TOOLWINDOW))
+        return TRUE;
     wchar_t cls[128]{};
-    GetClassNameW(w,cls,128);
-    if (!wcscmp(cls,L"Shell_SecondaryTrayWnd") || !wcscmp(cls,L"tooltips_class32")) return TRUE;
+    GetClassNameW(w, cls, 128);
+    if (!wcscmp(cls, L"Shell_SecondaryTrayWnd") || !wcscmp(cls, L"tooltips_class32"))
+        return TRUE;
     RECT r{}, hit{};
-    if (FAILED(DwmGetWindowAttribute(w,DWMWA_EXTENDED_FRAME_BOUNDS,&r,sizeof(r))) &&
-        !GetWindowRect(w,&r)) return TRUE;
-    if (!IntersectRect(&hit,&r,&s.monitor)) return TRUE;
+    if (FAILED(DwmGetWindowAttribute(w, DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(r))) && !GetWindowRect(w, &r))
+        return TRUE;
+    if (!IntersectRect(&hit, &r, &s.monitor))
+        return TRUE;
     s.windows.push_back({r});
     return TRUE;
 }
 static bool Fullscreen(HWND overlay, RECT bar)
 {
     MONITORINFO mi{sizeof(mi)};
-    if (!GetMonitorInfoW(MonitorFromRect(&bar,MONITOR_DEFAULTTONEAREST),&mi)) return false;
-    FullscreenSearch search{overlay,FindWindowW(L"Shell_TrayWnd",nullptr),mi.rcMonitor,{}};
-    EnumWindows(EnumerateFullscreen,reinterpret_cast<LPARAM>(&search));
-    if (MonitorHasFullscreen(mi.rcMonitor,search.windows)) return true;
+    if (!GetMonitorInfoW(MonitorFromRect(&bar, MONITOR_DEFAULTTONEAREST), &mi))
+        return false;
+    FullscreenSearch search{overlay, FindWindowW(L"Shell_TrayWnd", nullptr), mi.rcMonitor, {}};
+    EnumWindows(EnumerateFullscreen, reinterpret_cast<LPARAM>(&search));
+    if (MonitorHasFullscreen(mi.rcMonitor, search.windows))
+        return true;
     QUERY_USER_NOTIFICATION_STATE state{};
     if (SUCCEEDED(SHQueryUserNotificationState(&state)) &&
-        (state==QUNS_QUIET_TIME || state==QUNS_PRESENTATION_MODE)) return true;
+        (state == QUNS_QUIET_TIME || state == QUNS_PRESENTATION_MODE))
+        return true;
     return false;
 }
 std::optional<RECT> StartStrip(RECT bar, RECT start)
@@ -1653,14 +1665,14 @@ struct App
         RECT bar = snapshot.bar;
         UINT d = snapshot.dpi;
         auto target = snapshot.target;
-        HWND taskbar=FindWindowW(L"Shell_TrayWnd",nullptr);
+        HWND taskbar = FindWindowW(L"Shell_TrayWnd", nullptr);
         RECT actualBar{};
-        if (!taskbar || !GetWindowRect(taskbar,&actualBar))
+        if (!taskbar || !GetWindowRect(taskbar, &actualBar))
         {
             Hide();
             return;
         }
-        if (Fullscreen(hwnd,actualBar))
+        if (Fullscreen(hwnd, actualBar))
         {
             Hide();
             return;
@@ -1668,7 +1680,8 @@ struct App
         RepairOrder();
         if (!target)
         {
-            if (++missingGeometry>=20) Hide();
+            if (++missingGeometry >= 20)
+                Hide();
             return;
         }
         missingGeometry = 0;
@@ -1726,7 +1739,6 @@ struct App
                 std::copy(colors.pixels.begin(), colors.pixels.end(), wall->pixels);
                 Render(true);
             }
-
         }
     }
     void Change()
@@ -1752,20 +1764,23 @@ struct App
 };
 bool TestVisibilityPolicy()
 {
-    RECT primary{0,0,1920,1080}, secondary{1920,0,3840,1080};
+    RECT primary{0, 0, 1920, 1080}, secondary{1920, 0, 3840, 1080};
     MonitorWindow full{primary}, other{secondary};
-    MonitorWindow normal{{100,100,1600,950}};
-    if (!MonitorHasFullscreen(primary,{full}) ||
-        !MonitorHasFullscreen(primary,{other,full}) ||
-        MonitorHasFullscreen(primary,{other}) ||
-        MonitorHasFullscreen(primary,{normal,full})) return false;
-    auto minimized=full; minimized.minimized=true;
-    auto cloaked=full; cloaked.cloaked=true;
-    auto shell=full; shell.shell=true;
-    if (MonitorHasFullscreen(primary,{minimized,cloaked,shell})) return false;
-    if (!MonitorHasFullscreen(primary,{shell,other,full}) ||
-        !CoversMonitor({-1,-1,1921,1081},primary,2) ||
-        CoversMonitor({0,0,1920,1032},primary,2)) return false;
+    MonitorWindow normal{{100, 100, 1600, 950}};
+    if (!MonitorHasFullscreen(primary, {full}) || !MonitorHasFullscreen(primary, {other, full}) ||
+        MonitorHasFullscreen(primary, {other}) || MonitorHasFullscreen(primary, {normal, full}))
+        return false;
+    auto minimized = full;
+    minimized.minimized = true;
+    auto cloaked = full;
+    cloaked.cloaked = true;
+    auto shell = full;
+    shell.shell = true;
+    if (MonitorHasFullscreen(primary, {minimized, cloaked, shell}))
+        return false;
+    if (!MonitorHasFullscreen(primary, {shell, other, full}) ||
+        !CoversMonitor({-1, -1, 1921, 1081}, primary, 2) || CoversMonitor({0, 0, 1920, 1032}, primary, 2))
+        return false;
     return true;
 }
 bool TestWindowPixelOrder()
