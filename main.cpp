@@ -25,7 +25,7 @@ using Microsoft::WRL::ComPtr;
 namespace jinju
 {
 constexpr wchar_t kClass[] = L"JinJuApp";
-constexpr UINT_PTR QuoteTimer = 1, AnimationTimer = 2, GeometryTimer = 3;
+constexpr UINT_PTR QuoteTimer = 1, AnimationTimer = 2, GeometryTimer = 3, VisibilityTimer = 4;
 constexpr UINT ShellForegroundChanged = WM_APP + 1;
 static HWND eventTarget = nullptr;
 static void CALLBACK ForegroundChanged(HWINEVENTHOOK, DWORD, HWND, LONG, LONG, DWORD, DWORD)
@@ -473,29 +473,152 @@ static bool ShellView(HWND window)
     GetWindowThreadProcessId(FindWindowW(L"Shell_TrayWnd", nullptr), &shellPid);
     return IsShellViewClass(cls, title, pid != 0 && pid == shellPid);
 }
-static bool Fullscreen(HWND strip, RECT bar)
+// A desktop or Task View transition is not equivalent to activating the
+// taskbar. Keep normal ownership when the user merely clicks the taskbar.
+bool IsDesktopPresentationClass(const std::wstring &cls, const std::wstring &title, bool explorer)
 {
-    HWND fg = GetForegroundWindow();
-    if (ShellView(fg) || fg == GetShellWindow() || fg == GetDesktopWindow())
-        return false;
-    QUERY_USER_NOTIFICATION_STATE s{};
-    if (SUCCEEDED(SHQueryUserNotificationState(&s)) && (s == QUNS_QUIET_TIME || s == QUNS_PRESENTATION_MODE))
+    if (cls == L"Progman" || cls == L"WorkerW" || cls == L"SHELLDLL_DefView")
         return true;
-    if (!fg || fg == strip || fg == GetShellWindow() || fg == GetDesktopWindow() || IsIconic(fg))
-        return false;
-    wchar_t cls[128]{};
-    GetClassNameW(fg, cls, 128);
-    if (!wcscmp(cls, L"Progman") || !wcscmp(cls, L"WorkerW") || !wcscmp(cls, L"Shell_TrayWnd"))
-        return false;
+    if (cls == L"MultitaskingViewFrame" || cls == L"TaskSwitcherWnd")
+        return true;
+    if (title == L"Task View" || title == L"任务视图" || title == L"工作檢視")
+        return explorer && (cls == L"XamlExplorerHostIslandWindow" ||
+                            cls == L"XamlExplorerHostIslandWindow_WASDK");
+    return false;
+}
+static bool WindowCloaked(HWND w)
+{
+    DWORD cloak=0;
+    return SUCCEEDED(DwmGetWindowAttribute(w,DWMWA_CLOAKED,&cloak,sizeof(cloak))) && cloak;
+}
+static bool DesktopPresentationWindow(HWND w)
+{
+    if (!w) return false;
+    if (w==GetDesktopWindow() || w==GetShellWindow()) return true;
+    wchar_t cls[128]{}, title[128]{};
+    GetClassNameW(w,cls,128);
+    GetWindowTextW(w,title,128);
+    DWORD pid=0,shellPid=0;
+    GetWindowThreadProcessId(w,&pid);
+    GetWindowThreadProcessId(FindWindowW(L"Shell_TrayWnd",nullptr),&shellPid);
+    return IsDesktopPresentationClass(cls,title,pid!=0 && pid==shellPid);
+}
+// Some shell views never become GetForegroundWindow(). Enumerate visible
+// top-level windows and recognize the actual Task View surface separately.
+struct TaskViewSearch
+{
+    RECT monitor;
+    HWND window=nullptr;
+};
+static BOOL CALLBACK FindTaskView(HWND w, LPARAM l)
+{
+    auto &search=*reinterpret_cast<TaskViewSearch*>(l);
+    if (!IsWindowVisible(w) || IsIconic(w) || WindowCloaked(w)) return TRUE;
+    wchar_t cls[128]{}, title[128]{};
+    GetClassNameW(w,cls,128);
+    GetWindowTextW(w,title,128);
+    if (!wcscmp(cls,L"Progman") || !wcscmp(cls,L"WorkerW") ||
+        !wcscmp(cls,L"SHELLDLL_DefView")) return TRUE;
+    if (!DesktopPresentationWindow(w)) return TRUE;
+    RECT r{}, hit{};
+    if (!GetWindowRect(w,&r) || !IntersectRect(&hit,&r,&search.monitor)) return TRUE;
+    // Ignore tiny hosts and transient tooltips.
+    if (hit.right-hit.left < (search.monitor.right-search.monitor.left)/2 ||
+        hit.bottom-hit.top < (search.monitor.bottom-search.monitor.top)/2) return TRUE;
+    search.window=w;
+    return FALSE;
+}
+static HWND PresentationWindow(RECT bar)
+{
     MONITORINFO mi{sizeof(mi)};
-    HMONITOR m = MonitorFromRect(&bar, MONITOR_DEFAULTTONEAREST);
-    if (MonitorFromWindow(fg, MONITOR_DEFAULTTONULL) != m || !GetMonitorInfoW(m, &mi))
-        return false;
-    RECT r{};
-    if (FAILED(DwmGetWindowAttribute(fg, DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(r))) &&
-        !GetWindowRect(fg, &r))
-        return false;
-    return SameRect(r, mi.rcMonitor, 2);
+    if (!GetMonitorInfoW(MonitorFromRect(&bar,MONITOR_DEFAULTTONEAREST),&mi))
+        return nullptr;
+    TaskViewSearch search{mi.rcMonitor};
+    EnumWindows(FindTaskView,reinterpret_cast<LPARAM>(&search));
+    if (search.window) return search.window;
+    HWND fg=GetForegroundWindow();
+    if (DesktopPresentationWindow(fg)) return fg;
+    return nullptr;
+}
+// Fullscreen detection is monitor-local and does not require foreground
+// ownership. Walk the actual Z order; a fullscreen window behind an ordinary
+// app on this monitor does not keep the overlay hidden forever.
+bool CoversMonitor(RECT window, RECT monitor, int tolerance)
+{
+    return window.left <= monitor.left+tolerance && window.top <= monitor.top+tolerance &&
+           window.right >= monitor.right-tolerance && window.bottom >= monitor.bottom-tolerance;
+}
+struct MonitorWindow
+{
+    RECT bounds{};
+    bool visible=true;
+    bool minimized=false;
+    bool cloaked=false;
+    bool shell=false;
+};
+bool MonitorHasFullscreen(RECT monitor, const std::vector<MonitorWindow> &windows)
+{
+    // Windows are supplied from top to bottom. Require the fullscreen
+    // candidate to be the top relevant window at the monitor's centre.
+    // Non-overlapping windows (for example on a second display) have no effect.
+    const POINT centre{monitor.left+(monitor.right-monitor.left)/2,
+                       monitor.top+(monitor.bottom-monitor.top)/2};
+    for (const auto &w:windows)
+    {
+        if (!w.visible || w.minimized || w.cloaked || w.shell) continue;
+        RECT hit{};
+        if (!IntersectRect(&hit,&monitor,&w.bounds)) continue;
+        if (CoversMonitor(w.bounds,monitor,2)) return true;
+        if (PtInRect(&w.bounds,centre)) return false;
+    }
+    return false;
+}
+struct FullscreenSearch
+{
+    HWND overlay=nullptr;
+    HWND tray=nullptr;
+    RECT monitor{};
+    std::vector<MonitorWindow> windows;
+};
+static BOOL CALLBACK EnumerateFullscreen(HWND w, LPARAM l)
+{
+    auto &s=*reinterpret_cast<FullscreenSearch*>(l);
+    if (w==s.overlay || w==s.tray || !IsWindowVisible(w) || IsIconic(w) ||
+        WindowCloaked(w) || ShellView(w) || w==GetDesktopWindow() || w==GetShellWindow()) return TRUE;
+    const auto style=GetWindowLongPtrW(w,GWL_STYLE);
+    const auto ex=GetWindowLongPtrW(w,GWL_EXSTYLE);
+    if ((style&WS_CHILD) || (ex&WS_EX_TRANSPARENT) || (ex&WS_EX_TOOLWINDOW)) return TRUE;
+    wchar_t cls[128]{};
+    GetClassNameW(w,cls,128);
+    if (!wcscmp(cls,L"Shell_SecondaryTrayWnd") || !wcscmp(cls,L"tooltips_class32")) return TRUE;
+    RECT r{}, hit{};
+    if (FAILED(DwmGetWindowAttribute(w,DWMWA_EXTENDED_FRAME_BOUNDS,&r,sizeof(r))) &&
+        !GetWindowRect(w,&r)) return TRUE;
+    if (!IntersectRect(&hit,&r,&s.monitor)) return TRUE;
+    s.windows.push_back({r});
+    return TRUE;
+}
+static bool Fullscreen(HWND overlay, RECT bar)
+{
+    MONITORINFO mi{sizeof(mi)};
+    if (!GetMonitorInfoW(MonitorFromRect(&bar,MONITOR_DEFAULTTONEAREST),&mi)) return false;
+    FullscreenSearch search{overlay,FindWindowW(L"Shell_TrayWnd",nullptr),mi.rcMonitor,{}};
+    EnumWindows(EnumerateFullscreen,reinterpret_cast<LPARAM>(&search));
+    if (MonitorHasFullscreen(mi.rcMonitor,search.windows)) return true;
+    QUERY_USER_NOTIFICATION_STATE state{};
+    if (SUCCEEDED(SHQueryUserNotificationState(&state)) &&
+        (state==QUNS_QUIET_TIME || state==QUNS_PRESENTATION_MODE)) return true;
+    return false;
+}
+// A temporary unowned popup avoids Show Desktop's owner-hide propagation.
+// Do not detach during ordinary taskbar activation; the tested owned popup
+// is restored immediately after the shell presentation ends.
+static bool SetOverlayOwner(HWND overlay, HWND owner)
+{
+    if (GetWindow(overlay,GW_OWNER)==owner) return true;
+    SetLastError(ERROR_SUCCESS);
+    const LONG_PTR previous=SetWindowLongPtrW(overlay,GWLP_HWNDPARENT,reinterpret_cast<LONG_PTR>(owner));
+    return (previous!=0 || GetLastError()==ERROR_SUCCESS) && GetWindow(overlay,GW_OWNER)==owner;
 }
 std::optional<RECT> StartStrip(RECT bar, RECT start)
 {
@@ -1452,6 +1575,9 @@ struct App
     ULONGLONG lastWallpaperPoll = 0;
     bool positioned = false;
     bool wallpaperReady = false;
+    bool shellPresentation = false;
+    bool haveGeometry = false;
+    unsigned presentationMisses = 0;
     std::optional<RECT> pendingGeometry;
     unsigned geometryStable = 0;
     ~App()
@@ -1607,34 +1733,73 @@ struct App
         if (GetWindow(hwnd, GW_OWNER) != taskbar)
             RestoreOverlayOrder(hwnd, taskbar);
     }
+    void KeepPresentationVisible(HWND presentation)
+    {
+        if (!active || !haveGeometry) return;
+        SetOverlayOwner(hwnd,nullptr);
+        DWORD cloak=0;
+        if (SUCCEEDED(DwmGetWindowAttribute(hwnd,DWMWA_CLOAKED,&cloak,sizeof(cloak))) &&
+            (cloak&DWM_CLOAKED_APP))
+        {
+            const BOOL uncloak=FALSE;
+            DwmSetWindowAttribute(hwnd,DWMWA_CLOAK,&uncloak,sizeof(uncloak));
+        }
+        if (IsIconic(hwnd)) ShowWindow(hwnd,SW_SHOWNOACTIVATE);
+        if (!IsWindowVisible(hwnd))
+            SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,
+                         SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE|SWP_SHOWWINDOW);
+        if (presentation && presentation!=hwnd)
+            RestoreOverlayOrder(hwnd,presentation);
+    }
     void Refresh(bool wallpaper = false)
     {
         auto snapshot = geometry.Get();
         RECT bar = snapshot.bar;
         UINT d = snapshot.dpi;
         auto target = snapshot.target;
-        HWND taskbar = FindWindowW(L"Shell_TrayWnd", nullptr);
+        HWND taskbar=FindWindowW(L"Shell_TrayWnd",nullptr);
         RECT actualBar{};
-        if (!taskbar || !GetWindowRect(taskbar, &actualBar) || Fullscreen(hwnd, actualBar))
+        if (!taskbar || !GetWindowRect(taskbar,&actualBar))
         {
             Hide();
             return;
         }
-        RepairOrder();
-        const bool shellView = ShellView(GetForegroundWindow());
-        if (shellView && active)
+        HWND presentation=PresentationWindow(actualBar);
+        if (presentation)
         {
-            // Task View / Show Desktop can temporarily hide owned popups or
-            // invalidate UIA; retain the last known strip and restore visibility.
-            target = strip;
-            d = dpi;
+            presentationMisses=0;
+            shellPresentation=true;
+        }
+        else if (shellPresentation && ++presentationMisses>=3)
+        {
+            shellPresentation=false;
+            presentationMisses=0;
+        }
+        // Presentation has precedence over fullscreen; Task View may leave
+        // previously fullscreen app surfaces visible behind its own surface.
+        if (!shellPresentation && Fullscreen(hwnd,actualBar))
+        {
+            SetOverlayOwner(hwnd,taskbar);
+            Hide();
+            return;
+        }
+        if (shellPresentation)
+        {
+            SetOverlayOwner(hwnd,nullptr);
+            if (haveGeometry)
+            {
+                target=strip;
+                d=dpi;
+            }
+        }
+        else
+        {
+            SetOverlayOwner(hwnd,taskbar);
+            RepairOrder();
         }
         if (!target)
         {
-            // A transient accessibility failure while clicking the taskbar must
-            // not make the overlay flash. Two seconds without data hides it.
-            if (++missingGeometry >= 8 && !shellView)
-                Hide();
+            if (++missingGeometry>=20 && !shellPresentation) Hide();
             return;
         }
         missingGeometry = 0;
@@ -1665,6 +1830,7 @@ struct App
             positioned = false;
             strip = *target;
             dpi = d;
+            haveGeometry = true;
             if (!Rebuild())
             {
                 Hide();
@@ -1692,17 +1858,15 @@ struct App
                 std::copy(colors.pixels.begin(), colors.pixels.end(), wall->pixels);
                 Render(true);
             }
-            if (shellView && IsIconic(hwnd))
-                ShowWindow(hwnd, SW_SHOWNOACTIVATE);
-            if (shellView && !IsWindowVisible(hwnd))
-                SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0,
-                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
-            if (shellView && IsWindowVisible(hwnd))
+            if (shellPresentation)
+                KeepPresentationVisible(presentation);
+            else if (!IsWindowVisible(hwnd) || IsIconic(hwnd))
             {
-                HWND foreground = GetForegroundWindow();
-                if (foreground && foreground != hwnd)
-                    RestoreOverlayOrder(hwnd, foreground);
+                ShowWindow(hwnd,SW_SHOWNOACTIVATE);
+                Render(true);
+                Animate();
             }
+
         }
     }
     void Change()
@@ -1726,6 +1890,46 @@ struct App
             previous.clear();
     }
 };
+bool TestVisibilityPolicy()
+{
+    RECT primary{0,0,1920,1080}, secondary{1920,0,3840,1080};
+    MonitorWindow full{primary}, other{secondary};
+    MonitorWindow normal{{100,100,1600,950}};
+    if (!MonitorHasFullscreen(primary,{full}) ||
+        !MonitorHasFullscreen(primary,{other,full}) ||
+        MonitorHasFullscreen(primary,{other}) ||
+        MonitorHasFullscreen(primary,{normal,full})) return false;
+    auto minimized=full; minimized.minimized=true;
+    auto cloaked=full; cloaked.cloaked=true;
+    auto shell=full; shell.shell=true;
+    if (MonitorHasFullscreen(primary,{minimized,cloaked,shell})) return false;
+    if (!MonitorHasFullscreen(primary,{shell,other,full}) ||
+        !CoversMonitor({-1,-1,1921,1081},primary,2) ||
+        CoversMonitor({0,0,1920,1032},primary,2)) return false;
+    if (!IsDesktopPresentationClass(L"Progman",L"",true) ||
+        !IsDesktopPresentationClass(L"WorkerW",L"",true) ||
+        !IsDesktopPresentationClass(L"XamlExplorerHostIslandWindow_WASDK",L"任务视图",true) ||
+        IsDesktopPresentationClass(L"Shell_TrayWnd",L"",true) ||
+        IsDesktopPresentationClass(L"XamlExplorerHostIslandWindow",L"",true)) return false;
+    HINSTANCE instance=GetModuleHandleW(nullptr);
+    HWND owner=CreateWindowExW(WS_EX_TOOLWINDOW,L"STATIC",L"",WS_POPUP,
+                              20,20,160,45,nullptr,nullptr,instance,nullptr);
+    if (!owner) return false;
+    HWND overlay=CreateWindowExW(OverlayStyles(),L"STATIC",L"",WS_POPUP,
+                                20,20,160,45,owner,nullptr,instance,nullptr);
+    if (!overlay) { DestroyWindow(owner); return false; }
+    RECT before{},after{};
+    GetWindowRect(overlay,&before);
+    bool detached=SetOverlayOwner(overlay,nullptr);
+    bool reattached=SetOverlayOwner(overlay,owner);
+    GetWindowRect(overlay,&after);
+    bool ok=detached && reattached && SameRect(before,after) &&
+        (GetWindowLongPtrW(overlay,GWL_EXSTYLE)&WS_EX_NOACTIVATE) &&
+        (GetWindowLongPtrW(overlay,GWL_EXSTYLE)&WS_EX_TRANSPARENT);
+    DestroyWindow(overlay);
+    DestroyWindow(owner);
+    return ok;
+}
 bool TestWindowPixelOrder()
 {
     RECT strip{-2, 10, 4, 12};
@@ -1869,14 +2073,14 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         switch (msg)
         {
         case ShellForegroundChanged:
-            a->RepairOrder();
+            a->Refresh();
             return 0;
         case WM_TIMER:
             if (wp == QuoteTimer)
                 a->Change();
             else if (wp == AnimationTimer)
                 a->Render();
-            else if (wp == GeometryTimer)
+            else if (wp == GeometryTimer || wp == VisibilityTimer)
                 a->Refresh();
             return 0;
         case WM_SETTINGCHANGE:
@@ -1970,7 +2174,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
                     SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, nullptr,
                                     ForegroundChanged, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
                 SetTimer(app.hwnd, QuoteTimer, 180000, nullptr);
-                SetTimer(app.hwnd, GeometryTimer, 250, nullptr);
+                SetTimer(app.hwnd, VisibilityTimer, 100, nullptr);
                 app.Refresh();
                 MSG msg{};
                 BOOL status;

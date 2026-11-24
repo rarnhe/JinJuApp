@@ -130,6 +130,10 @@ int main(int argc, char **argv)
         {
             CHECK(TestWindowPixelOrder());
         }
+        else if (name == "visibility")
+        {
+            CHECK(TestVisibilityPolicy());
+        }
         else if (name == "quotes")
         {
             auto v = ParseLines("\xef\xbb\xbf"

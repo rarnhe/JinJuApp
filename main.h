@@ -32,5 +32,6 @@ bool TestRenderPipeline();
 bool TestOverlayOrder();
 bool TestOwnedOverlayOrder();
 bool TestWindowPixelOrder();
+bool TestVisibilityPolicy();
 bool SameRect(const RECT &a, const RECT &b, int tolerance = 0);
 } // namespace jinju
