@@ -126,6 +126,10 @@ int main(int argc, char **argv)
             CHECK(TestOverlayOrder());
             CHECK(TestOwnedOverlayOrder());
         }
+        else if (name == "window_pixels")
+        {
+            CHECK(TestWindowPixelOrder());
+        }
         else if (name == "quotes")
         {
             auto v = ParseLines("\xef\xbb\xbf"
