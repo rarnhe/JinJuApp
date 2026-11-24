@@ -1,3 +1,33 @@
 # C++ Windows 测试报告
 
-- 本轮待测试，旧版 EXE 已删除。
+- 状态：通过 (Passed)
+- 时间（UTC）：2026-11-24 07:49:02
+- 测试源码基准提交：89b1d966325eb4c065ee3d705222fa692124faf1
+- 执行记录：https://github.com/rarnhe/JinJuApp/actions/runs/45350822733
+- 平台：Windows / MSVC / C++20 / Win32 + Windows SDK
+- 阶段：Configure=success / Build=success / CTest=success
+- 统计：通过 4 / 失败 0 / 跳过 0 / 共 4
+
+## GitHub Actions 阶段状态
+
+| 阶段 | 结果 |
+| --- | --- |
+| Configure | success |
+| Build | success |
+| CTest | success |
+
+## 测试用例结果
+
+| 测试 | 结果 |
+| --- | --- |
+| geometry | 通过 |
+| animation | 通过 |
+| pixels | 通过 |
+| quotes | 通过 |
+
+## 失败详情
+
+## 覆盖范围
+真实编译 main.cpp，验证动态空闲矩形、动画时间边界、预乘像素、壁纸实际 BGRA 输出、非零屏幕坐标取样、原版 GDI 字形合成、分层窗口样式及 Start 边框重叠 7px、左边距 0px、窄间距、同名 TXT 创建及 UTF-8 解析。
+
+实际 Explorer UIA、壁纸镂空视觉、鼠标穿透、全屏与多屏/DPI 仍需交互式人工验证；不计入自动通过数。

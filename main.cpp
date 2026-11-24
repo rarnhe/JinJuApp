@@ -485,7 +485,8 @@ static BOOL CALLBACK AnchorProc(HWND hwnd, LPARAM lp)
     // Task-list HWND can cover the entire available region, not just buttons.
     if (!task || i.right - i.left < (a.bar.right - a.bar.left) / 2)
         a.items.push_back(i);
-    if (start) a.startRect = i;
+    if (start)
+        a.startRect = i;
     a.start |= start;
     a.task |= task;
     a.tray |= tray;
@@ -533,10 +534,13 @@ static void ScanUia(IUIAutomationTreeWalker *walker, IUIAutomationElement *node,
             BSTR name = nullptr;
             node->get_CurrentAutomationId(&id);
             node->get_CurrentName(&name);
-            const bool isStart = (id && (!_wcsicmp(id, L"StartButton") || !_wcsicmp(id, L"Start"))) ||
+            const bool isStart =
+                (id && (!_wcsicmp(id, L"StartButton") || !_wcsicmp(id, L"Start"))) ||
                 (name && (!_wcsicmp(name, L"Start") || !wcscmp(name, L"开始") || !wcscmp(name, L"開始")));
-            if (isStart) out.startRect = i;
-            if (!out.firstButton || i.left < out.firstButton->left) out.firstButton = i;
+            if (isStart)
+                out.startRect = i;
+            if (!out.firstButton || i.left < out.firstButton->left)
+                out.firstButton = i;
             SysFreeString(id);
             SysFreeString(name);
         }
@@ -595,7 +599,8 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
     if (!s.complete || s.buttons < 2 || !a.tray)
         return {};
     const auto start = s.startRect ? s.startRect : a.startRect;
-    if (!start) return {};
+    if (!start)
+        return {};
     auto result = StartStrip(bar, *start);
     if (result)
     {
@@ -618,8 +623,8 @@ static BOOL CALLBACK FindDesktopBackground(HWND window, LPARAM param)
     if (!IsWindowVisible(window) || FindWindowExW(window, nullptr, L"SHELLDLL_DefView", nullptr))
         return TRUE;
     RECT rect{};
-    if (!GetWindowRect(window, &rect) || rect.right-rect.left < GetSystemMetrics(SM_CXSCREEN) ||
-        rect.bottom-rect.top < GetSystemMetrics(SM_CYSCREEN))
+    if (!GetWindowRect(window, &rect) || rect.right - rect.left < GetSystemMetrics(SM_CXSCREEN) ||
+        rect.bottom - rect.top < GetSystemMetrics(SM_CYSCREEN))
         return TRUE;
     result = window;
     return FALSE;
@@ -637,32 +642,33 @@ static bool CaptureDesktopBackground(Dib &dst, RECT strip)
     if (!ClientToScreen(desktop, &origin))
         return false;
     const int w = rect.right, h = rect.bottom;
-    const int sx = strip.left-origin.x, sy = strip.top-origin.y;
-    if (w <= 0 || h <= 0 || static_cast<uint64_t>(w)*h > 64*1024*1024 ||
-        sx < 0 || sy < 0 || sx+dst.w > w || sy+dst.h > h)
+    const int sx = strip.left - origin.x, sy = strip.top - origin.y;
+    if (w <= 0 || h <= 0 || static_cast<uint64_t>(w) * h > 64 * 1024 * 1024 || sx < 0 || sy < 0 ||
+        sx + dst.w > w || sy + dst.h > h)
         return false;
-    Dib capture(w,h);
+    Dib capture(w, h);
     if (!capture)
         return false;
-    std::fill_n(capture.pixels, static_cast<size_t>(w)*h, 0x00ff00ffu);
+    std::fill_n(capture.pixels, static_cast<size_t>(w) * h, 0x00ff00ffu);
     if (!PrintWindow(desktop, capture.dc, PW_CLIENTONLY | 2))
         return false;
     GdiFlush();
     // Compositor-only surfaces frequently return black or an untouched buffer.
     // Fall back to the original image instead of displaying that failure.
     bool usable = false;
-    for (int y=0; y<dst.h; ++y)
-        for (int x=0; x<dst.w; ++x)
+    for (int y = 0; y < dst.h; ++y)
+        for (int x = 0; x < dst.w; ++x)
         {
-            uint32_t rgb = capture.pixels[static_cast<size_t>(sy+y)*w+sx+x] & 0xffffff;
-            if (rgb != 0 && rgb != 0xff00ff) usable = true;
+            uint32_t rgb = capture.pixels[static_cast<size_t>(sy + y) * w + sx + x] & 0xffffff;
+            if (rgb != 0 && rgb != 0xff00ff)
+                usable = true;
         }
     if (!usable)
         return false;
-    for (int y=0; y<dst.h; ++y)
-        for (int x=0; x<dst.w; ++x)
-            dst.pixels[static_cast<size_t>(y)*dst.w+x] =
-                0xff000000u | (capture.pixels[static_cast<size_t>(sy+y)*w+sx+x]&0xffffff);
+    for (int y = 0; y < dst.h; ++y)
+        for (int x = 0; x < dst.w; ++x)
+            dst.pixels[static_cast<size_t>(y) * dst.w + x] =
+                0xff000000u | (capture.pixels[static_cast<size_t>(sy + y) * w + sx + x] & 0xffffff);
     OutputDebugStringW(L"JinJuApp: sampled Explorer desktop background window.\n");
     return true;
 }
@@ -1083,7 +1089,8 @@ struct App
                   DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_NOCLIP);
         SelectObject(mask->dc, old);
         GdiFlush();
-        const unsigned alpha = static_cast<unsigned>(std::lround(255 * std::clamp(f.alpha * weight, 0.0, 1.0)));
+        const unsigned alpha =
+            static_cast<unsigned>(std::lround(255 * std::clamp(f.alpha * weight, 0.0, 1.0)));
         for (int y = 0; y < mask->h; ++y)
         {
             for (int x = Pad(); x < mask->w - Pad(); ++x)
@@ -1177,7 +1184,8 @@ struct App
                 geometryStable = 1;
                 return;
             }
-            if (++geometryStable < 2) return;
+            if (++geometryStable < 2)
+                return;
         }
         pendingGeometry.reset();
         geometryStable = 0;
