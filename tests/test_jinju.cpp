@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
+#include <objidl.h>
 #include <gdiplus.h>
 #include <shobjidl.h>
 using namespace jinju;
