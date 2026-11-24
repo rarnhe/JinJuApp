@@ -24,5 +24,7 @@ std::vector<std::wstring> LoadQuotes(const std::wstring &path);
 uint32_t WallpaperPixel(uint32_t rgb, unsigned coverage, double opacity);
 bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT area, const std::wstring &file,
                      int position, COLORREF background);
+DWORD OverlayStyles();
+bool TestGlyphComposition();
 bool SameRect(const RECT &a, const RECT &b, int tolerance = 0);
 } // namespace jinju

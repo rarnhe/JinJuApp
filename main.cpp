@@ -25,6 +25,7 @@ namespace jinju
 {
 constexpr wchar_t kClass[] = L"JinJuApp";
 constexpr UINT_PTR QuoteTimer = 1, AnimationTimer = 2, GeometryTimer = 3;
+DWORD OverlayStyles() { return WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE; }
 constexpr char kDefault[] = R"JINJU(千里之行，始于足下。
 九层之台，起于累土。
 合抱之木，生于毫末。
@@ -282,7 +283,7 @@ std::optional<RECT> FreeStrip(RECT bar, std::vector<RECT> occupied, int margin, 
     LONG cursor = bar.left;
     std::optional<RECT> best;
     auto gap = [&](LONG l, LONG r) {
-        if (!best && r - l >= minimum + 2 * margin)
+        if (!best && r - l >= std::max(1, minimum) + 2 * margin)
             best = RECT{l + margin, bar.top, r - margin, bar.bottom};
     };
     for (auto [l, r] : spans)
@@ -498,7 +499,9 @@ static void ScanUia(IUIAutomationTreeWalker *walker, IUIAutomationElement *node,
         out.complete = false;
         return;
     }
-    bool hit = !off && IntersectRect(&i, &bar, &r);
+    bool hit = !off && IntersectRect(&i, &bar, &r) &&
+               r.top + (r.bottom - r.top) / 2 >= bar.top &&
+               r.top + (r.bottom - r.top) / 2 < bar.bottom;
     bool control = type == UIA_ButtonControlTypeId || type == UIA_SplitButtonControlTypeId ||
                    type == UIA_MenuItemControlTypeId || type == UIA_ListItemControlTypeId ||
                    type == UIA_TabItemControlTypeId || type == UIA_EditControlTypeId ||
@@ -564,143 +567,213 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
     if (!s.complete || s.buttons < 2 || !a.tray)
         return {};
     a.items.insert(a.items.end(), s.items.begin(), s.items.end());
-    return FreeStrip(bar, std::move(a.items), Scale(6, dpi), Scale(120, dpi));
+    return FreeStrip(bar, std::move(a.items), 7, 0);
 }
-// Render into a GDI+ bitmap backed by explicit BGRA memory, not a Graphics
-// created from a memory HDC. Graphics(HDC) can target a temporary surface.
+// Resolve the actual wallpaper for the monitor; never capture the composed
+// screen, since that would copy the taskbar and our own text back into itself.
 static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
 {
-    if (!desktop)
-        return false;
     HMONITOR monitor = MonitorFromRect(&strip, MONITOR_DEFAULTTONEAREST);
     MONITORINFO mi{sizeof(mi)};
     if (!GetMonitorInfoW(monitor, &mi))
         return false;
-    UINT count = 0;
-    if (FAILED(desktop->GetMonitorDevicePathCount(&count)))
-        return false;
-    LPWSTR id = nullptr;
-    for (UINT i = 0; i < count; ++i)
+
+    std::wstring file;
+    COLORREF background = GetSysColor(COLOR_BACKGROUND);
+    DESKTOP_WALLPAPER_POSITION position = DWPOS_FILL;
+    bool resolved = false;
+    if (desktop)
     {
-        LPWSTR p = nullptr;
-        RECT r{};
-        if (SUCCEEDED(desktop->GetMonitorDevicePathAt(i, &p)) && p &&
-            SUCCEEDED(desktop->GetMonitorRECT(p, &r)) && SameRect(r, mi.rcMonitor))
+        desktop->GetBackgroundColor(&background);
+        desktop->GetPosition(&position);
+        UINT count = 0;
+        if (SUCCEEDED(desktop->GetMonitorDevicePathCount(&count)))
         {
-            id = p;
-            break;
+            for (UINT i = 0; i < count; ++i)
+            {
+                LPWSTR id = nullptr;
+                RECT monitorRect{};
+                if (SUCCEEDED(desktop->GetMonitorDevicePathAt(i, &id)) && id &&
+                    SUCCEEDED(desktop->GetMonitorRECT(id, &monitorRect)) &&
+                    SameRect(monitorRect, mi.rcMonitor))
+                {
+                    LPWSTR path = nullptr;
+                    if (SUCCEEDED(desktop->GetWallpaper(id, &path)))
+                    {
+                        resolved = true;
+                        if (path)
+                            file = path;
+                    }
+                    CoTaskMemFree(path);
+                    CoTaskMemFree(id);
+                    break;
+                }
+                CoTaskMemFree(id);
+            }
         }
-        CoTaskMemFree(p);
     }
-    if (!id)
-        return false;
-    LPWSTR path = nullptr;
-    HRESULT hr = desktop->GetWallpaper(id, &path);
-    CoTaskMemFree(id);
-    if (FAILED(hr))
+
+    // SPI is a second system source, useful on the primary monitor if
+    // IDesktopWallpaper did not return a usable image path.
+    std::wstring fallback;
+    if (mi.dwFlags & MONITORINFOF_PRIMARY)
     {
-        CoTaskMemFree(path);
-        return false;
+        std::vector<wchar_t> buffer(32768);
+        if (SystemParametersInfoW(SPI_GETDESKWALLPAPER, static_cast<UINT>(buffer.size()),
+                                  buffer.data(), 0))
+        {
+            fallback = buffer.data();
+            if (!resolved && fallback.empty())
+                resolved = true;
+        }
     }
-    std::wstring file = path ? path : L"";
-    CoTaskMemFree(path);
-    COLORREF color = GetSysColor(COLOR_BACKGROUND);
-    desktop->GetBackgroundColor(&color);
-    DESKTOP_WALLPAPER_POSITION pos = DWPOS_FILL;
-    desktop->GetPosition(&pos);
+    if (file.empty() && !fallback.empty())
+    {
+        file = fallback;
+        resolved = true;
+    }
+    if (!resolved)
+        return false;
+
     RECT area = mi.rcMonitor;
-    if (pos == DWPOS_SPAN)
+    if (position == DWPOS_SPAN)
     {
         area.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
         area.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
         area.right = area.left + GetSystemMetrics(SM_CXVIRTUALSCREEN);
         area.bottom = area.top + GetSystemMetrics(SM_CYVIRTUALSCREEN);
     }
-    return RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, pos, color);
+
+    bool ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
+    if (!ok && !fallback.empty() && fallback != file)
+    {
+        file = fallback;
+        ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
+    }
+    if (!ok)
+    {
+        OutputDebugStringW(L"JinJuApp: wallpaper decoding failed; hiding strip.\n");
+        return false;
+    }
+    // Useful in DebugView / Visual Studio without writing an extra user file.
+    uint32_t minRGB = 0xffffff, maxRGB = 0;
+    size_t colored = 0;
+    const size_t n = static_cast<size_t>(dst.w) * dst.h;
+    for (size_t i = 0; i < n; ++i)
+    {
+        const auto rgb = dst.pixels[i] & 0xffffff;
+        minRGB = std::min(minRGB, rgb);
+        maxRGB = std::max(maxRGB, rgb);
+        colored += rgb != 0;
+    }
+    wchar_t log[256]{};
+    swprintf_s(log, L"JinJuApp wallpaper: position=%d rect=(%ld,%ld,%ld,%ld) nonblack=%zu/%zu range=%06X..%06X\n",
+               static_cast<int>(position), strip.left, strip.top, strip.right, strip.bottom,
+               colored, n, static_cast<unsigned>(minRGB), static_cast<unsigned>(maxRGB));
+    OutputDebugStringW(log);
+    return true;
 }
 
-bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT area, const std::wstring &file,
-                     int position, COLORREF background)
+// All source and destination coordinates are physical screen pixels.
+// GDI+ only decodes the source; the actual wallpaper sampler is explicit.
+bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT area,
+                     const std::wstring &file, int position, COLORREF background)
 {
-    if (!pixels || width <= 0 || height <= 0 || area.right <= area.left || area.bottom <= area.top)
+    if (!pixels || width <= 0 || height <= 0 || area.right <= area.left ||
+        area.bottom <= area.top)
         return false;
-    GdiFlush();
-    Gdiplus::Bitmap bitmap(width, height, width * 4, PixelFormat32bppARGB, reinterpret_cast<BYTE *>(pixels));
-    if (bitmap.GetLastStatus() != Gdiplus::Ok)
+    const uint32_t bg = 0xff000000u | (static_cast<uint32_t>(GetRValue(background)) << 16) |
+                        (static_cast<uint32_t>(GetGValue(background)) << 8) |
+                        GetBValue(background);
+    std::fill_n(pixels, static_cast<size_t>(width) * height, bg);
+    if (file.empty())
+        return true;
+
+    Gdiplus::Bitmap source(file.c_str());
+    if (source.GetLastStatus() != Gdiplus::Ok || !source.GetWidth() || !source.GetHeight() ||
+        source.GetWidth() > INT_MAX || source.GetHeight() > INT_MAX)
         return false;
-    {
-        Gdiplus::Graphics g(&bitmap);
-        if (g.GetLastStatus() != Gdiplus::Ok ||
-            g.Clear(Gdiplus::Color(255, GetRValue(background), GetGValue(background),
-                                   GetBValue(background))) != Gdiplus::Ok)
-            return false;
-        if (!file.empty())
-        {
-            Gdiplus::Image image(file.c_str());
-            if (image.GetLastStatus() != Gdiplus::Ok || !image.GetWidth() || !image.GetHeight())
-                return false;
-            double aw = area.right - area.left, ah = area.bottom - area.top;
-            double iw = image.GetWidth(), ih = image.GetHeight(), w = iw, h = ih;
-            g.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
-            if (position == DWPOS_TILE)
-            {
-                Gdiplus::TextureBrush brush(&image, Gdiplus::WrapModeTile);
-                brush.TranslateTransform(static_cast<float>(area.left - strip.left),
-                                         static_cast<float>(area.top - strip.top));
-                if (g.FillRectangle(&brush, 0, 0, width, height) != Gdiplus::Ok)
-                    return false;
-            }
-            else
-            {
-                if (position == DWPOS_STRETCH)
-                {
-                    w = aw;
-                    h = ah;
-                }
-                else if (position != DWPOS_CENTER)
-                {
-                    double scale =
-                        position == DWPOS_FIT ? std::min(aw / iw, ah / ih) : std::max(aw / iw, ah / ih);
-                    w = iw * scale;
-                    h = ih * scale;
-                }
-                Gdiplus::RectF target(static_cast<float>(area.left - strip.left + (aw - w) / 2),
-                                      static_cast<float>(area.top - strip.top + (ah - h) / 2),
-                                      static_cast<float>(w), static_cast<float>(h));
-                if (g.DrawImage(&image, target) != Gdiplus::Ok)
-                    return false;
-            }
-        }
-        g.Flush(Gdiplus::FlushIntentionSync);
-    }
-    // Explicit LockBits copy also handles GDI+ implementations which internally
-    // stage the provided buffer instead of updating it synchronously.
-    Gdiplus::Rect bounds(0, 0, width, height);
+    const int iw = static_cast<int>(source.GetWidth());
+    const int ih = static_cast<int>(source.GetHeight());
+    Gdiplus::Rect bounds(0, 0, iw, ih);
+    // Request an explicit 32bpp ARGB conversion even for JPEG/24-bit BMP.
     Gdiplus::BitmapData data{};
-    if (bitmap.LockBits(&bounds, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &data) != Gdiplus::Ok)
+    if (source.LockBits(&bounds, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &data) != Gdiplus::Ok)
         return false;
-    std::vector<uint32_t> copy(static_cast<size_t>(width) * height);
+
+    const double aw = area.right - area.left;
+    const double ah = area.bottom - area.top;
+    double dw = iw, dh = ih;
+    if (position == DWPOS_STRETCH)
+    {
+        dw = aw;
+        dh = ah;
+    }
+    else if (position != DWPOS_CENTER && position != DWPOS_TILE)
+    {
+        const double scale = position == DWPOS_FIT ? std::min(aw / iw, ah / ih) :
+                                                     std::max(aw / iw, ah / ih);
+        dw *= scale;
+        dh *= scale;
+    }
+    const double originX = area.left + (aw - dw) / 2;
+    const double originY = area.top + (ah - dh) / 2;
+    auto wrap = [](int v, int n) { return ((v % n) + n) % n; };
+    auto sample = [&](int x, int y) {
+        x = std::clamp(x, 0, iw - 1);
+        y = std::clamp(y, 0, ih - 1);
+        const auto *row = reinterpret_cast<const uint32_t *>(
+            static_cast<const BYTE *>(data.Scan0) + static_cast<ptrdiff_t>(y) * data.Stride);
+        return row[x];
+    };
+    auto opaque = [&](uint32_t p) {
+        const unsigned a = p >> 24;
+        auto channel = [&](unsigned shift) {
+            return (((p >> shift) & 255) * a + ((bg >> shift) & 255) * (255 - a) + 127) / 255;
+        };
+        return 0xff000000u | (channel(16) << 16) | (channel(8) << 8) | channel(0);
+    };
     for (int y = 0; y < height; ++y)
     {
-        const auto *row = reinterpret_cast<const uint32_t *>(static_cast<const BYTE *>(data.Scan0) +
-                                                             static_cast<ptrdiff_t>(y) * data.Stride);
-        std::copy_n(row, width, copy.data() + static_cast<size_t>(y) * width);
+        for (int x = 0; x < width; ++x)
+        {
+            const double sx = strip.left + x + 0.5;
+            const double sy = strip.top + y + 0.5;
+            auto &pixel = pixels[static_cast<size_t>(y) * width + x];
+            if (position == DWPOS_TILE)
+            {
+                pixel = opaque(sample(wrap(strip.left + x - area.left, iw),
+                                      wrap(strip.top + y - area.top, ih)));
+                continue;
+            }
+            if (sx < originX || sx >= originX + dw || sy < originY || sy >= originY + dh)
+                continue;
+            const double u = (sx - originX) * iw / dw - 0.5;
+            const double v = (sy - originY) * ih / dh - 0.5;
+            const int ix = static_cast<int>(std::floor(u));
+            const int iy = static_cast<int>(std::floor(v));
+            const double fx = u - ix, fy = v - iy;
+            const uint32_t p00 = opaque(sample(ix, iy));
+            const uint32_t p10 = opaque(sample(ix+1, iy));
+            const uint32_t p01 = opaque(sample(ix, iy+1));
+            const uint32_t p11 = opaque(sample(ix+1, iy+1));
+            auto channel = [&](unsigned shift) {
+                const double a = ((p00 >> shift) & 255) * (1-fx) + ((p10 >> shift) & 255) * fx;
+                const double b = ((p01 >> shift) & 255) * (1-fx) + ((p11 >> shift) & 255) * fx;
+                return static_cast<uint32_t>(std::lround(a*(1-fy) + b*fy));
+            };
+            pixel = 0xff000000u | (channel(16) << 16) | (channel(8) << 8) | channel(0);
+        }
     }
-    if (bitmap.UnlockBits(&data) != Gdiplus::Ok)
-        return false;
-    std::copy(copy.begin(), copy.end(), pixels);
-    return true;
+    return source.UnlockBits(&data) == Gdiplus::Ok;
 }
 static HFONT MakeFont(UINT dpi)
 {
     NONCLIENTMETRICSW metrics{sizeof(metrics)};
     LOGFONTW lf{};
-    if (SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0, dpi))
+    if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0))
         lf = metrics.lfMessageFont;
-    else
-        wcscpy_s(lf.lfFaceName, L"Microsoft YaHei UI");
     lf.lfHeight = -MulDiv(13, static_cast<int>(dpi), 72);
-    lf.lfWidth = 0;
     lf.lfWeight = FW_LIGHT;
     lf.lfQuality = ANTIALIASED_QUALITY;
     return CreateFontIndirectW(&lf);
@@ -724,9 +797,11 @@ static GlyphMask RasterText(const std::wstring &text, HFONT font, int width, int
         return out;
     dib.clear();
     auto old = SelectObject(dib.dc, font);
-    SetBkMode(dib.dc, TRANSPARENT);
-    SetTextColor(dib.dc, RGB(255, 255, 255));
     RECT bounds{0, 0, width, height};
+    FillRect(dib.dc, &bounds, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
+    SetBkMode(dib.dc, OPAQUE);
+    SetBkColor(dib.dc, RGB(0, 0, 0));
+    SetTextColor(dib.dc, RGB(255, 255, 255));
     DrawTextW(dib.dc, text.c_str(), static_cast<int>(text.size()), &bounds,
               DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_NOCLIP);
     SelectObject(dib.dc, old);
@@ -737,6 +812,22 @@ static GlyphMask RasterText(const std::wstring &text, HFONT font, int width, int
     for (size_t i = 0; i < out.coverage.size(); ++i)
         out.coverage[i] = static_cast<uint8_t>((dib.pixels[i] >> 16) & 255);
     return out;
+}
+bool TestGlyphComposition()
+{
+    HFONT font = MakeFont(96);
+    if (!font)
+        return false;
+    auto mask = RasterText(L"Windows test", font, 180, 48);
+    DeleteObject(font);
+    bool ink = false, transparent = false;
+    for (auto c : mask.coverage)
+    {
+        auto p = WallpaperPixel(0x42a9ef, c, 1);
+        if (!c) transparent |= p == 0;
+        if (c >= 240 && (p & 0xff) >= 224) ink = true;
+    }
+    return ink && transparent;
 }
 struct GeometrySnapshot
 {
@@ -802,6 +893,8 @@ struct App
     ULONGLONG lastTick = 0;
     double animationMs = 0;
     bool wallpaperDirty = false;
+    unsigned missingGeometry = 0;
+    ULONGLONG lastWallpaperPoll = 0;
     ~App()
     {
         if (font)
@@ -822,17 +915,18 @@ struct App
     }
     int Pad() const
     {
-        return Scale(2, dpi);
+        return 2;
     }
     int Measure(const std::wstring &s)
     {
         if (!mask || !font || s.size() > INT_MAX)
             return 0;
         auto old = SelectObject(mask->dc, font);
-        SIZE z{};
-        GetTextExtentPoint32W(mask->dc, s.c_str(), static_cast<int>(s.size()), &z);
+        RECT bounds{0, 0, 0, mask->h};
+        DrawTextW(mask->dc, s.c_str(), static_cast<int>(s.size()), &bounds,
+                  DT_SINGLELINE | DT_CALCRECT | DT_NOPREFIX);
         SelectObject(mask->dc, old);
-        return z.cx;
+        return std::max(0L, bounds.right);
     }
     Frame At(ULONGLONG /*now*/) const
     {
@@ -873,9 +967,12 @@ struct App
         {
             mask->clear();
             auto old = SelectObject(mask->dc, font);
-            SetBkMode(mask->dc, TRANSPARENT);
+            RECT background{0, 0, mask->w, mask->h};
+            FillRect(mask->dc, &background, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
+            SetBkMode(mask->dc, OPAQUE);
+            SetBkColor(mask->dc, RGB(0, 0, 0));
             SetTextColor(mask->dc, RGB(255, 255, 255));
-            RECT bounds{f.x, 0, mask->w, mask->h};
+            RECT bounds{f.x, 0, f.x + mask->w, mask->h};
             DrawTextW(mask->dc, s.c_str(), static_cast<int>(s.size()), &bounds,
                       DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_NOCLIP);
             SelectObject(mask->dc, old);
@@ -900,6 +997,8 @@ struct App
     }
     void Hide()
     {
+        if (!active && !IsWindowVisible(hwnd))
+            return;
         active = false;
         KillTimer(hwnd, AnimationTimer);
         ShowWindow(hwnd, SW_HIDE);
@@ -948,12 +1047,23 @@ struct App
         RECT bar = snapshot.bar;
         UINT d = snapshot.dpi;
         auto target = snapshot.target;
-        if (!target || Fullscreen(hwnd, bar))
+        HWND taskbar = FindWindowW(L"Shell_TrayWnd", nullptr);
+        RECT actualBar{};
+        if (!taskbar || !GetWindowRect(taskbar, &actualBar) || Fullscreen(hwnd, actualBar))
         {
             Hide();
             return;
         }
-        bool rebuild = !active || !SameRect(strip, *target) || dpi != d || wallpaper || wallpaperDirty;
+        if (!target)
+        {
+            // A transient accessibility failure while clicking the taskbar must
+            // not make the overlay flash. Two seconds without data hides it.
+            if (++missingGeometry >= 8) Hide();
+            return;
+        }
+        missingGeometry = 0;
+        bool rebuild = !active || !SameRect(strip, *target) || dpi != d;
+        bool refreshWallpaper = wallpaper || wallpaperDirty;
         wallpaperDirty = false;
         if (rebuild)
         {
@@ -971,10 +1081,30 @@ struct App
             Render(true);
             if (!active)
                 return;
-            ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+            if (!IsWindowVisible(hwnd))
+                ShowWindow(hwnd, SW_SHOWNOACTIVATE);
             Animate();
         }
-        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        else if (refreshWallpaper && wall)
+        {
+            if (!PaintWallpaper(*wall, strip, desktop.Get()))
+            {
+                Hide();
+                return;
+            }
+            Render(true);
+        }
+        // Only repair Z order when the taskbar actually moved above us.
+        // A periodic unconditional HWND_TOPMOST call can cause visible flicker.
+        for (HWND above = GetWindow(hwnd, GW_HWNDPREV); above; above = GetWindow(above, GW_HWNDPREV))
+        {
+            if (above == taskbar)
+            {
+                SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0,
+                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
+                break;
+            }
+        }
     }
     void Change()
     {
@@ -1020,9 +1150,17 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
                 a->Refresh();
             return 0;
         case WM_SETTINGCHANGE:
+            if (wp == SPI_SETDESKWALLPAPER || wp == 0)
+                a->wallpaperDirty = true;
+            return 0;
         case WM_DISPLAYCHANGE:
         case WM_DPICHANGED:
             a->wallpaperDirty = true;
+            return 0;
+        case WM_ERASEBKGND:
+            return 1;
+        case WM_PAINT:
+            ValidateRect(hwnd, nullptr);
             return 0;
         case WM_NCHITTEST:
             return HTTRANSPARENT;
@@ -1088,13 +1226,12 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
         else
         {
             app.hwnd = CreateWindowExW(
-                WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE,
-                kClass, L"JinJuApp", WS_POPUP | WS_DISABLED, 0, 0, 0, 0, nullptr, nullptr, instance, &app);
+                OverlayStyles(),
+                kClass, L"JinJuApp", WS_POPUP, 0, 0, 0, 0, nullptr, nullptr, instance, &app);
             if (!app.hwnd)
                 result = 1;
             else
             {
-                EnableWindow(app.hwnd, FALSE);
                 SetTimer(app.hwnd, QuoteTimer, 180000, nullptr);
                 SetTimer(app.hwnd, GeometryTimer, 250, nullptr);
                 app.Refresh();
