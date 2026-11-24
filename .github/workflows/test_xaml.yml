@@ -13,6 +13,8 @@ jobs:
         shell: pwsh
     steps:
       - uses: actions/checkout@v5
+      - name: Clean previous binaries
+        run: Remove-Item tests/JinJuApp.exe,tests/JinJuXaml.dll,tests/JinJuApp.exe.sha256,tests/JinJuXaml.dll.sha256 -Force -ErrorAction SilentlyContinue
       - name: Configure and compile
         id: build
         run: |
@@ -26,14 +28,20 @@ jobs:
           ctest --test-dir out/build/xaml-release -C Release --output-on-failure
           exit $LASTEXITCODE
       - name: Copy verified binaries
+        id: copy
         if: success()
         run: |
           Copy-Item out/build/xaml-release/Release/JinJuApp.exe, out/build/xaml-release/Release/JinJuXaml.dll tests/ -Force
-          Get-FileHash tests/JinJuApp.exe,tests/JinJuXaml.dll
+          foreach ($name in @('JinJuApp.exe','JinJuXaml.dll')) {
+            $source = (Get-FileHash "out/build/xaml-release/Release/$name").Hash
+            $dest = (Get-FileHash "tests/$name").Hash
+            if ($source -ne $dest) { throw "Copy hash mismatch: $name" }
+            "$dest  $name" | Set-Content "tests/$name.sha256" -Encoding ascii
+          }
       - name: Report
         if: always()
         run: |
-          @('# Native XAML test report','', 'Build: ${{ steps.build.outcome }}','CTest: ${{ steps.test.outcome }}','Live Explorer visual test: not performed') | Set-Content test_report.md
+          @('# Native XAML test report','', 'Build: ${{ steps.build.outcome }}','CTest: ${{ steps.test.outcome }}','Copy: ${{ steps.copy.outcome }}','Source: ${{ github.event.pull_request.head.sha }}','Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}','Live Explorer visual test: not performed') | Set-Content test_report.md
           Get-Content test_report.md >> $env:GITHUB_STEP_SUMMARY
       - uses: actions/upload-artifact@v5
         if: success()
@@ -42,6 +50,7 @@ jobs:
           path: |
             tests/JinJuApp.exe
             tests/JinJuXaml.dll
+            tests/*.sha256
             test_report.md
       - name: Publish report and binaries
         if: always() && github.event.pull_request.head.repo.full_name == github.repository
@@ -49,16 +58,16 @@ jobs:
           BRANCH: ${{ github.event.pull_request.head.ref }}
           SOURCE: ${{ github.event.pull_request.head.sha }}
           TEST: ${{ steps.test.outcome }}
+          COPY: ${{ steps.copy.outcome }}
         run: |
           git fetch origin "refs/heads/$env:BRANCH"
           if ($LASTEXITCODE -or (git rev-parse FETCH_HEAD) -ne $env:SOURCE) { throw 'Stale source' }
           git reset --soft $env:SOURCE
           git add test_report.md
-          git rm --ignore-unmatch tests/JinJuApp.exe.sha256
-          if ($env:TEST -eq 'success' -and (Test-Path tests/JinJuXaml.dll)) {
-            git add -f tests/JinJuApp.exe tests/JinJuXaml.dll
+          if ($env:TEST -eq 'success' -and $env:COPY -eq 'success') {
+            git add -f tests/JinJuApp.exe tests/JinJuXaml.dll tests/JinJuApp.exe.sha256 tests/JinJuXaml.dll.sha256
           } else {
-            git rm -f --ignore-unmatch tests/JinJuApp.exe tests/JinJuXaml.dll
+            git rm -f --ignore-unmatch tests/JinJuApp.exe tests/JinJuXaml.dll tests/JinJuApp.exe.sha256 tests/JinJuXaml.dll.sha256
           }
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'

@@ -7,7 +7,7 @@ int wmain(int argc,wchar_t** argv){
     auto dll=LoadLibraryW(argv[1]);if(!dll)return 2;
     using Get=HRESULT(WINAPI*)(REFCLSID,REFIID,void**);
     auto get=reinterpret_cast<Get>(GetProcAddress(dll,"DllGetClassObject"));
-    if(!get)return 3;
+    if(!get || !GetProcAddress(dll,"DllCanUnloadNow"))return 3;
     IClassFactory* factory=nullptr;
     if(FAILED(get(TapId,IID_IClassFactory,reinterpret_cast<void**>(&factory))))return 4;
     IObjectWithSite* tap=nullptr;

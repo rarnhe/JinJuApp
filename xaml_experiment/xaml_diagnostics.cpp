@@ -1,6 +1,7 @@
 #include "shared.h"
 #include <ocidl.h>
 #include <xamlom.h>
+#undef GetCurrentTime
 #include <winrt/Windows.UI.Xaml.Controls.h>
 #include <winrt/Windows.UI.Xaml.Media.h>
 #include <winrt/Windows.UI.Core.h>
@@ -101,9 +102,9 @@ struct Factory:implements<Factory,IClassFactory>{
     HRESULT STDMETHODCALLTYPE LockServer(BOOL) noexcept override{return S_OK;}
 };
 }
-extern "C" __declspec(dllexport) HRESULT WINAPI DllGetClassObject(REFCLSID cls,REFIID iid,void** out){
+STDAPI DllGetClassObject(REFCLSID cls,REFIID iid,void** out){
     if(!out)return E_POINTER;*out=nullptr;
     if(!IsEqualCLSID(cls,TapId))return CLASS_E_CLASSNOTAVAILABLE;
     try{return make_self<Factory>()->QueryInterface(iid,out);}catch(...){return to_hresult();}
 }
-extern "C" __declspec(dllexport) HRESULT WINAPI DllCanUnloadNow(){return S_FALSE;}
+STDAPI DllCanUnloadNow(){return S_FALSE;}

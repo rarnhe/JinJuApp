@@ -1,5 +1,3 @@
-# Native XAML test report
+# Native XAML experiment
 
-Build: failure
-CTest: skipped
-Live Explorer visual test: not performed
+Pending rebuild after COM export fix.
