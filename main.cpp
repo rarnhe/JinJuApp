@@ -774,40 +774,43 @@ static bool DiagnosticsEnabled()
 // rendered pixels, never the composed screen or other applications.
 static void SaveDiagnosticDib(const Dib &dib, const wchar_t *extension, bool frame)
 {
-    if (!DiagnosticsEnabled() || !dib.pixels) return;
+    if (!DiagnosticsEnabled() || !dib.pixels)
+        return;
     auto path = std::filesystem::path(ExePath()).replace_extension(extension);
     std::ofstream out(path, std::ios::binary | std::ios::trunc);
-    if (!out) return;
-    const DWORD stride = (static_cast<DWORD>(dib.w)*3+3)&~3u;
+    if (!out)
+        return;
+    const DWORD stride = (static_cast<DWORD>(dib.w) * 3 + 3) & ~3u;
     BITMAPFILEHEADER fh{};
     BITMAPINFOHEADER ih{};
-    fh.bfType=0x4d42;
-    fh.bfOffBits=sizeof(fh)+sizeof(ih);
-    fh.bfSize=fh.bfOffBits+stride*dib.h;
-    ih.biSize=sizeof(ih);
-    ih.biWidth=dib.w;
-    ih.biHeight=-dib.h;
-    ih.biPlanes=1;
-    ih.biBitCount=24;
-    ih.biSizeImage=stride*dib.h;
-    out.write(reinterpret_cast<const char*>(&fh),sizeof(fh));
-    out.write(reinterpret_cast<const char*>(&ih),sizeof(ih));
-    std::vector<char> row(stride,0);
-    for(int y=0;y<dib.h;++y)
+    fh.bfType = 0x4d42;
+    fh.bfOffBits = sizeof(fh) + sizeof(ih);
+    fh.bfSize = fh.bfOffBits + stride * dib.h;
+    ih.biSize = sizeof(ih);
+    ih.biWidth = dib.w;
+    ih.biHeight = -dib.h;
+    ih.biPlanes = 1;
+    ih.biBitCount = 24;
+    ih.biSizeImage = stride * dib.h;
+    out.write(reinterpret_cast<const char *>(&fh), sizeof(fh));
+    out.write(reinterpret_cast<const char *>(&ih), sizeof(ih));
+    std::vector<char> row(stride, 0);
+    for (int y = 0; y < dib.h; ++y)
     {
-        for(int x=0;x<dib.w;++x)
+        for (int x = 0; x < dib.w; ++x)
         {
-            const uint32_t p=dib.pixels[static_cast<size_t>(y)*dib.w+x];
-            const unsigned a=p>>24;
-            for(unsigned k=0;k<3;++k)
+            const uint32_t p = dib.pixels[static_cast<size_t>(y) * dib.w + x];
+            const unsigned a = p >> 24;
+            for (unsigned k = 0; k < 3; ++k)
             {
-                unsigned channel=(p>>(8*k))&255;
+                unsigned channel = (p >> (8 * k)) & 255;
                 // Show the premultiplied frame on a neutral gray background.
-                if(frame) channel=std::min(255u,channel+(128*(255-a)+127)/255);
-                row[3*x+k]=static_cast<char>(channel);
+                if (frame)
+                    channel = std::min(255u, channel + (128 * (255 - a) + 127) / 255);
+                row[3 * x + k] = static_cast<char>(channel);
             }
         }
-        out.write(row.data(),row.size());
+        out.write(row.data(), row.size());
     }
 }
 static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
@@ -827,7 +830,8 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         desktop->GetBackgroundColor(&background);
         desktop->GetPosition(&position);
         DESKTOP_SLIDESHOW_STATE state{};
-        if (SUCCEEDED(desktop->GetStatus(&state))) solid = (state & DSS_ENABLED) == 0;
+        if (SUCCEEDED(desktop->GetStatus(&state)))
+            solid = (state & DSS_ENABLED) == 0;
         UINT count = 0;
         if (SUCCEEDED(desktop->GetMonitorDevicePathCount(&count)))
         {
@@ -842,7 +846,8 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
                     LPWSTR path = nullptr;
                     if (SUCCEEDED(desktop->GetWallpaper(id, &path)))
                     {
-                        if (path) file = path;
+                        if (path)
+                            file = path;
                         resolved = !file.empty() || solid;
                     }
                     CoTaskMemFree(path);
@@ -923,8 +928,8 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         std::error_code stampError;
         auto stamp = std::filesystem::last_write_time(cached, stampError);
         if (!newest.empty() && (file.empty() || (!stampError && latest >= stamp)) &&
-            RasterWallpaper(dst.pixels, dst.w, dst.h, strip, mi.rcMonitor,
-                            newest.wstring(), DWPOS_STRETCH, background))
+            RasterWallpaper(dst.pixels, dst.w, dst.h, strip, mi.rcMonitor, newest.wstring(), DWPOS_STRETCH,
+                            background))
         {
             file = newest.wstring();
             area = mi.rcMonitor;
@@ -941,7 +946,8 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
     if (!ok && !solid && !cached.empty() && cached != file)
     {
         ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, cached, position, background);
-        if (ok) file = cached;
+        if (ok)
+            file = cached;
     }
     if (!ok)
     {
@@ -1344,7 +1350,8 @@ struct App
         frame->clear();
         Layer(previous, oldFrame, 1 - blend);
         Layer(current, f, blend);
-        if (force) SaveDiagnosticDib(*frame, L".frame.bmp", true);
+        if (force)
+            SaveDiagnosticDib(*frame, L".frame.bmp", true);
         POINT dest{strip.left, strip.top}, src{};
         SIZE size{frame->w, frame->h};
         BLENDFUNCTION bf{AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
@@ -1371,7 +1378,8 @@ struct App
     }
     void RepairOrder()
     {
-        if (!active) return;
+        if (!active)
+            return;
         HWND taskbar = FindWindowW(L"Shell_TrayWnd", nullptr);
         // Owned popups follow the owner's stacking automatically. Keep the
         // previous repair as fallback if Explorer was not present at startup.
@@ -1418,9 +1426,10 @@ struct App
         geometryStable = 0;
         bool rebuild = !active || !SameRect(strip, *target) || dpi != d;
         const auto now = GetTickCount64();
-        bool refreshWallpaper = wallpaper || wallpaperDirty ||
-            (!wallpaperReady && now-lastWallpaperPoll >= 10000);
-        if (refreshWallpaper || rebuild) lastWallpaperPoll = now;
+        bool refreshWallpaper =
+            wallpaper || wallpaperDirty || (!wallpaperReady && now - lastWallpaperPoll >= 10000);
+        if (refreshWallpaper || rebuild)
+            lastWallpaperPoll = now;
         wallpaperDirty = false;
         if (rebuild)
         {
@@ -1499,24 +1508,33 @@ bool TestOverlayOrder()
 }
 bool TestOwnedOverlayOrder()
 {
-    HINSTANCE instance=GetModuleHandleW(nullptr);
-    HWND tray=CreateWindowExW(WS_EX_TOPMOST|WS_EX_NOACTIVATE|WS_EX_TOOLWINDOW,L"STATIC",L"",
-                              WS_POPUP,20,20,160,45,nullptr,nullptr,instance,nullptr);
-    if(!tray) return false;
-    HWND overlay=CreateWindowExW(OverlayStyles(),L"STATIC",L"",WS_POPUP,
-                                20,20,160,45,tray,nullptr,instance,nullptr);
-    if(!overlay) { DestroyWindow(tray); return false; }
-    ShowWindow(tray,SW_SHOWNOACTIVATE);
-    ShowWindow(overlay,SW_SHOWNOACTIVATE);
-    RECT before{},after{};
-    GetWindowRect(overlay,&before);
-    SetWindowPos(tray,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
-    bool above=false;
-    for(HWND w=GetWindow(tray,GW_HWNDPREV);w;w=GetWindow(w,GW_HWNDPREV))
-        if(w==overlay) { above=true; break; }
-    GetWindowRect(overlay,&after);
-    bool ok=above && GetWindow(overlay,GW_OWNER)==tray && SameRect(before,after) &&
-        (GetWindowLongPtrW(overlay,GWL_EXSTYLE)&WS_EX_TRANSPARENT);
+    HINSTANCE instance = GetModuleHandleW(nullptr);
+    HWND tray = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, L"STATIC", L"", WS_POPUP,
+                                20, 20, 160, 45, nullptr, nullptr, instance, nullptr);
+    if (!tray)
+        return false;
+    HWND overlay = CreateWindowExW(OverlayStyles(), L"STATIC", L"", WS_POPUP, 20, 20, 160, 45, tray, nullptr,
+                                   instance, nullptr);
+    if (!overlay)
+    {
+        DestroyWindow(tray);
+        return false;
+    }
+    ShowWindow(tray, SW_SHOWNOACTIVATE);
+    ShowWindow(overlay, SW_SHOWNOACTIVATE);
+    RECT before{}, after{};
+    GetWindowRect(overlay, &before);
+    SetWindowPos(tray, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    bool above = false;
+    for (HWND w = GetWindow(tray, GW_HWNDPREV); w; w = GetWindow(w, GW_HWNDPREV))
+        if (w == overlay)
+        {
+            above = true;
+            break;
+        }
+    GetWindowRect(overlay, &after);
+    bool ok = above && GetWindow(overlay, GW_OWNER) == tray && SameRect(before, after) &&
+              (GetWindowLongPtrW(overlay, GWL_EXSTYLE) & WS_EX_TRANSPARENT);
     DestroyWindow(overlay);
     DestroyWindow(tray);
     return ok;
@@ -1668,8 +1686,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
         else
         {
             HWND taskbarOwner = FindWindowW(L"Shell_TrayWnd", nullptr);
-            app.hwnd = CreateWindowExW(OverlayStyles(), kClass, L"JinJuApp", WS_POPUP, 0, 0, 0, 0, taskbarOwner,
-                                       nullptr, instance, &app);
+            app.hwnd = CreateWindowExW(OverlayStyles(), kClass, L"JinJuApp", WS_POPUP, 0, 0, 0, 0,
+                                       taskbarOwner, nullptr, instance, &app);
             if (!app.hwnd)
                 result = 1;
             else
