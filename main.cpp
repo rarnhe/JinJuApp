@@ -30,18 +30,20 @@ constexpr UINT ShellForegroundChanged = WM_APP + 1;
 static HWND eventTarget = nullptr;
 static void CALLBACK ForegroundChanged(HWINEVENTHOOK, DWORD, HWND, LONG, LONG, DWORD, DWORD)
 {
-    if (eventTarget) PostMessageW(eventTarget, ShellForegroundChanged, 0, 0);
+    if (eventTarget)
+        PostMessageW(eventTarget, ShellForegroundChanged, 0, 0);
 }
 // Restore only when Explorer has actually covered the overlay. No hide/show,
 // activation, move, resize or surface reconstruction is necessary.
 bool RestoreOverlayOrder(HWND overlay, HWND taskbar)
 {
-    if (!IsWindowVisible(overlay) || !taskbar) return false;
+    if (!IsWindowVisible(overlay) || !taskbar)
+        return false;
     for (HWND above = GetWindow(overlay, GW_HWNDPREV); above; above = GetWindow(above, GW_HWNDPREV))
     {
         if (above == taskbar)
             return SetWindowPos(overlay, HWND_TOPMOST, 0, 0, 0, 0,
-                SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER) != FALSE;
+                                SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER) != FALSE;
     }
     return false;
 }
@@ -748,8 +750,10 @@ static bool CaptureDesktopBackground(Dib &dst, RECT strip)
         for (int x = 0; x < dst.w; ++x)
         {
             uint32_t rgb = capture.pixels[static_cast<size_t>(sy + y) * w + sx + x] & 0xffffff;
-            if (rgb == 0xff00ff) untouched = true;
-            if (rgb != 0 && rgb != 0xff00ff) usable = true;
+            if (rgb == 0xff00ff)
+                untouched = true;
+            if (rgb != 0 && rgb != 0xff00ff)
+                usable = true;
         }
     if (!usable || untouched)
         return false;
@@ -906,7 +910,7 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
     if (GetEnvironmentVariableW(L"JINJU_DIAGNOSTICS", nullptr, 0))
     {
         std::wofstream diagnostics(std::filesystem::path(ExePath()).replace_extension(L".wallpaper.log"),
-                                  std::ios::app);
+                                   std::ios::app);
         diagnostics << L"source=" << file << L" " << log;
     }
     return true;
@@ -930,34 +934,37 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
     struct ComScope
     {
         HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-        ~ComScope() { if (SUCCEEDED(hr)) CoUninitialize(); }
+        ~ComScope()
+        {
+            if (SUCCEEDED(hr))
+                CoUninitialize();
+        }
     } com;
     if (FAILED(com.hr) && com.hr != RPC_E_CHANGED_MODE)
         return false;
     ComPtr<IWICImagingFactory> factory;
     if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
-                               IID_PPV_ARGS(factory.GetAddressOf()))))
+                                IID_PPV_ARGS(factory.GetAddressOf()))))
         return false;
     ComPtr<IWICBitmapDecoder> decoder;
     if (FAILED(factory->CreateDecoderFromFilename(file.c_str(), nullptr, GENERIC_READ,
-                                                 WICDecodeMetadataCacheOnLoad, &decoder)))
+                                                  WICDecodeMetadataCacheOnLoad, &decoder)))
         return false;
     ComPtr<IWICBitmapFrameDecode> source;
     if (FAILED(decoder->GetFrame(0, &source)))
         return false;
-    UINT sw=0, sh=0;
-    if (FAILED(source->GetSize(&sw, &sh)) || !sw || !sh ||
-        static_cast<uint64_t>(sw)*sh > 64*1024*1024)
+    UINT sw = 0, sh = 0;
+    if (FAILED(source->GetSize(&sw, &sh)) || !sw || !sh || static_cast<uint64_t>(sw) * sh > 64 * 1024 * 1024)
         return false;
-    const int iw=static_cast<int>(sw), ih=static_cast<int>(sh);
+    const int iw = static_cast<int>(sw), ih = static_cast<int>(sh);
     ComPtr<IWICFormatConverter> converter;
     if (FAILED(factory->CreateFormatConverter(&converter)) ||
-        FAILED(converter->Initialize(source.Get(), GUID_WICPixelFormat32bppBGRA,
-                                    WICBitmapDitherTypeNone, nullptr, 0, WICBitmapPaletteTypeCustom)))
+        FAILED(converter->Initialize(source.Get(), GUID_WICPixelFormat32bppBGRA, WICBitmapDitherTypeNone,
+                                     nullptr, 0, WICBitmapPaletteTypeCustom)))
         return false;
-    std::vector<uint32_t> decoded(static_cast<size_t>(sw)*sh);
-    if (FAILED(converter->CopyPixels(nullptr, sw*4, static_cast<UINT>(decoded.size()*4),
-                                    reinterpret_cast<BYTE*>(decoded.data()))))
+    std::vector<uint32_t> decoded(static_cast<size_t>(sw) * sh);
+    if (FAILED(converter->CopyPixels(nullptr, sw * 4, static_cast<UINT>(decoded.size() * 4),
+                                     reinterpret_cast<BYTE *>(decoded.data()))))
         return false;
 
     const double aw = area.right - area.left;
@@ -980,7 +987,7 @@ bool RasterWallpaper(uint32_t *pixels, int width, int height, RECT strip, RECT a
     auto sample = [&](int x, int y) {
         x = std::clamp(x, 0, iw - 1);
         y = std::clamp(y, 0, ih - 1);
-        return decoded[static_cast<size_t>(y)*iw+x];
+        return decoded[static_cast<size_t>(y) * iw + x];
     };
     auto opaque = [&](uint32_t p) {
         const unsigned a = p >> 24;
@@ -1299,7 +1306,8 @@ struct App
     }
     void RepairOrder()
     {
-        if (active) RestoreOverlayOrder(hwnd, FindWindowW(L"Shell_TrayWnd", nullptr));
+        if (active)
+            RestoreOverlayOrder(hwnd, FindWindowW(L"Shell_TrayWnd", nullptr));
     }
     void Refresh(bool wallpaper = false)
     {
@@ -1392,26 +1400,28 @@ struct App
 bool TestOverlayOrder()
 {
     HINSTANCE instance = GetModuleHandleW(nullptr);
-    HWND overlay = CreateWindowExW(OverlayStyles(), L"STATIC", L"", WS_POPUP,
-                                    20,20,160,45,nullptr,nullptr,instance,nullptr);
-    HWND tray = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW,
-                                 L"STATIC", L"", WS_POPUP,20,20,160,45,nullptr,nullptr,instance,nullptr);
+    HWND overlay = CreateWindowExW(OverlayStyles(), L"STATIC", L"", WS_POPUP, 20, 20, 160, 45, nullptr,
+                                   nullptr, instance, nullptr);
+    HWND tray = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, L"STATIC", L"", WS_POPUP,
+                                20, 20, 160, 45, nullptr, nullptr, instance, nullptr);
     if (!overlay || !tray)
     {
-        if (overlay) DestroyWindow(overlay);
-        if (tray) DestroyWindow(tray);
+        if (overlay)
+            DestroyWindow(overlay);
+        if (tray)
+            DestroyWindow(tray);
         return false;
     }
     ShowWindow(overlay, SW_SHOWNOACTIVATE);
-    SetWindowPos(tray, HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE|SWP_SHOWWINDOW);
-    RECT before{},after{};
-    GetWindowRect(overlay,&before);
-    const bool repaired=RestoreOverlayOrder(overlay,tray);
-    GetWindowRect(overlay,&after);
-    const bool stable=!RestoreOverlayOrder(overlay,tray);
+    SetWindowPos(tray, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    RECT before{}, after{};
+    GetWindowRect(overlay, &before);
+    const bool repaired = RestoreOverlayOrder(overlay, tray);
+    GetWindowRect(overlay, &after);
+    const bool stable = !RestoreOverlayOrder(overlay, tray);
     DestroyWindow(tray);
     DestroyWindow(overlay);
-    return repaired && stable && SameRect(before,after);
+    return repaired && stable && SameRect(before, after);
 }
 bool TestRenderPipeline()
 {
@@ -1566,8 +1576,9 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
             else
             {
                 eventTarget = app.hwnd;
-                HWINEVENTHOOK foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
-                    nullptr, ForegroundChanged, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+                HWINEVENTHOOK foregroundHook =
+                    SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, nullptr,
+                                    ForegroundChanged, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
                 SetTimer(app.hwnd, QuoteTimer, 180000, nullptr);
                 SetTimer(app.hwnd, GeometryTimer, 250, nullptr);
                 app.Refresh();
@@ -1578,7 +1589,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
                     TranslateMessage(&msg);
                     DispatchMessageW(&msg);
                 }
-                if (foregroundHook) UnhookWinEvent(foregroundHook);
+                if (foregroundHook)
+                    UnhookWinEvent(foregroundHook);
                 eventTarget = nullptr;
                 if (status == -1)
                     result = 1;
