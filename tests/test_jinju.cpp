@@ -124,6 +124,7 @@ int main(int argc, char **argv)
         {
             CHECK(TestRenderPipeline());
             CHECK(TestOverlayOrder());
+            CHECK(TestOwnedOverlayOrder());
         }
         else if (name == "quotes")
         {

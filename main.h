@@ -30,5 +30,6 @@ DWORD OverlayStyles();
 bool TestGlyphComposition();
 bool TestRenderPipeline();
 bool TestOverlayOrder();
+bool TestOwnedOverlayOrder();
 bool SameRect(const RECT &a, const RECT &b, int tolerance = 0);
 } // namespace jinju

@@ -766,6 +766,50 @@ static bool CaptureDesktopBackground(Dib &dst, RECT strip)
 }
 // Resolve the actual wallpaper for the monitor; never capture the composed
 // screen, since that would copy the taskbar and our own text back into itself.
+static bool DiagnosticsEnabled()
+{
+    return GetEnvironmentVariableW(L"JINJU_DIAGNOSTICS", nullptr, 0) != 0;
+}
+// Diagnostic output contains only the sampled wallpaper strip or our own
+// rendered pixels, never the composed screen or other applications.
+static void SaveDiagnosticDib(const Dib &dib, const wchar_t *extension, bool frame)
+{
+    if (!DiagnosticsEnabled() || !dib.pixels) return;
+    auto path = std::filesystem::path(ExePath()).replace_extension(extension);
+    std::ofstream out(path, std::ios::binary | std::ios::trunc);
+    if (!out) return;
+    const DWORD stride = (static_cast<DWORD>(dib.w)*3+3)&~3u;
+    BITMAPFILEHEADER fh{};
+    BITMAPINFOHEADER ih{};
+    fh.bfType=0x4d42;
+    fh.bfOffBits=sizeof(fh)+sizeof(ih);
+    fh.bfSize=fh.bfOffBits+stride*dib.h;
+    ih.biSize=sizeof(ih);
+    ih.biWidth=dib.w;
+    ih.biHeight=-dib.h;
+    ih.biPlanes=1;
+    ih.biBitCount=24;
+    ih.biSizeImage=stride*dib.h;
+    out.write(reinterpret_cast<const char*>(&fh),sizeof(fh));
+    out.write(reinterpret_cast<const char*>(&ih),sizeof(ih));
+    std::vector<char> row(stride,0);
+    for(int y=0;y<dib.h;++y)
+    {
+        for(int x=0;x<dib.w;++x)
+        {
+            const uint32_t p=dib.pixels[static_cast<size_t>(y)*dib.w+x];
+            const unsigned a=p>>24;
+            for(unsigned k=0;k<3;++k)
+            {
+                unsigned channel=(p>>(8*k))&255;
+                // Show the premultiplied frame on a neutral gray background.
+                if(frame) channel=std::min(255u,channel+(128*(255-a)+127)/255);
+                row[3*x+k]=static_cast<char>(channel);
+            }
+        }
+        out.write(row.data(),row.size());
+    }
+}
 static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
 {
     HMONITOR monitor = MonitorFromRect(&strip, MONITOR_DEFAULTTONEAREST);
@@ -777,10 +821,13 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
     COLORREF background = GetSysColor(COLOR_BACKGROUND);
     DESKTOP_WALLPAPER_POSITION position = DWPOS_FILL;
     bool resolved = false;
+    bool solid = false;
     if (desktop)
     {
         desktop->GetBackgroundColor(&background);
         desktop->GetPosition(&position);
+        DESKTOP_SLIDESHOW_STATE state{};
+        if (SUCCEEDED(desktop->GetStatus(&state))) solid = (state & DSS_ENABLED) == 0;
         UINT count = 0;
         if (SUCCEEDED(desktop->GetMonitorDevicePathCount(&count)))
         {
@@ -795,9 +842,8 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
                     LPWSTR path = nullptr;
                     if (SUCCEEDED(desktop->GetWallpaper(id, &path)))
                     {
-                        resolved = true;
-                        if (path)
-                            file = path;
+                        if (path) file = path;
+                        resolved = !file.empty() || solid;
                     }
                     CoTaskMemFree(path);
                     CoTaskMemFree(id);
@@ -817,11 +863,11 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         if (SystemParametersInfoW(SPI_GETDESKWALLPAPER, static_cast<UINT>(buffer.size()), buffer.data(), 0))
         {
             fallback = buffer.data();
-            if (!resolved && fallback.empty())
+            if (!resolved && fallback.empty() && solid)
                 resolved = true;
         }
     }
-    if (file.empty() && !fallback.empty())
+    if (!solid && file.empty() && !fallback.empty())
     {
         file = fallback;
         resolved = true;
@@ -849,7 +895,7 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
     }
     // CachedFiles contains Explorer's already scaled wallpaper for a monitor.
     // Prefer a matching-size cache only when the source path is unavailable.
-    if (!resolved && !cached.empty())
+    if (!solid && !cached.empty() && position != DWPOS_SPAN)
     {
         auto dir = std::filesystem::path(cached).parent_path() / L"CachedFiles";
         std::error_code ec;
@@ -871,9 +917,20 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
                 latest = time;
             }
         }
-        if (!newest.empty() && RasterWallpaper(dst.pixels, dst.w, dst.h, strip, mi.rcMonitor,
-                                               newest.wstring(), DWPOS_STRETCH, background))
-            return true;
+        // A cache newer than the resolved source is a candidate for the actual
+        // scaled desktop, but only accept matching dimensions and a current
+        // transcoded-wallpaper timestamp to avoid stale caches.
+        std::error_code stampError;
+        auto stamp = std::filesystem::last_write_time(cached, stampError);
+        if (!newest.empty() && (file.empty() || (!stampError && latest >= stamp)) &&
+            RasterWallpaper(dst.pixels, dst.w, dst.h, strip, mi.rcMonitor,
+                            newest.wstring(), DWPOS_STRETCH, background))
+        {
+            file = newest.wstring();
+            area = mi.rcMonitor;
+            position = DWPOS_STRETCH;
+            resolved = true;
+        }
     }
     bool ok = resolved && RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
     if (!ok && !fallback.empty() && fallback != file)
@@ -881,8 +938,11 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         file = fallback;
         ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, file, position, background);
     }
-    if (!ok && !cached.empty() && cached != file)
+    if (!ok && !solid && !cached.empty() && cached != file)
+    {
         ok = RasterWallpaper(dst.pixels, dst.w, dst.h, strip, area, cached, position, background);
+        if (ok) file = cached;
+    }
     if (!ok)
     {
         OutputDebugStringW(L"JinJuApp: wallpaper decoding failed; trying desktop surface.\n");
@@ -899,15 +959,19 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         maxRGB = std::max(maxRGB, rgb);
         colored += rgb != 0;
     }
-    if (!colored && CaptureDesktopBackground(dst, strip))
+    if (!colored && !solid && CaptureDesktopBackground(dst, strip))
+    {
+        SaveDiagnosticDib(dst, L".wallpaper.bmp", false);
         return true;
+    }
     wchar_t log[256]{};
     swprintf_s(log,
                L"JinJuApp wallpaper: position=%d rect=(%ld,%ld,%ld,%ld) nonblack=%zu/%zu range=%06X..%06X\n",
                static_cast<int>(position), strip.left, strip.top, strip.right, strip.bottom, colored, n,
                static_cast<unsigned>(minRGB), static_cast<unsigned>(maxRGB));
     OutputDebugStringW(log);
-    if (GetEnvironmentVariableW(L"JINJU_DIAGNOSTICS", nullptr, 0))
+    SaveDiagnosticDib(dst, L".wallpaper.bmp", false);
+    if (DiagnosticsEnabled())
     {
         std::wofstream diagnostics(std::filesystem::path(ExePath()).replace_extension(L".wallpaper.log"),
                                    std::ios::app);
@@ -1280,6 +1344,7 @@ struct App
         frame->clear();
         Layer(previous, oldFrame, 1 - blend);
         Layer(current, f, blend);
+        if (force) SaveDiagnosticDib(*frame, L".frame.bmp", true);
         POINT dest{strip.left, strip.top}, src{};
         SIZE size{frame->w, frame->h};
         BLENDFUNCTION bf{AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
@@ -1306,8 +1371,12 @@ struct App
     }
     void RepairOrder()
     {
-        if (active)
-            RestoreOverlayOrder(hwnd, FindWindowW(L"Shell_TrayWnd", nullptr));
+        if (!active) return;
+        HWND taskbar = FindWindowW(L"Shell_TrayWnd", nullptr);
+        // Owned popups follow the owner's stacking automatically. Keep the
+        // previous repair as fallback if Explorer was not present at startup.
+        if (GetWindow(hwnd, GW_OWNER) != taskbar)
+            RestoreOverlayOrder(hwnd, taskbar);
     }
     void Refresh(bool wallpaper = false)
     {
@@ -1334,6 +1403,8 @@ struct App
         missingGeometry = 0;
         if (active && !SameRect(strip, *target))
         {
+            if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000) || (GetAsyncKeyState(VK_RBUTTON) & 0x8000))
+                return;
             if (!pendingGeometry || !SameRect(*pendingGeometry, *target))
             {
                 pendingGeometry = target;
@@ -1346,7 +1417,10 @@ struct App
         pendingGeometry.reset();
         geometryStable = 0;
         bool rebuild = !active || !SameRect(strip, *target) || dpi != d;
-        bool refreshWallpaper = wallpaper || wallpaperDirty;
+        const auto now = GetTickCount64();
+        bool refreshWallpaper = wallpaper || wallpaperDirty ||
+            (!wallpaperReady && now-lastWallpaperPoll >= 10000);
+        if (refreshWallpaper || rebuild) lastWallpaperPoll = now;
         wallpaperDirty = false;
         if (rebuild)
         {
@@ -1422,6 +1496,30 @@ bool TestOverlayOrder()
     DestroyWindow(tray);
     DestroyWindow(overlay);
     return repaired && stable && SameRect(before, after);
+}
+bool TestOwnedOverlayOrder()
+{
+    HINSTANCE instance=GetModuleHandleW(nullptr);
+    HWND tray=CreateWindowExW(WS_EX_TOPMOST|WS_EX_NOACTIVATE|WS_EX_TOOLWINDOW,L"STATIC",L"",
+                              WS_POPUP,20,20,160,45,nullptr,nullptr,instance,nullptr);
+    if(!tray) return false;
+    HWND overlay=CreateWindowExW(OverlayStyles(),L"STATIC",L"",WS_POPUP,
+                                20,20,160,45,tray,nullptr,instance,nullptr);
+    if(!overlay) { DestroyWindow(tray); return false; }
+    ShowWindow(tray,SW_SHOWNOACTIVATE);
+    ShowWindow(overlay,SW_SHOWNOACTIVATE);
+    RECT before{},after{};
+    GetWindowRect(overlay,&before);
+    SetWindowPos(tray,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
+    bool above=false;
+    for(HWND w=GetWindow(tray,GW_HWNDPREV);w;w=GetWindow(w,GW_HWNDPREV))
+        if(w==overlay) { above=true; break; }
+    GetWindowRect(overlay,&after);
+    bool ok=above && GetWindow(overlay,GW_OWNER)==tray && SameRect(before,after) &&
+        (GetWindowLongPtrW(overlay,GWL_EXSTYLE)&WS_EX_TRANSPARENT);
+    DestroyWindow(overlay);
+    DestroyWindow(tray);
+    return ok;
 }
 bool TestRenderPipeline()
 {
@@ -1569,7 +1667,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
             result = 1;
         else
         {
-            app.hwnd = CreateWindowExW(OverlayStyles(), kClass, L"JinJuApp", WS_POPUP, 0, 0, 0, 0, nullptr,
+            HWND taskbarOwner = FindWindowW(L"Shell_TrayWnd", nullptr);
+            app.hwnd = CreateWindowExW(OverlayStyles(), kClass, L"JinJuApp", WS_POPUP, 0, 0, 0, 0, taskbarOwner,
                                        nullptr, instance, &app);
             if (!app.hwnd)
                 result = 1;
