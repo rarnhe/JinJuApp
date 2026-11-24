@@ -632,7 +632,8 @@ static std::optional<RECT> TaskbarStrip(IUIAutomation *uia, RECT &bar, UINT &dpi
     const LSTATUS status =
         RegGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                      L"TaskbarAl", RRF_RT_REG_DWORD, nullptr, &alignment, &bytes);
-    const bool centered = status == ERROR_SUCCESS ? alignment != 0 : startBounds.left - bar.left > Scale(48, dpi);
+    const bool centered =
+        status == ERROR_SUCCESS ? alignment != 0 : startBounds.left - bar.left > Scale(48, dpi);
     std::optional<RECT> result;
     if (centered)
     {
@@ -833,13 +834,19 @@ static bool PaintWallpaper(Dib &dst, RECT strip, IDesktopWallpaper *desktop)
         std::filesystem::file_time_type latest{};
         for (std::filesystem::directory_iterator it(dir, ec), end; !ec && it != end; it.increment(ec))
         {
-            if (!it->is_regular_file(ec)) continue;
+            if (!it->is_regular_file(ec))
+                continue;
             Gdiplus::Bitmap image(it->path().c_str());
             if (image.GetLastStatus() != Gdiplus::Ok ||
-                image.GetWidth() != static_cast<UINT>(mi.rcMonitor.right-mi.rcMonitor.left) ||
-                image.GetHeight() != static_cast<UINT>(mi.rcMonitor.bottom-mi.rcMonitor.top)) continue;
+                image.GetWidth() != static_cast<UINT>(mi.rcMonitor.right - mi.rcMonitor.left) ||
+                image.GetHeight() != static_cast<UINT>(mi.rcMonitor.bottom - mi.rcMonitor.top))
+                continue;
             auto time = it->last_write_time(ec);
-            if (!ec && (newest.empty() || time > latest)) { newest = it->path(); latest = time; }
+            if (!ec && (newest.empty() || time > latest))
+            {
+                newest = it->path();
+                latest = time;
+            }
         }
         if (!newest.empty() && RasterWallpaper(dst.pixels, dst.w, dst.h, strip, mi.rcMonitor,
                                                newest.wstring(), DWPOS_STRETCH, background))
@@ -1224,8 +1231,7 @@ struct App
         SIZE size{frame->w, frame->h};
         BLENDFUNCTION bf{AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
         GdiFlush();
-        if (!UpdateLayeredWindow(hwnd, nullptr, &dest, &size,
-                                 frame->dc, &src, 0, &bf, ULW_ALPHA))
+        if (!UpdateLayeredWindow(hwnd, nullptr, &dest, &size, frame->dc, &src, 0, &bf, ULW_ALPHA))
         {
             Hide();
             return;
@@ -1310,7 +1316,6 @@ struct App
             wallpaperReady = PaintWallpaper(*wall, strip, desktop.Get());
             Render(true);
         }
-
     }
     void Change()
     {
@@ -1336,38 +1341,46 @@ struct App
 bool TestRenderPipeline()
 {
     App app;
-    app.strip = {20,20,180,65};
+    app.strip = {20, 20, 180, 65};
     app.current = L"Long marquee text for Windows rendering regression test";
-    app.mask = std::make_unique<Dib>(160,45);
-    app.frame = std::make_unique<Dib>(160,45);
-    app.wall = std::make_unique<Dib>(160,45);
+    app.mask = std::make_unique<Dib>(160, 45);
+    app.frame = std::make_unique<Dib>(160, 45);
+    app.wall = std::make_unique<Dib>(160, 45);
     app.font = MakeFont(96);
-    if (!app.font || !*app.mask || !*app.frame || !*app.wall) return false;
+    if (!app.font || !*app.mask || !*app.frame || !*app.wall)
+        return false;
     app.textWidth = app.Measure(app.current);
-    if (app.textWidth <= 156) return false;
-    std::fill_n(app.wall->pixels, 160*45, 0xff35a9ef);
+    if (app.textWidth <= 156)
+        return false;
+    std::fill_n(app.wall->pixels, 160 * 45, 0xff35a9ef);
     app.wallpaperReady = true;
     app.frame->clear();
-    app.Layer(app.current, {2,1}, 1);
-    std::vector<uint32_t> first(app.frame->pixels, app.frame->pixels+160*45);
-    bool ink=false, clear=false;
-    for (auto p:first)
+    app.Layer(app.current, {2, 1}, 1);
+    std::vector<uint32_t> first(app.frame->pixels, app.frame->pixels + 160 * 45);
+    bool ink = false, clear = false;
+    for (auto p : first)
     {
-        if ((p>>24)==255 && (p&0xffffff)==0x35a9ef) ink=true;
-        if (p==0) clear=true;
+        if ((p >> 24) == 255 && (p & 0xffffff) == 0x35a9ef)
+            ink = true;
+        if (p == 0)
+            clear = true;
     }
-    if (!ink || !clear) return false;
+    if (!ink || !clear)
+        return false;
     app.frame->clear();
-    app.Layer(app.current, {-25,1}, 1);
-    if (std::equal(first.begin(),first.end(),app.frame->pixels)) return false;
-    HWND window=CreateWindowExW(OverlayStyles(), L"STATIC", L"", WS_POPUP,
-                               20,20,160,45,nullptr,nullptr,GetModuleHandleW(nullptr),nullptr);
-    if (!window) return false;
-    POINT dst{20,20}, src{};
-    SIZE size{160,45};
-    BLENDFUNCTION blend{AC_SRC_OVER,0,255,AC_SRC_ALPHA};
+    app.Layer(app.current, {-25, 1}, 1);
+    if (std::equal(first.begin(), first.end(), app.frame->pixels))
+        return false;
+    HWND window = CreateWindowExW(OverlayStyles(), L"STATIC", L"", WS_POPUP, 20, 20, 160, 45, nullptr,
+                                  nullptr, GetModuleHandleW(nullptr), nullptr);
+    if (!window)
+        return false;
+    POINT dst{20, 20}, src{};
+    SIZE size{160, 45};
+    BLENDFUNCTION blend{AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
     GdiFlush();
-    bool ok=UpdateLayeredWindow(window,nullptr,&dst,&size,app.frame->dc,&src,0,&blend,ULW_ALPHA)!=FALSE;
+    bool ok =
+        UpdateLayeredWindow(window, nullptr, &dst, &size, app.frame->dc, &src, 0, &blend, ULW_ALPHA) != FALSE;
     DestroyWindow(window);
     return ok;
 }
