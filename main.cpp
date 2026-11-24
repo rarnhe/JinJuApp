@@ -457,25 +457,27 @@ bool IsShellViewClass(const std::wstring &cls, const std::wstring &title, bool e
         return true;
     if (cls == L"MultitaskingViewFrame" || cls == L"TaskSwitcherWnd")
         return true;
-    return explorer && (cls == L"XamlExplorerHostIslandWindow" ||
-                         cls == L"XamlExplorerHostIslandWindow_WASDK") &&
+    return explorer &&
+           (cls == L"XamlExplorerHostIslandWindow" || cls == L"XamlExplorerHostIslandWindow_WASDK") &&
            (title.empty() || title == L"Task View" || title == L"任务视图" || title == L"工作檢視");
 }
 static bool ShellView(HWND window)
 {
-    if (!window) return false;
+    if (!window)
+        return false;
     wchar_t cls[128]{}, title[128]{};
-    GetClassNameW(window,cls,128);
-    GetWindowTextW(window,title,128);
-    DWORD pid=0,shellPid=0;
-    GetWindowThreadProcessId(window,&pid);
-    GetWindowThreadProcessId(FindWindowW(L"Shell_TrayWnd",nullptr),&shellPid);
-    return IsShellViewClass(cls,title,pid!=0 && pid==shellPid);
+    GetClassNameW(window, cls, 128);
+    GetWindowTextW(window, title, 128);
+    DWORD pid = 0, shellPid = 0;
+    GetWindowThreadProcessId(window, &pid);
+    GetWindowThreadProcessId(FindWindowW(L"Shell_TrayWnd", nullptr), &shellPid);
+    return IsShellViewClass(cls, title, pid != 0 && pid == shellPid);
 }
 static bool Fullscreen(HWND strip, RECT bar)
 {
     HWND fg = GetForegroundWindow();
-    if (ShellView(fg) || fg == GetShellWindow() || fg == GetDesktopWindow()) return false;
+    if (ShellView(fg) || fg == GetShellWindow() || fg == GetDesktopWindow())
+        return false;
     QUERY_USER_NOTIFICATION_STATE s{};
     if (SUCCEEDED(SHQueryUserNotificationState(&s)) && (s == QUNS_QUIET_TIME || s == QUNS_PRESENTATION_MODE))
         return true;
@@ -1230,26 +1232,33 @@ struct GeometryWorker
 };
 // Composite the first covering window in Z order. White is the background
 // and also the conservative result when the top window cannot be captured.
-void ClaimWindowPixels(uint32_t *output, uint8_t *claimed, RECT strip, RECT window,
-                       const uint32_t *source, int stride, HRGN region, BYTE opacity)
+void ClaimWindowPixels(uint32_t *output, uint8_t *claimed, RECT strip, RECT window, const uint32_t *source,
+                       int stride, HRGN region, BYTE opacity)
 {
     RECT overlap{};
-    if (!IntersectRect(&overlap,&strip,&window)) return;
-    const int width=strip.right-strip.left;
-    for(int y=overlap.top;y<overlap.bottom;++y)
-        for(int x=overlap.left;x<overlap.right;++x)
+    if (!IntersectRect(&overlap, &strip, &window))
+        return;
+    const int width = strip.right - strip.left;
+    for (int y = overlap.top; y < overlap.bottom; ++y)
+        for (int x = overlap.left; x < overlap.right; ++x)
         {
-            size_t dst=static_cast<size_t>(y-strip.top)*width+x-strip.left;
-            if(claimed[dst]) continue;
-            int sx=x-window.left, sy=y-window.top;
-            if(region && !PtInRegion(region,sx,sy)) continue;
-            if(!opacity) continue;
-            claimed[dst]=1;
-            if(!source) continue;
-            uint32_t rgb=source[static_cast<size_t>(sy)*stride+sx];
+            size_t dst = static_cast<size_t>(y - strip.top) * width + x - strip.left;
+            if (claimed[dst])
+                continue;
+            int sx = x - window.left, sy = y - window.top;
+            if (region && !PtInRegion(region, sx, sy))
+                continue;
+            if (!opacity)
+                continue;
+            claimed[dst] = 1;
+            if (!source)
+                continue;
+            uint32_t rgb = source[static_cast<size_t>(sy) * stride + sx];
             // Constant-opacity layered windows: composite against white.
-            auto ch=[&](unsigned s){return ((((rgb>>s)&255)*opacity+255*(255-opacity)+127)/255);};
-            output[dst]=0xff000000u|(ch(16)<<16)|(ch(8)<<8)|ch(0);
+            auto ch = [&](unsigned s) {
+                return ((((rgb >> s) & 255) * opacity + 255 * (255 - opacity) + 127) / 255);
+            };
+            output[dst] = 0xff000000u | (ch(16) << 16) | (ch(8) << 8) | ch(0);
         }
 }
 struct WindowColorSnapshot
@@ -1259,87 +1268,116 @@ struct WindowColorSnapshot
 };
 static bool EligibleWindow(HWND w, HWND overlay, HWND taskbar)
 {
-    if(w==overlay || w==taskbar || w==GetDesktopWindow() || w==GetShellWindow() ||
-        !IsWindowVisible(w) || IsIconic(w) || ShellView(w)) return false;
-    DWORD cloaked=0;
-    if(SUCCEEDED(DwmGetWindowAttribute(w,DWMWA_CLOAKED,&cloaked,sizeof(cloaked))) && cloaked) return false;
+    if (w == overlay || w == taskbar || w == GetDesktopWindow() || w == GetShellWindow() ||
+        !IsWindowVisible(w) || IsIconic(w) || ShellView(w))
+        return false;
+    DWORD cloaked = 0;
+    if (SUCCEEDED(DwmGetWindowAttribute(w, DWMWA_CLOAKED, &cloaked, sizeof(cloaked))) && cloaked)
+        return false;
     wchar_t cls[128]{};
-    GetClassNameW(w,cls,128);
-    if(!wcscmp(cls,L"Shell_SecondaryTrayWnd") || !wcscmp(cls,L"Windows.UI.Core.CoreWindow") &&
-       GetWindow(w,GW_OWNER)==taskbar || !wcscmp(cls,L"tooltips_class32")) return false;
-    const LONG_PTR style=GetWindowLongPtrW(w,GWL_STYLE);
-    const LONG_PTR ex=GetWindowLongPtrW(w,GWL_EXSTYLE);
-    return !(style&WS_CHILD) && !(ex&WS_EX_TRANSPARENT);
+    GetClassNameW(w, cls, 128);
+    if (!wcscmp(cls, L"Shell_SecondaryTrayWnd") ||
+        !wcscmp(cls, L"Windows.UI.Core.CoreWindow") && GetWindow(w, GW_OWNER) == taskbar ||
+        !wcscmp(cls, L"tooltips_class32"))
+        return false;
+    const LONG_PTR style = GetWindowLongPtrW(w, GWL_STYLE);
+    const LONG_PTR ex = GetWindowLongPtrW(w, GWL_EXSTYLE);
+    return !(style & WS_CHILD) && !(ex & WS_EX_TRANSPARENT);
 }
 static WindowColorSnapshot SampleWindows(RECT strip, HWND overlay)
 {
     WindowColorSnapshot result;
-    result.strip=strip;
-    int width=strip.right-strip.left,height=strip.bottom-strip.top;
-    if(width<=0 || height<=0) return result;
-    result.pixels.assign(static_cast<size_t>(width)*height,0xffffffffu);
-    std::vector<uint8_t> claimed(result.pixels.size(),0);
-    HWND taskbar=FindWindowW(L"Shell_TrayWnd",nullptr);
-    if(!taskbar) return result;
+    result.strip = strip;
+    int width = strip.right - strip.left, height = strip.bottom - strip.top;
+    if (width <= 0 || height <= 0)
+        return result;
+    result.pixels.assign(static_cast<size_t>(width) * height, 0xffffffffu);
+    std::vector<uint8_t> claimed(result.pixels.size(), 0);
+    HWND taskbar = FindWindowW(L"Shell_TrayWnd", nullptr);
+    if (!taskbar)
+        return result;
     // Start strictly below the taskbar; do not capture the overlay, flyouts
     // above the bar, or the desktop itself. GetWindow walks top to bottom.
     std::vector<HWND> windows;
-    for(HWND w=GetWindow(taskbar,GW_HWNDNEXT);w && windows.size()<4096;w=GetWindow(w,GW_HWNDNEXT))
+    for (HWND w = GetWindow(taskbar, GW_HWNDNEXT); w && windows.size() < 4096; w = GetWindow(w, GW_HWNDNEXT))
     {
-        if(std::find(windows.begin(),windows.end(),w)!=windows.end()) break;
+        if (std::find(windows.begin(), windows.end(), w) != windows.end())
+            break;
         windows.push_back(w);
     }
-    for(HWND w:windows)
+    for (HWND w : windows)
     {
-        if(!EligibleWindow(w,overlay,taskbar)) continue;
-        RECT rect{},visible{},intersection{};
-        if(!GetWindowRect(w,&rect)) continue;
-        if(FAILED(DwmGetWindowAttribute(w,DWMWA_EXTENDED_FRAME_BOUNDS,&visible,sizeof(visible)))) visible=rect;
-        if(!IntersectRect(&intersection,&visible,&strip) || !IntersectRect(&intersection,&intersection,&rect)) continue;
-        int ww=rect.right-rect.left,hh=rect.bottom-rect.top;
-        if(ww<=0 || hh<=0 || static_cast<uint64_t>(ww)*hh>32*1024*1024) continue;
-        HRGN region=CreateRectRgn(0,0,0,0);
-        int regionType=region?GetWindowRgn(w,region):ERROR;
-        if(regionType==ERROR)
+        if (!EligibleWindow(w, overlay, taskbar))
+            continue;
+        RECT rect{}, visible{}, intersection{};
+        if (!GetWindowRect(w, &rect))
+            continue;
+        if (FAILED(DwmGetWindowAttribute(w, DWMWA_EXTENDED_FRAME_BOUNDS, &visible, sizeof(visible))))
+            visible = rect;
+        if (!IntersectRect(&intersection, &visible, &strip) ||
+            !IntersectRect(&intersection, &intersection, &rect))
+            continue;
+        int ww = rect.right - rect.left, hh = rect.bottom - rect.top;
+        if (ww <= 0 || hh <= 0 || static_cast<uint64_t>(ww) * hh > 32 * 1024 * 1024)
+            continue;
+        HRGN region = CreateRectRgn(0, 0, 0, 0);
+        int regionType = region ? GetWindowRgn(w, region) : ERROR;
+        if (regionType == ERROR)
         {
-            if(!region) region=CreateRectRgn(0,0,0,0);
-            if(region) SetRectRgn(region,visible.left-rect.left,visible.top-rect.top,
-                                 visible.right-rect.left,visible.bottom-rect.top);
+            if (!region)
+                region = CreateRectRgn(0, 0, 0, 0);
+            if (region)
+                SetRectRgn(region, visible.left - rect.left, visible.top - rect.top,
+                           visible.right - rect.left, visible.bottom - rect.top);
         }
-        BYTE opacity=255;
-        DWORD flags=0; COLORREF key=0; BYTE alpha=255;
-        if(GetLayeredWindowAttributes(w,&key,&alpha,&flags) && (flags&LWA_ALPHA)) opacity=alpha;
-        bool needed=false;
-        for(int y=intersection.top;y<intersection.bottom && !needed;++y)
-            for(int x=intersection.left;x<intersection.right;++x)
-                if(!claimed[static_cast<size_t>(y-strip.top)*width+x-strip.left] &&
-                    (!region || PtInRegion(region,x-rect.left,y-rect.top))) {needed=true;break;}
-        if(needed && opacity)
+        BYTE opacity = 255;
+        DWORD flags = 0;
+        COLORREF key = 0;
+        BYTE alpha = 255;
+        if (GetLayeredWindowAttributes(w, &key, &alpha, &flags) && (flags & LWA_ALPHA))
+            opacity = alpha;
+        bool needed = false;
+        for (int y = intersection.top; y < intersection.bottom && !needed; ++y)
+            for (int x = intersection.left; x < intersection.right; ++x)
+                if (!claimed[static_cast<size_t>(y - strip.top) * width + x - strip.left] &&
+                    (!region || PtInRegion(region, x - rect.left, y - rect.top)))
+                {
+                    needed = true;
+                    break;
+                }
+        if (needed && opacity)
         {
-            Dib image(ww,hh);
-            const uint32_t *pixels=nullptr;
-            if(image)
+            Dib image(ww, hh);
+            const uint32_t *pixels = nullptr;
+            if (image)
             {
                 // PrintWindow asks the target for its unoccluded surface.
                 // It may fail on GPU or protected windows; do not use screen BitBlt.
-                std::fill_n(image.pixels,static_cast<size_t>(ww)*hh,0x00ff00ffu);
-                DWORD_PTR ignored=0;
-                if(SendMessageTimeoutW(w,WM_NULL,0,0,SMTO_ABORTIFHUNG|SMTO_BLOCK,50,&ignored) &&
-                   PrintWindow(w,image.dc,2))
+                std::fill_n(image.pixels, static_cast<size_t>(ww) * hh, 0x00ff00ffu);
+                DWORD_PTR ignored = 0;
+                if (SendMessageTimeoutW(w, WM_NULL, 0, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK, 50, &ignored) &&
+                    PrintWindow(w, image.dc, 2))
                 {
                     GdiFlush();
-                    bool valid=false;
-                    for(int y=intersection.top;y<intersection.bottom && !valid;++y)
-                        for(int x=intersection.left;x<intersection.right;++x)
-                            if((image.pixels[static_cast<size_t>(y-rect.top)*ww+x-rect.left]&0xffffff)!=0xff00ff)
-                            {valid=true;break;}
-                    if(valid) pixels=image.pixels;
+                    bool valid = false;
+                    for (int y = intersection.top; y < intersection.bottom && !valid; ++y)
+                        for (int x = intersection.left; x < intersection.right; ++x)
+                            if ((image.pixels[static_cast<size_t>(y - rect.top) * ww + x - rect.left] &
+                                 0xffffff) != 0xff00ff)
+                            {
+                                valid = true;
+                                break;
+                            }
+                    if (valid)
+                        pixels = image.pixels;
                 }
             }
-            ClaimWindowPixels(result.pixels.data(),claimed.data(),strip,rect,pixels,ww,region,opacity);
+            ClaimWindowPixels(result.pixels.data(), claimed.data(), strip, rect, pixels, ww, region, opacity);
         }
-        if(region) DeleteObject(region);
-        if(std::all_of(claimed.begin(),claimed.end(),[](uint8_t v){return v!=0;})) break;
+        if (region)
+            DeleteObject(region);
+        if (std::all_of(claimed.begin(), claimed.end(), [](uint8_t v) { return v != 0; }))
+            break;
     }
     return result;
 }
@@ -1348,20 +1386,27 @@ struct WindowColorWorker
 {
     std::mutex mutex;
     RECT target{};
-    HWND overlay=nullptr;
+    HWND overlay = nullptr;
     WindowColorSnapshot snapshot;
     std::jthread thread;
     void Start(HWND hwnd)
     {
-        overlay=hwnd;
-        thread=std::jthread([this](std::stop_token stop){
-            while(!stop.stop_requested())
+        overlay = hwnd;
+        thread = std::jthread([this](std::stop_token stop) {
+            while (!stop.stop_requested())
             {
                 RECT r{};
-                {std::lock_guard lock(mutex); r=target;}
-                auto next=SampleWindows(r,overlay);
-                {std::lock_guard lock(mutex); if(SameRect(r,target)) snapshot=std::move(next);}
-                for(int i=0;i<5 && !stop.stop_requested();++i)
+                {
+                    std::lock_guard lock(mutex);
+                    r = target;
+                }
+                auto next = SampleWindows(r, overlay);
+                {
+                    std::lock_guard lock(mutex);
+                    if (SameRect(r, target))
+                        snapshot = std::move(next);
+                }
+                for (int i = 0; i < 5 && !stop.stop_requested(); ++i)
                     std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
         });
@@ -1369,7 +1414,11 @@ struct WindowColorWorker
     void SetTarget(RECT r)
     {
         std::lock_guard lock(mutex);
-        if(!SameRect(r,target)){target=r;snapshot={};}
+        if (!SameRect(r, target))
+        {
+            target = r;
+            snapshot = {};
+        }
     }
     WindowColorSnapshot Get()
     {
@@ -1462,7 +1511,7 @@ struct App
         lastTick = GetTickCount64();
         lastX = INT_MIN;
         lastA = -1;
-        std::fill_n(wall->pixels,static_cast<size_t>(w)*h,0xffffffffu);
+        std::fill_n(wall->pixels, static_cast<size_t>(w) * h, 0xffffffffu);
         wallpaperReady = true;
         windowColors.SetTarget(strip);
         return true;
@@ -1635,21 +1684,24 @@ struct App
         }
         if (active && wall)
         {
-            auto colors=windowColors.Get();
-            const size_t n=static_cast<size_t>(wall->w)*wall->h;
-            if (SameRect(colors.strip,strip) && colors.pixels.size()==n &&
-                !std::equal(colors.pixels.begin(),colors.pixels.end(),wall->pixels))
+            auto colors = windowColors.Get();
+            const size_t n = static_cast<size_t>(wall->w) * wall->h;
+            if (SameRect(colors.strip, strip) && colors.pixels.size() == n &&
+                !std::equal(colors.pixels.begin(), colors.pixels.end(), wall->pixels))
             {
-                std::copy(colors.pixels.begin(),colors.pixels.end(),wall->pixels);
+                std::copy(colors.pixels.begin(), colors.pixels.end(), wall->pixels);
                 Render(true);
             }
-            if(shellView && IsIconic(hwnd)) ShowWindow(hwnd,SW_SHOWNOACTIVATE);
+            if (shellView && IsIconic(hwnd))
+                ShowWindow(hwnd, SW_SHOWNOACTIVATE);
             if (shellView && !IsWindowVisible(hwnd))
-                SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE|SWP_SHOWWINDOW);
-            if(shellView && IsWindowVisible(hwnd))
+                SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0,
+                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+            if (shellView && IsWindowVisible(hwnd))
             {
-                HWND foreground=GetForegroundWindow();
-                if(foreground && foreground!=hwnd) RestoreOverlayOrder(hwnd,foreground);
+                HWND foreground = GetForegroundWindow();
+                if (foreground && foreground != hwnd)
+                    RestoreOverlayOrder(hwnd, foreground);
             }
         }
     }
@@ -1676,27 +1728,29 @@ struct App
 };
 bool TestWindowPixelOrder()
 {
-    RECT strip{-2,10,4,12};
-    std::vector<uint32_t> output(12,0xffffffffu);
-    std::vector<uint8_t> claimed(12,0);
-    uint32_t top[]={0xff112233,0xff445566,0xff778899,0xffaabbcc};
-    ClaimWindowPixels(output.data(),claimed.data(),strip,{-1,10,1,12},top,2,nullptr,255);
+    RECT strip{-2, 10, 4, 12};
+    std::vector<uint32_t> output(12, 0xffffffffu);
+    std::vector<uint8_t> claimed(12, 0);
+    uint32_t top[] = {0xff112233, 0xff445566, 0xff778899, 0xffaabbcc};
+    ClaimWindowPixels(output.data(), claimed.data(), strip, {-1, 10, 1, 12}, top, 2, nullptr, 255);
     uint32_t lower[8];
-    std::fill_n(lower,8,0xff00ff00u);
-    ClaimWindowPixels(output.data(),claimed.data(),strip,{0,10,4,12},lower,4,nullptr,255);
-    if(output[0]!=0xffffffffu || output[1]!=top[0] || output[2]!=top[1] ||
-       output[3]!=0xff00ff00u || output[7]!=top[2]) return false;
-    std::fill(output.begin(),output.end(),0xffffffffu);
-    std::fill(claimed.begin(),claimed.end(),0);
-    HRGN region=CreateRectRgn(0,0,1,1);
-    if(!region) return false;
-    ClaimWindowPixels(output.data(),claimed.data(),strip,{-2,10,0,12},nullptr,2,region,255);
+    std::fill_n(lower, 8, 0xff00ff00u);
+    ClaimWindowPixels(output.data(), claimed.data(), strip, {0, 10, 4, 12}, lower, 4, nullptr, 255);
+    if (output[0] != 0xffffffffu || output[1] != top[0] || output[2] != top[1] || output[3] != 0xff00ff00u ||
+        output[7] != top[2])
+        return false;
+    std::fill(output.begin(), output.end(), 0xffffffffu);
+    std::fill(claimed.begin(), claimed.end(), 0);
+    HRGN region = CreateRectRgn(0, 0, 1, 1);
+    if (!region)
+        return false;
+    ClaimWindowPixels(output.data(), claimed.data(), strip, {-2, 10, 0, 12}, nullptr, 2, region, 255);
     DeleteObject(region);
-    ClaimWindowPixels(output.data(),claimed.data(),strip,{-2,10,0,12},top,2,nullptr,255);
-    return output[0]==0xffffffffu && output[1]==top[1] &&
-           IsShellViewClass(L"XamlExplorerHostIslandWindow",L"任务视图",true) &&
-           !IsShellViewClass(L"XamlExplorerHostIslandWindow",L"任务视图",false) &&
-           IsShellViewClass(L"Progman",L"",true);
+    ClaimWindowPixels(output.data(), claimed.data(), strip, {-2, 10, 0, 12}, top, 2, nullptr, 255);
+    return output[0] == 0xffffffffu && output[1] == top[1] &&
+           IsShellViewClass(L"XamlExplorerHostIslandWindow", L"任务视图", true) &&
+           !IsShellViewClass(L"XamlExplorerHostIslandWindow", L"任务视图", false) &&
+           IsShellViewClass(L"Progman", L"", true);
 }
 bool TestOverlayOrder()
 {
