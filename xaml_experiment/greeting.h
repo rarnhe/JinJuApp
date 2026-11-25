@@ -19,6 +19,7 @@ inline TextBlock appendPeer(Panel const& panel, Grid const& weather) {
     TextBlock text;
     text.Name(Marker);
     text.Text(Greeting);
+    text.FontSize(12);
     text.TextWrapping(TextWrapping::NoWrap);
     text.HorizontalAlignment(HorizontalAlignment::Left);
     text.VerticalAlignment(VerticalAlignment::Center);
@@ -50,6 +51,7 @@ public:
         if (auto text=peer.get()) {
             auto p=Media::VisualTreeHelper::GetParent(text);
             auto panel=p ? p.try_as<Panel>() : parent.get();
+            if (p && !panel) throw winrt::hresult_error(E_UNEXPECTED,L"Owned greeting has an unsupported parent");
             uint32_t index{};
             if (panel && panel.Children().IndexOf(text,index)) panel.Children().RemoveAt(index);
         }

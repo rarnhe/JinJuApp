@@ -16,8 +16,11 @@ inline bool fits(Box item, Box outer) {
 }
 inline std::optional<Box> besideWeather(Box button, Box weather, double width, double height) {
     if (!fits(weather,button)) return {};
-    constexpr double gap=6;
-    Box desired{weather.x+weather.width+gap,button.y+(button.height-height)/2,width,height};
+    const double right=weather.x+weather.width;
+    const double spare=button.x+button.width-right-width;
+    if (!std::isfinite(spare) || spare<2) return {};
+    const double gap=spare<6 ? spare : 6;
+    Box desired{right+gap,button.y+(button.height-height)/2,width,height};
     if (!fits(desired,button)) return {};
     return desired;
 }

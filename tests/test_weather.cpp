@@ -11,6 +11,9 @@ int main(int argc, char** argv) {
         if (!right || right->x!=146 || right->y!=15 || !fits(*right,button)) return 11;
         if (besideWeather({0,0,152,48},weather,42,18)) return 12;
         if (besideWeather(button,weather,42,64) || besideWeather(button,weather,0,18)) return 13;
+        auto centered=besideWeather({-32,0,216,48},{8,4,136,40},36,16);
+        if (!centered || centered->x!=148 ||
+            besideWeather({-32,0,216,48},{8,4,136,40},39,16)) return 15;
         weather.x=120;
         if (besideWeather(button,weather,42,18)) return 14;
         return 0;

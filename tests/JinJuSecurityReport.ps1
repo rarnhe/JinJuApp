@@ -136,7 +136,7 @@ Add-Section 'Recent XAML initialization and error milestones (UTC in source)' {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { 'XAML log missing.' }
     else {
         Get-XamlRecords @(Get-Content -LiteralPath $path -Tail 20000) $start |
-            Where-Object { $_ -match 'Launcher:|VisualDiagConnection\d+|DllGetClassObject|SetSite|AdviseVisualTreeChange|TextBlock appended|exception|P1 layout attempt=' } |
+            Where-Object { $_ -match 'Launcher:|VisualDiagConnection\d+|DllGetClassObject|SetSite|AdviseVisualTreeChange|TextBlock appended|exception|P1 layout attempt=|Weather (waiting|measuring|layout stable|peer|template|button unloaded|UI cleanup)' } |
             Select-Object -Last 100
     }
 }

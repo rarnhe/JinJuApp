@@ -7,7 +7,7 @@ Keep JinJuApp.exe and JinJuXaml.dll together. Run JinJuApp.exe in a Windows 11 s
 
 ## Weather layout
 
-The UI thread samples the named root panel, content grid and measured Adaptive Cards at 250 ms intervals. Four matching samples allow one TextBlock to be appended beside the content grid. Only the greeting receives a render transform. It stays transparent while measuring or when the button has insufficient room to its right. Existing weather children, columns and hit testing retain their original values.
+The UI thread samples the named root panel, content grid and measured Adaptive Cards at 250 ms intervals. Four matching samples allow one TextBlock to be appended beside the content grid. The greeting uses a 12-DIP font and a gap of 2–6 DIPs according to the available space. Only the greeting receives a render transform. It stays transparent while measuring or when the button has insufficient room to its right. Existing weather children, columns and hit testing retain their original values.
 
 Template replacement and button reloads restart the same stability check. A live layout update moves the existing greeting as space changes. JinJuXaml.log records state changes and placement. XamlTree.txt contains a bounded weather snapshot at a stable insertion attempt. File output runs in batches.
 
