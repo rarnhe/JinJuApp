@@ -1,3 +1,3 @@
-# Native XAML experiment
+# Unified build
 
-Pending rebuild: typed fill and Explorer cleanup utility.
+Pending Windows build and CTest.
