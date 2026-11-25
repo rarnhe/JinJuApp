@@ -1,5 +1,6 @@
 #include "shared.h"
-#include "diagnostics.h"
+#include "async_log.h"
+#include <algorithm>
 #include "layout_policy.h"
 #include <chrono>
 #include <vector>
@@ -15,14 +16,12 @@ using namespace winrt;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 namespace {
-std::filesystem::path LogDirectory(){
-    HMODULE module{};
-    if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                          reinterpret_cast<LPCWSTR>(&LogDirectory),&module))return {};
-    return diagnostics::directory(module);
+diagnostics::AsyncLog& Logger() {
+    static diagnostics::AsyncLog log;
+    return log;
 }
 void Log(std::wstring_view message) noexcept {
-    try { diagnostics::append(LogDirectory(),L"JinJuXaml.log",message); } catch(...) {}
+    Logger().push(diagnostics::LogFile::events, message);
 }
 void LogHr(std::wstring_view stage,HRESULT value) noexcept {
     try{Log(std::wstring(stage)+L" HRESULT="+diagnostics::hr(value));}catch(...){}
@@ -68,7 +67,7 @@ void Describe(FrameworkElement const& e,std::wostringstream& s){
     }
 }
 void TreeLine(std::wstring_view line) noexcept {
-    try{diagnostics::append(LogDirectory(),L"XamlTree.txt",line);}catch(...){}
+    Logger().push(diagnostics::LogFile::tree, line);
 }
 void DumpElement(FrameworkElement const& e,unsigned depth,unsigned& budget){
     if(!budget||depth>64)return;
@@ -190,11 +189,21 @@ void AddGreeting(FrameworkElement const& button){
     try{ObserveGreeting(text,grid,button);}catch(...){LogException(L"Queue P1 layout observation");}
 }
 void QueueWeather(FrameworkElement const& element){
-    auto weak=make_weak(element);
-    element.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak](){
-        try{if(auto b=weak.get()){DumpWeather(b,L"before");AddGreeting(b);DumpWeather(b,L"after");}}
-        catch(...){LogException(L"AddGreeting");}
-    });
+    // Coalesce the button and its children's notifications on this UI dispatcher.
+    static thread_local std::vector<weak_ref<FrameworkElement>> pending;
+    std::erase_if(pending, [](auto const& item) { return !item.get(); });
+    for (auto const& item : pending) if (item.get() == element) return;
+    auto weak = make_weak(element);
+    pending.push_back(weak);
+    try {
+        element.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low, [weak]() {
+            auto button = weak.get();
+            try {
+                if (button) { DumpWeather(button, L"candidate"); AddGreeting(button); }
+            } catch (...) { LogException(L"AddGreeting"); }
+            std::erase_if(pending, [&](auto const& item) { auto e=item.get(); return !e || e==button; });
+        });
+    } catch (...) { pending.pop_back(); throw; }
 }
 // Scan an observed visual root once, including non-FrameworkElement nodes.
 // Descendant notifications still handle templates created later.
@@ -235,31 +244,30 @@ struct Watcher:implements<Watcher,IVisualTreeServiceCallback,non_agile>{
     com_ptr<IXamlDiagnostics> diag;
     explicit Watcher(com_ptr<IXamlDiagnostics> d):diag(std::move(d)){}
     HRESULT STDMETHODCALLTYPE OnVisualTreeChange(ParentChildRelation relation,VisualElement e,VisualMutationType mutation) noexcept override{
-        try{
-            std::wostringstream event;
-            event<<L"VisualTreeChange mutation="<<static_cast<int>(mutation)
-                 <<L" handle="<<e.Handle<<L" parent="<<relation.Parent
-                 <<L" child="<<relation.Child<<L" index="<<relation.ChildIndex;
-            Log(event.str());TreeLine(event.str());
-        }catch(...){}
-        if(mutation!=Add)return S_OK;
-        try{
+        if (mutation != Add) return S_OK;
+        try {
+            // Root and named template notifications suffice. Describe the weather
+            // subtree only, rather than walking ancestors for every unrelated icon.
+            std::wstring_view type = e.Type ? e.Type : L"";
+            std::wstring_view name = e.Name ? e.Name : L"";
+            const bool candidate = WeatherButton(type) || layout::weatherGrid(name);
+            static thread_local bool observedRoot = false;
+            if (observedRoot && relation.Parent && !candidate) return S_OK;
             com_ptr<::IInspectable> raw;
-            auto result=diag->GetIInspectableFromHandle(e.Handle,raw.put());
-            LogHr(L"GetIInspectableFromHandle",result);
-            if(FAILED(result))return S_OK;
+            auto result = diag->GetIInspectableFromHandle(e.Handle, raw.put());
+            if (FAILED(result)) { LogHr(L"GetIInspectableFromHandle", result); return S_OK; }
             Windows::Foundation::IInspectable obj{nullptr};
-            copy_from_abi(obj,raw.get());
-            auto element=obj.try_as<FrameworkElement>();
-            if(!element){Log(L"Not a FrameworkElement");return S_OK;}
-            try{std::wostringstream s;s<<L"handle="<<e.Handle<<L" ";Describe(element,s);TreeLine(s.str());}catch(...){LogException(L"Describe element");}
-            // Walk through non-FrameworkElement parents too.
-            for(DependencyObject current=element;current;current=Media::VisualTreeHelper::GetParent(current)){
-                if(auto f=current.try_as<FrameworkElement>();f&&WeatherButton(get_class_name(f))){
-                    Log(L"WeatherButton found");QueueWeather(f);break;
+            copy_from_abi(obj, raw.get());
+            auto element = obj.try_as<FrameworkElement>();
+            if (!element) return S_OK;
+            if (candidate) {
+                for (DependencyObject node=element; node; node=Media::VisualTreeHelper::GetParent(node)) {
+                    if (auto f=node.try_as<FrameworkElement>(); f && WeatherButton(get_class_name(f))) {
+                        QueueWeather(f); break;
+                    }
                 }
             }
-            QueueRoot(element,element);
+            if (!observedRoot || !relation.Parent) { QueueRoot(element,element); observedRoot=true; }
         }catch(...){LogException(L"OnVisualTreeChange");}
         return S_OK;
     }

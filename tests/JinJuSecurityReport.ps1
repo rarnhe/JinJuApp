@@ -45,7 +45,7 @@ function Get-ProjectMatches($Records) {
     # Only show events mentioning this product. Do not dump unrelated threats.
     $pattern = '(?i)JinJuApp\.exe|JinJuXaml\.dll|JinJuXamlUnload\.exe|JinJuMarquee\.exe'
     foreach ($record in $Records) {
-        $fields = @($record.Message, $record.ProcessName, $record.Resources) -join ' '
+        $fields = @($record.Message, $record.ProcessName) + @($record.Resources)
         if ($fields -match $pattern) { $record }
     }
 }
@@ -70,7 +70,7 @@ function Get-XamlRecords([string[]]$Records,[datetime]$Start) {
 if ($SelfTest) {
     $sample = @([pscustomobject]@{Message='Detected JinJuXaml.dll'},[pscustomobject]@{Message='Other application'})
     if (@(Get-ProjectMatches $sample).Count -ne 1) { throw 'Project filter test failed' }
-    $resource = [pscustomobject]@{Resources=@('file:_C:\test\JinJuXaml.dll');ProcessName='explorer.exe'}
+    $resource = [pscustomobject]@{Resources=@('file:_C:\other.exe','file:_C:\test\JinJuXaml.dll');ProcessName='explorer.exe'}
     if (@(Get-ProjectMatches @($resource)).Count -ne 1) { throw 'Resource match failed' }
     $sampleLog = @('2026-11-25T18:1:11.449Z pid=18832 Launcher: Explorer PID=7640','2026-11-25T17:15:41.348Z old')
     $cutoff = [datetime]::new(2026,11,25,18,0,0,[DateTimeKind]::Utc)
