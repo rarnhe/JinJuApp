@@ -7,3 +7,6 @@ Keep JinJuApp.exe and JinJuXaml.dll together. Run only on a personal Windows 11 
 
 ## Cleanup
 Run JinJuXamlUnload.exe and confirm the graceful Explorer restart. This is not a remote FreeLibrary operation: the DLL is pinned until the original Explorer process exits. Restart Manager can refuse shell restart; if so use Task Manager > Windows Explorer > Restart. No forced termination. CI tests only Restart Manager session creation; actual shell restart is manual validation.
+
+## P0 diagnostics
+After restarting Explorer to unload the previous DLL, run the new JinJuApp.exe from tests. JinJuXaml.log and XamlTree.txt are UTF-8 append-only files beside the DLL/launcher. Delete old logs before a new experiment if desired. Check the logged PID, COM factory, SetSite, Advise, mutation handles and weather snapshots. A nonzero post-dispatch size is not proof of on-screen visibility; a zero size may be transient. No insertion policy or unload changes. Logs contain class/name/layout metadata; review before sharing. CI verifies COM/logging and UTF-8, not live Explorer callbacks.

@@ -1,4 +1,6 @@
 #include "shared.h"
+#include "diagnostics.h"
+#include <cstring>
 #include <ocidl.h>
 #include <xamlom.h>
 #undef GetCurrentTime
@@ -10,6 +12,86 @@ using namespace winrt;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 namespace {
+std::filesystem::path LogDirectory(){
+    HMODULE module{};
+    if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                          reinterpret_cast<LPCWSTR>(&LogDirectory),&module))return {};
+    return diagnostics::directory(module);
+}
+void Log(std::wstring_view message) noexcept {
+    try { diagnostics::append(LogDirectory(),L"JinJuXaml.log",message); } catch(...) {}
+}
+void LogHr(std::wstring_view stage,HRESULT value) noexcept {
+    try{Log(std::wstring(stage)+L" HRESULT="+diagnostics::hr(value));}catch(...){}
+}
+void LogException(std::wstring_view stage) noexcept {
+    try {
+        throw;
+    } catch(hresult_error const& e){
+        try{Log(std::wstring(stage)+L" HRESULT="+diagnostics::hr(e.code())+
+                L" message="+diagnostics::clean(e.message().c_str()));}catch(...){}
+    } catch(std::exception const& e){
+        try{Log(std::wstring(stage)+L" exception="+std::wstring(e.what(),e.what()+strlen(e.what())));}catch(...){}
+    } catch(...){Log(stage);}
+}
+// Read-only snapshot of actual XAML elements. Parent and child handles in the
+// callback log reconstruct the full observed tree, while the local snapshot
+// captures layout of the weather subtree and its ancestors.
+void Describe(FrameworkElement const& e,std::wostringstream& s){
+    s<<L"class="<<diagnostics::clean(get_class_name(e).c_str())
+     <<L" name="<<diagnostics::clean(e.Name().c_str())
+     <<L" actual="<<e.ActualWidth()<<L"x"<<e.ActualHeight()
+     <<L" width="<<e.Width()<<L" height="<<e.Height()
+     <<L" minWidth="<<e.MinWidth()<<L" maxWidth="<<e.MaxWidth()
+     <<L" minHeight="<<e.MinHeight()<<L" maxHeight="<<e.MaxHeight()
+     <<L" visibility="<<static_cast<int>(e.Visibility())<<L" opacity="<<e.Opacity()
+     <<L" clip="<<static_cast<bool>(e.Clip())
+     <<L" column="<<Grid::GetColumn(e)<<L" columnSpan="<<Grid::GetColumnSpan(e)
+     <<L" row="<<Grid::GetRow(e)<<L" rowSpan="<<Grid::GetRowSpan(e)
+     <<L" visualChildren="<<Media::VisualTreeHelper::GetChildrenCount(e);
+    if(auto grid=e.try_as<Grid>()){
+        s<<L" columns="<<grid.ColumnDefinitions().Size()<<L" rows="<<grid.RowDefinitions().Size()
+         <<L" children="<<grid.Children().Size();
+        for(auto const& col:grid.ColumnDefinitions()){
+            auto width=col.Width();
+            s<<L" [column width="<<width.Value<<L" unit="<<static_cast<int>(width.GridUnitType)
+             <<L" actual="<<col.ActualWidth()<<L"]";
+        }
+        for(auto const& row:grid.RowDefinitions()){
+            auto height=row.Height();
+            s<<L" [row height="<<height.Value<<L" unit="<<static_cast<int>(height.GridUnitType)
+             <<L" actual="<<row.ActualHeight()<<L"]";
+        }
+    }
+}
+void TreeLine(std::wstring_view line) noexcept {
+    try{diagnostics::append(LogDirectory(),L"XamlTree.txt",line);}catch(...){}
+}
+void DumpElement(FrameworkElement const& e,unsigned depth,unsigned& budget){
+    if(!budget||depth>64)return;
+    --budget;
+    std::wostringstream s;s<<std::wstring(depth*2,L' ');
+    Describe(e,s);TreeLine(s.str());
+    for(int i=0;i<Media::VisualTreeHelper::GetChildrenCount(e)&&budget;++i){
+        if(auto child=Media::VisualTreeHelper::GetChild(e,i).try_as<FrameworkElement>())
+            DumpElement(child,depth+1,budget);
+    }
+}
+void DumpWeather(FrameworkElement const& button,std::wstring_view stage) noexcept {
+    try{
+        TreeLine(std::wstring(L"=== weather snapshot ")+std::wstring(stage)+L" ===");
+        unsigned budget=512;
+        DumpElement(button,0,budget);
+        if(!budget)TreeLine(L"snapshot truncated at 512 elements");
+        auto parent=Media::VisualTreeHelper::GetParent(button);
+        for(unsigned depth=0;parent&&depth<64;++depth){
+            if(auto e=parent.try_as<FrameworkElement>()){
+                std::wostringstream s;s<<L"ancestor "<<depth<<L" ";Describe(e,s);TreeLine(s.str());
+            }
+            parent=Media::VisualTreeHelper::GetParent(parent);
+        }
+    }catch(...){LogException(L"DumpWeather");}
+}
 void AddGreeting(FrameworkElement const& button){
     // Only modify the named weather content grid; append a column without replacing children.
     auto scan=[&](auto&& self,DependencyObject const& node)->Grid{
@@ -19,12 +101,12 @@ void AddGreeting(FrameworkElement const& button){
         return nullptr;
     };
     auto grid=scan(scan,button);
-    if(!grid)return;
+    if(!grid){Log(L"WeatherGrid not found");return;}
     auto children=grid.Children();
     for(auto const& child:children)
-        if(auto e=child.try_as<FrameworkElement>();e && e.Name()==Marker)return;
+        if(auto e=child.try_as<FrameworkElement>();e && e.Name()==Marker){Log(L"TextBlock already present");return;}
     auto cols=grid.ColumnDefinitions();
-    if(!cols.Size())return; // Unknown template: leave it untouched.
+    if(!cols.Size()){Log(L"WeatherGrid has zero explicit columns; original insertion policy skipped");return;} // Unknown template: leave it untouched.
     TextBlock text;
     text.Name(Marker);text.Text(Greeting);
     text.Margin(Thickness{6,0,0,0});
@@ -38,33 +120,57 @@ void AddGreeting(FrameworkElement const& button){
     cols.Append(column);
     try{children.Append(text);}catch(...){cols.RemoveAt(index);throw;}
     OutputDebugStringW(L"JinJuXaml: greeting appended\n");
+    Log(L"TextBlock appended; actual size pending layout");
+    try{
+        auto weak=make_weak(text);
+        text.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak](){
+            try{
+                if(auto t=weak.get()){
+                    std::wostringstream s;s<<L"TextBlock post-dispatch ";Describe(t,s);
+                    s<<L" nonzeroSize="<<(t.ActualWidth()>0 && t.ActualHeight()>0);
+                    Log(s.str());TreeLine(s.str());
+                }
+            }catch(...){LogException(L"TextBlock layout");}
+        });
+    }catch(...){LogException(L"Queue layout observation");}
 }
 struct Watcher:implements<Watcher,IVisualTreeServiceCallback,non_agile>{
     com_ptr<IXamlDiagnostics> diag;
     explicit Watcher(com_ptr<IXamlDiagnostics> d):diag(std::move(d)){}
-    HRESULT STDMETHODCALLTYPE OnVisualTreeChange(ParentChildRelation,VisualElement e,VisualMutationType mutation) noexcept override{
+    HRESULT STDMETHODCALLTYPE OnVisualTreeChange(ParentChildRelation relation,VisualElement e,VisualMutationType mutation) noexcept override{
+        try{
+            std::wostringstream event;
+            event<<L"VisualTreeChange mutation="<<static_cast<int>(mutation)
+                 <<L" handle="<<e.Handle<<L" parent="<<relation.Parent
+                 <<L" child="<<relation.Child<<L" index="<<relation.ChildIndex;
+            Log(event.str());TreeLine(event.str());
+        }catch(...){}
         if(mutation!=Add)return S_OK;
         try{
             com_ptr<::IInspectable> raw;
-            if(FAILED(diag->GetIInspectableFromHandle(e.Handle,raw.put())))return S_OK;
+            auto result=diag->GetIInspectableFromHandle(e.Handle,raw.put());
+            LogHr(L"GetIInspectableFromHandle",result);
+            if(FAILED(result))return S_OK;
             Windows::Foundation::IInspectable obj{nullptr};
             copy_from_abi(obj,raw.get());
             auto element=obj.try_as<FrameworkElement>();
-            if(!element)return S_OK;
+            if(!element){Log(L"Not a FrameworkElement");return S_OK;}
+            try{std::wostringstream s;s<<L"handle="<<e.Handle<<L" ";Describe(element,s);TreeLine(s.str());}catch(...){LogException(L"Describe element");}
             // A descendant notification can arrive after the weather template is constructed.
             for(auto current=element;current;){
                 if(WeatherButton(get_class_name(current))){
+                    Log(L"WeatherButton found");
                     auto dispatcher=current.Dispatcher();
                     auto weak=make_weak(current);
                     dispatcher.RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak](){
-                        try{if(auto b=weak.get())AddGreeting(b);}catch(...){}
+                        try{if(auto b=weak.get()){DumpWeather(b,L"before");AddGreeting(b);DumpWeather(b,L"after");}}catch(...){LogException(L"AddGreeting");}
                     });
                     break;
                 }
                 auto p=Media::VisualTreeHelper::GetParent(current);
                 current=p?p.try_as<FrameworkElement>():nullptr;
             }
-        }catch(...){}
+        }catch(...){LogException(L"OnVisualTreeChange");}
         return S_OK;
     }
 };
@@ -73,20 +179,22 @@ struct Tap:implements<Tap,IObjectWithSite,non_agile>{
     com_ptr<IVisualTreeService> service;
     com_ptr<Watcher> watcher;
     HRESULT STDMETHODCALLTYPE SetSite(IUnknown* value) noexcept override{
+        Log(value?L"SetSite(non-null)":L"SetSite(null)");
         try{
-            if(service && watcher)service->UnadviseVisualTreeChange(watcher.get());
+            if(service && watcher)LogHr(L"UnadviseVisualTreeChange",service->UnadviseVisualTreeChange(watcher.get()));
             watcher=nullptr;service=nullptr;site=nullptr;
-            if(!value)return S_OK;
+            if(!value){LogHr(L"SetSite",S_OK);return S_OK;}
             site.copy_from(value);
-            auto d=site.as<IXamlDiagnostics>();
-            service=site.as<IVisualTreeService>();
+            auto d=site.as<IXamlDiagnostics>();LogHr(L"QueryInterface IXamlDiagnostics",S_OK);
+            service=site.as<IVisualTreeService>();LogHr(L"QueryInterface IVisualTreeService",S_OK);
             watcher=make_self<Watcher>(d);
             // Keep module resident while queued UI callbacks exist.
             HMODULE pinned{};
             GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_PIN,
                 reinterpret_cast<LPCWSTR>(&AddGreeting),&pinned);
-            return service->AdviseVisualTreeChange(watcher.get());
-        }catch(...){return to_hresult();}
+            auto result=service->AdviseVisualTreeChange(watcher.get());
+            LogHr(L"AdviseVisualTreeChange",result);LogHr(L"SetSite",result);return result;
+        }catch(...){auto result=to_hresult();LogException(L"SetSite");LogHr(L"SetSite",result);return result;}
     }
     HRESULT STDMETHODCALLTYPE GetSite(REFIID iid,void** out) noexcept override{
         if(!out)return E_POINTER;*out=nullptr;
@@ -97,14 +205,15 @@ struct Factory:implements<Factory,IClassFactory>{
     HRESULT STDMETHODCALLTYPE CreateInstance(IUnknown* outer,REFIID iid,void** out) noexcept override{
         if(!out)return E_POINTER;*out=nullptr;
         if(outer)return CLASS_E_NOAGGREGATION;
-        try{return make_self<Tap>()->QueryInterface(iid,out);}catch(...){return to_hresult();}
+        try{auto result=make_self<Tap>()->QueryInterface(iid,out);LogHr(L"CreateInstance",result);return result;}catch(...){auto result=to_hresult();LogException(L"CreateInstance");return result;}
     }
     HRESULT STDMETHODCALLTYPE LockServer(BOOL) noexcept override{return S_OK;}
 };
 }
 STDAPI DllGetClassObject(REFCLSID cls,REFIID iid,void** out){
     if(!out)return E_POINTER;*out=nullptr;
+    Log(L"DLL active: DllGetClassObject");
     if(!IsEqualCLSID(cls,TapId))return CLASS_E_CLASSNOTAVAILABLE;
-    try{return make_self<Factory>()->QueryInterface(iid,out);}catch(...){return to_hresult();}
+    try{auto result=make_self<Factory>()->QueryInterface(iid,out);LogHr(L"DllGetClassObject",result);return result;}catch(...){auto result=to_hresult();LogException(L"DllGetClassObject");return result;}
 }
 STDAPI DllCanUnloadNow(){return S_FALSE;}

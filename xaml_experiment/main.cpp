@@ -1,4 +1,5 @@
 #include "shared.h"
+#include "diagnostics.h"
 #include <filesystem>
 #include <iostream>
 #include <winrt/base.h>
@@ -17,7 +18,10 @@ int wmain(int argc,wchar_t** argv){
         if(!tray || !GetWindowThreadProcessId(tray,&pid))return 2;
         wchar_t exe[32768]{};
         if(!GetModuleFileNameW(nullptr,exe,32768))return 3;
-        auto dll=std::filesystem::path(exe).parent_path()/L"JinJuXaml.dll";
+        auto dir=std::filesystem::path(exe).parent_path();
+        auto dll=dir/L"JinJuXaml.dll";
+        if(!diagnostics::append(dir,L"JinJuXaml.log",L"Launcher: Explorer PID="+std::to_wstring(pid)))std::wcerr<<L"Cannot write diagnostic log\n";
+        std::wcout<<L"Log: "<<(dir/L"JinJuXaml.log").wstring()<<L"\nTree: "<<(dir/L"XamlTree.txt").wstring()<<L"\n";
         if(!std::filesystem::exists(dll)){std::wcerr<<L"Missing JinJuXaml.dll\n";return 4;}
         auto module=LoadLibraryExW(L"Windows.UI.Xaml.dll",nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);
         if(!module)return 5;
@@ -31,10 +35,11 @@ int wmain(int argc,wchar_t** argv){
         for(int i=1;i<=20;++i){
             auto endpoint=L"VisualDiagConnection"+std::to_wstring(i);
             hr=init(endpoint.c_str(),pid,xaml.c_str(),dll.c_str(),TapId,L"");
+            diagnostics::append(dir,L"JinJuXaml.log",endpoint+L" HRESULT="+diagnostics::hr(hr));
             if(SUCCEEDED(hr))break;
             if(hr!=HRESULT_FROM_WIN32(ERROR_NOT_FOUND))break;
         }
         std::wcout<<L"Diagnostics HRESULT: 0x"<<std::hex<<static_cast<unsigned>(hr)<<L"\n";
         return FAILED(hr)?8:0;
-    }catch(...){return 9;}
+    }catch(winrt::hresult_error const& e){diagnostics::append(diagnostics::directory(),L"JinJuXaml.log",L"Launcher exception HRESULT="+diagnostics::hr(e.code())+L" "+e.message().c_str());return 9;}catch(...){diagnostics::append(diagnostics::directory(),L"JinJuXaml.log",L"Launcher unknown exception");return 9;}
 }

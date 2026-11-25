@@ -1,4 +1,7 @@
 #include "../xaml_experiment/shared.h"
+#include "../xaml_experiment/diagnostics.h"
+#include <fstream>
+#include <iterator>
 #include <ocidl.h>
 #include <iostream>
 int wmain(int argc,wchar_t** argv){
@@ -15,5 +18,14 @@ int wmain(int argc,wchar_t** argv){
     if(FAILED(hr))return 5;
     auto clear=tap->SetSite(nullptr);
     tap->Release();factory->Release();FreeLibrary(dll);
-    return FAILED(clear)?6:0;
+    if(FAILED(clear))return 6;
+    auto dir=std::filesystem::path(argv[1]).parent_path();
+    std::ifstream log(dir/L"JinJuXaml.log",std::ios::binary);
+    std::string contents((std::istreambuf_iterator<char>(log)),{});
+    if(contents.find("DllGetClassObject HRESULT=0x00000000")==std::string::npos || contents.find("SetSite HRESULT=0x00000000")==std::string::npos)return 7;
+    if(diagnostics::hr(E_FAIL)!=L"0x80004005")return 8;
+    if(!diagnostics::append(dir,L"diagnostics-test.txt",L"你好。"))return 9;
+    std::ifstream utf(dir/L"diagnostics-test.txt",std::ios::binary);
+    std::string bytes((std::istreambuf_iterator<char>(utf)),{});
+    return bytes.find("\xe4\xbd\xa0\xe5\xa5\xbd\xe3\x80\x82")==std::string::npos?10:0;
 }
