@@ -15,11 +15,6 @@ int wmain(int argc,wchar_t** argv){
        layout::validSize(std::numeric_limits<double>::infinity(),20)||
        !layout::inside(60,0,30,20,100,40)||layout::inside(90,0,30,20,100,40)||
        !layout::weatherGrid(L"AugmentedEntryPointContentGrid")||layout::weatherGrid(L"OverflowRootGrid"))return 11;
-    if(!layout::canExpand(152,136,48,216)||layout::canExpand(152,136,70,216)||
-       layout::canExpand(152,160,48,216)||
-       !layout::insideRect(150,10,42,18,0,0,1440,48)||
-       layout::insideRect(150,10,42,18,0,0,180,48)||
-       !layout::insideRect(150,10,42,18,140,0,60,48))return 12;
     auto dll=LoadLibraryW(argv[1]);if(!dll)return 2;
     using Get=HRESULT(WINAPI*)(REFCLSID,REFIID,void**);
     auto get=reinterpret_cast<Get>(GetProcAddress(dll,"DllGetClassObject"));

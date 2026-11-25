@@ -30,6 +30,9 @@ jobs:
         run: |
           ctest --test-dir out/build/x64-release -C Release --output-on-failure --no-tests=error
           exit $LASTEXITCODE
+      - name: Security diagnostic self-test
+        id: security
+        run: ./tests/JinJuSecurityReport.ps1 -SelfTest
       - name: Verify delivery
         id: copy
         run: |
@@ -41,7 +44,7 @@ jobs:
       - name: Report
         if: always()
         run: |
-          @('# Native XAML test report','', 'Build: ${{ steps.build.outcome }}','CTest: ${{ steps.test.outcome }}','Copy: ${{ steps.copy.outcome }}','Source: ${{ github.event.pull_request.head.sha }}','Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}','Live Explorer visual test: not performed') | Set-Content test_report.md
+          @('# Native XAML test report','', 'Build: ${{ steps.build.outcome }}','CTest: ${{ steps.test.outcome }}','Security diagnostic self-test: ${{ steps.security.outcome }}','Copy: ${{ steps.copy.outcome }}','Source: ${{ github.event.pull_request.head.sha }}','Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}','Live Explorer visual test: not performed') | Set-Content test_report.md
           Get-Content test_report.md >> $env:GITHUB_STEP_SUMMARY
       - uses: actions/upload-artifact@v5
         if: success()
@@ -53,6 +56,7 @@ jobs:
             tests/JinJuXamlUnload.exe
             tests/JinJuMarquee.exe
             tests/*.sha256
+            tests/JinJuSecurityReport.ps1
             test_report.md
       - name: Publish report and binaries
         if: always() && github.event.pull_request.head.repo.full_name == github.repository

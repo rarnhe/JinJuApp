@@ -109,35 +109,13 @@ void ObserveGreeting(TextBlock const& text,Grid const& grid,FrameworkElement con
             auto t=weakText.get();auto g=weakGrid.get();auto b=weakButton.get();
             if(!t||!g||!b){clock.Stop();Log(L"P1 layout: target removed");return;}
             auto w=t.ActualWidth(),h=t.ActualHeight();
-            bool size=layout::validSize(w,h),visible=true,clip=false,clipOutside=false,clipUnknown=false;
+            bool size=layout::validSize(w,h),visible=true,clip=false;
             bool attached=false;
             for(DependencyObject node=t;node;node=Media::VisualTreeHelper::GetParent(node)){
                 if(node==b)attached=true;
                 if(auto ui=node.try_as<UIElement>()){
                     visible=visible&&ui.Visibility()==Visibility::Visible&&ui.Opacity()>0;
-                    if(auto geometry=ui.Clip()){
-                        clip=true;
-                        if(auto rectangle=geometry.try_as<Media::RectangleGeometry>();rectangle&&size){
-                            auto bounds=rectangle.Rect();
-                            // Nonidentity geometry transforms are not assumed to be rectangular in element coordinates.
-                            bool identity=true;
-                            if(auto transform=rectangle.Transform()){
-                                if(auto matrix=transform.try_as<Media::MatrixTransform>()){
-                                    auto m=matrix.Matrix();
-                                    identity=m.M11==1&&m.M22==1&&m.M12==0&&m.M21==0&&m.OffsetX==0&&m.OffsetY==0;
-                                }else identity=false;
-                            }
-                            auto r=t.TransformToVisual(ui).TransformBounds(Windows::Foundation::Rect{0,0,static_cast<float>(w),static_cast<float>(h)});
-                            bool contained=identity&&layout::insideRect(r.X,r.Y,r.Width,r.Height,bounds.X,bounds.Y,bounds.Width,bounds.Height);
-                            if(!identity)clipUnknown=true;
-                            else if(!contained)clipOutside=true;
-                            std::wostringstream cs;cs<<L"P1 clip class="<<get_class_name(ui).c_str()
-                                <<L" rect="<<bounds.X<<L","<<bounds.Y<<L","<<bounds.Width<<L","<<bounds.Height
-                                <<L" text="<<r.X<<L","<<r.Y<<L","<<r.Width<<L","<<r.Height
-                                <<L" identity="<<identity<<L" contained="<<contained;
-                            Log(cs.str());TreeLine(cs.str());
-                        }else{clipUnknown=true;Log(L"P1 clip geometry not verified");}
-                    }
+                    clip=clip||static_cast<bool>(ui.Clip());
                 }
             }
             bool inGrid=false,inButton=false;
@@ -148,14 +126,12 @@ void ObserveGreeting(TextBlock const& text,Grid const& grid,FrameworkElement con
                 inGrid=layout::inside(rg.X,rg.Y,rg.Width,rg.Height,g.ActualWidth(),g.ActualHeight());
                 inButton=layout::inside(rb.X,rb.Y,rb.Width,rb.Height,b.ActualWidth(),b.ActualHeight());
             }
-            bool candidate=size&&visible&&attached&&inGrid&&inButton&&!clipOutside&&!clipUnknown;
+            bool candidate=size&&visible&&attached&&inGrid&&inButton&&!clip;
             std::wostringstream s;s<<L"P1 layout attempt="<<attempt<<L" ";Describe(t,s);
             s<<L" grid="<<g.ActualWidth()<<L"x"<<g.ActualHeight()
              <<L" button="<<b.ActualWidth()<<L"x"<<b.ActualHeight()
              <<L" validSize="<<size<<L" ancestorVisible="<<visible<<L" attached="<<attached
              <<L" insideGrid="<<inGrid<<L" insideButton="<<inButton<<L" ancestorClip="<<clip
-             <<L" clipOutside="<<clipOutside<<L" clipUnknown="<<clipUnknown
-             <<L" originalColumnActual="<<(g.ColumnDefinitions().Size()?g.ColumnDefinitions().GetAt(0).ActualWidth():0)
              <<L" visibilityCandidate="<<candidate<<L" visualProof=manual";
             Log(s.str());TreeLine(s.str());
         }catch(...){LogException(L"P1 layout observation");}
@@ -192,24 +168,6 @@ void AddGreeting(FrameworkElement const& button){
     text.Margin(Thickness{6,0,0,0});
     text.VerticalAlignment(VerticalAlignment::Center);
     text.IsHitTestVisible(false);
-    // Captured template has an explicit 152-DIP parent and a 136-DIP
-    // implicit weather column. Reserve greeting space without shrinking it.
-    auto panel=Media::VisualTreeHelper::GetParent(grid).try_as<FrameworkElement>();
-    if(!panel||panel.Name()!=L"ExperienceToggleButtonRootPanel"||
-       get_class_name(panel)!=L"Taskbar.TaskListButtonPanel"||originalCount!=0){
-        Log(L"P1 skip: layout differs from captured implicit-column template");return;
-    }
-    auto oldPanelWidth=panel.Width();
-    auto oldGridWidth=grid.Width();
-    auto originalWidth=grid.ActualWidth();
-    text.Measure(Windows::Foundation::Size{10000,10000});
-    auto extra=std::ceil(static_cast<double>(text.DesiredSize().Width));
-    if(!layout::canExpand(oldPanelWidth,originalWidth,extra,button.ActualWidth())||
-       originalWidth+extra>grid.MaxWidth()||oldPanelWidth+extra>panel.MaxWidth()){
-        Log(L"P1 skip: insufficient verified space for original weather plus greeting");return;
-    }
-    Log(L"P1 reserve original="+std::to_wstring(originalWidth)+L" extra="+std::to_wstring(extra)+
-        L" panel="+std::to_wstring(oldPanelWidth)+L" newPanel="+std::to_wstring(oldPanelWidth+extra));
     ColumnDefinition column;
     column.Width(GridLength{1,GridUnitType::Auto});
     auto index=originalCount?originalCount:1u;
@@ -218,21 +176,13 @@ void AddGreeting(FrameworkElement const& button){
     try{
         if(!originalCount){
             ColumnDefinition implicit;
-            implicit.Width(GridLength{originalWidth,GridUnitType::Pixel});
+            implicit.Width(GridLength{1,GridUnitType::Star});
             cols.Append(implicit);
         }
         cols.Append(column);
-        panel.Width(oldPanelWidth+extra);
-        grid.Width(originalWidth+extra);
         children.Append(text);
     }catch(...){
-        try{
-            uint32_t position=0;
-            if(children.IndexOf(text,position))children.RemoveAt(position);
-            while(cols.Size()>originalCount)cols.RemoveAtEnd();
-            grid.Width(oldGridWidth);
-            panel.Width(oldPanelWidth);
-        }catch(...){LogException(L"P1 rollback");}
+        while(cols.Size()>originalCount)cols.RemoveAtEnd();
         throw;
     }
     OutputDebugStringW(L"JinJuXaml: greeting appended\n");

@@ -17,6 +17,8 @@ include(CTest)
 add_subdirectory(xaml_experiment)
 if(BUILD_TESTING)
   add_subdirectory(tests)
+  find_program(JINJU_POWERSHELL NAMES pwsh powershell REQUIRED)
+  add_test(NAME security_report_self_test COMMAND "${JINJU_POWERSHELL}" -NoProfile -File "${CMAKE_SOURCE_DIR}/tests/JinJuSecurityReport.ps1" -SelfTest)
 endif()
 
 # Always synchronize the visual-test delivery directory after a successful build.
