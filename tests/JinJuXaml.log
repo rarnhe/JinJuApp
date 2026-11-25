@@ -910,3 +910,129 @@
 2026-11-25T16:52:37.43Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134178488 parent=0 child=1134178488 index=0
 2026-11-25T16:52:37.43Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1141745704 parent=0 child=1141745704 index=0
 2026-11-25T16:52:37.43Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1156779672 parent=0 child=1156779672 index=0
+2026-11-25T17:15:41.332Z pid=5028 tid=17280 Launcher: Explorer PID=10288
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection1 HRESULT=0x00000000
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection2 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection3 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection4 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=10288 tid=27188 DLL active: DllGetClassObject
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection5 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection6 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection7 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection8 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection9 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection10 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection11 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection12 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection13 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection14 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection15 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection16 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection17 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection18 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection19 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection20 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=10288 tid=27188 DllGetClassObject HRESULT=0x00000000
+2026-11-25T17:15:41.380Z pid=10288 tid=27188 CreateInstance HRESULT=0x00000000
+2026-11-25T17:15:41.380Z pid=10288 tid=27188 SetSite(non-null)
+2026-11-25T17:15:41.396Z pid=10288 tid=27188 QueryInterface IXamlDiagnostics HRESULT=0x00000000
+2026-11-25T17:15:41.416Z pid=10288 tid=27188 QueryInterface IVisualTreeService HRESULT=0x00000000
+2026-11-25T17:15:41.418Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=412652744 parent=0 child=0 index=0
+2026-11-25T17:15:41.445Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:41.470Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=412657496 parent=0 child=0 index=0
+2026-11-25T17:15:41.491Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:41.507Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=417421656 parent=0 child=0 index=0
+2026-11-25T17:15:41.539Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:41.555Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=422999336 parent=417421656 child=422999336 index=0
+2026-11-25T17:15:41.571Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:41.601Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=126964296 parent=422999336 child=126964296 index=0
+2026-11-25T17:15:41.618Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:41.637Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=407567288 parent=126964296 child=407567288 index=0
+2026-11-25T17:15:41.653Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:41.681Z pid=10288 tid=27188 AdviseVisualTreeChange HRESULT=0x00000000
+2026-11-25T17:15:41.681Z pid=10288 tid=27188 SetSite HRESULT=0x00000000
+2026-11-25T17:15:41.697Z pid=10288 tid=27188 P1 observed root class=Windows.UI.Xaml.Controls.Canvas
+2026-11-25T17:15:41.713Z pid=10288 tid=27188 P1 observed root class=Windows.UI.Xaml.Controls.Panel
+2026-11-25T17:15:41.726Z pid=10288 tid=27188 P1 observed root class=Windows.UI.Xaml.Controls.ScrollViewer
+2026-11-25T17:15:49.933Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1154087288 parent=409699032 child=1154087288 index=10
+2026-11-25T17:15:49.959Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:49.989Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1160549480 parent=1164327912 child=1160549480 index=0
+2026-11-25T17:15:50.4Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:50.36Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1160551960 parent=1164327912 child=1160551960 index=1
+2026-11-25T17:15:50.54Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:50.83Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1160550472 parent=1164327912 child=1160550472 index=2
+2026-11-25T17:15:50.100Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:50.123Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1104318648 parent=1164327912 child=1104318648 index=3
+2026-11-25T17:15:50.145Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:50.165Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1164327912 parent=1154087288 child=1164327912 index=0
+2026-11-25T17:15:50.179Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:50.209Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1160549976 parent=1164327912 child=1160549976 index=4
+2026-11-25T17:15:50.226Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:50.242Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1160551464 parent=1164327912 child=1160551464 index=3
+2026-11-25T17:15:50.275Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:50.321Z pid=10288 tid=27188 P1 observed root class=Windows.UI.Xaml.Controls.ScrollViewer
+2026-11-25T17:15:50.321Z pid=10288 tid=27188 P1 WeatherButton found by root scan
+2026-11-25T17:15:50.881Z pid=10288 tid=27188 P1 weather Grid original columns=0 children=2
+2026-11-25T17:15:50.891Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1105707752 parent=408626984 child=1105707752 index=2
+2026-11-25T17:15:50.914Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:15:50.935Z pid=10288 tid=27188 WeatherButton found
+2026-11-25T17:15:50.942Z pid=10288 tid=27188 TextBlock appended; actual size pending layout
+2026-11-25T17:15:51.484Z pid=10288 tid=27188 P1 layout attempt=1 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:51.995Z pid=10288 tid=27188 TextBlock already present
+2026-11-25T17:15:52.457Z pid=10288 tid=27188 P1 layout attempt=2 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:52.633Z pid=10288 tid=27188 VisualTreeChange mutation=1 handle=1160551464 parent=0 child=1160551464 index=0
+2026-11-25T17:15:52.729Z pid=10288 tid=27188 P1 layout attempt=3 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:53.26Z pid=10288 tid=27188 P1 layout attempt=4 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:53.301Z pid=10288 tid=27188 P1 layout attempt=5 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:53.574Z pid=10288 tid=27188 P1 layout attempt=6 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:53.864Z pid=10288 tid=27188 P1 layout attempt=7 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:54.145Z pid=10288 tid=27188 P1 layout attempt=8 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:16:1.730Z pid=3928 tid=20916 Launcher: Explorer PID=10288
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection1 HRESULT=0x00000000
+2026-11-25T17:16:1.746Z pid=10288 tid=27188 DLL active: DllGetClassObject
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection2 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection3 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection4 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection5 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection6 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection7 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection8 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection9 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection10 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection11 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection12 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection13 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection14 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection15 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection16 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection17 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection18 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection19 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection20 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=10288 tid=27188 DllGetClassObject HRESULT=0x00000000
+2026-11-25T17:16:1.785Z pid=10288 tid=27188 CreateInstance HRESULT=0x00000000
+2026-11-25T17:16:1.792Z pid=10288 tid=27188 SetSite(non-null)
+2026-11-25T17:16:1.809Z pid=10288 tid=27188 QueryInterface IXamlDiagnostics HRESULT=0x00000000
+2026-11-25T17:16:1.812Z pid=10288 tid=27188 QueryInterface IVisualTreeService HRESULT=0x00000000
+2026-11-25T17:16:1.828Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=412652744 parent=0 child=0 index=0
+2026-11-25T17:16:1.856Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:16:1.872Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=412657496 parent=0 child=0 index=0
+2026-11-25T17:16:1.904Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:16:1.919Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=417421656 parent=0 child=0 index=0
+2026-11-25T17:16:1.951Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:16:1.983Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=422999336 parent=417421656 child=422999336 index=0
+2026-11-25T17:16:2.3Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:16:2.30Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=126964296 parent=422999336 child=126964296 index=0
+2026-11-25T17:16:2.46Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:16:2.78Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=407567288 parent=126964296 child=407567288 index=0
+2026-11-25T17:16:2.110Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:16:2.146Z pid=10288 tid=27188 AdviseVisualTreeChange HRESULT=0x00000000
+2026-11-25T17:16:2.158Z pid=10288 tid=27188 SetSite HRESULT=0x00000000
+2026-11-25T17:16:22.28Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1115071032 parent=1164327912 child=1115071032 index=3
+2026-11-25T17:16:22.51Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:16:31.352Z pid=10288 tid=27188 VisualTreeChange mutation=1 handle=1115071032 parent=0 child=1115071032 index=0
+2026-11-25T17:16:36.993Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1188652952 parent=419305992 child=1188652952 index=3
+2026-11-25T17:16:37.29Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
+2026-11-25T17:16:39.765Z pid=10288 tid=27188 VisualTreeChange mutation=1 handle=1188652952 parent=0 child=1188652952 index=0
+2026-11-25T17:16:48.306Z pid=10288 tid=27188 VisualTreeChange mutation=0 handle=1164487480 parent=1164327912 child=1164487480 index=3
+2026-11-25T17:16:48.332Z pid=10288 tid=27188 GetIInspectableFromHandle HRESULT=0x00000000
