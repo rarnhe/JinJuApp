@@ -1,5 +1,8 @@
 #include "shared.h"
 #include "diagnostics.h"
+#include "layout_policy.h"
+#include <chrono>
+#include <vector>
 #include <cstring>
 #include <ocidl.h>
 #include <xamlom.h>
@@ -92,10 +95,53 @@ void DumpWeather(FrameworkElement const& button,std::wstring_view stage) noexcep
         }
     }catch(...){LogException(L"DumpWeather");}
 }
+void ObserveGreeting(TextBlock const& text,Grid const& grid,FrameworkElement const& button){
+    auto weakText=make_weak(text);
+    auto weakGrid=make_weak(grid);
+    auto weakButton=make_weak(button);
+    DispatcherTimer timer;
+    timer.Interval(std::chrono::milliseconds(250));
+    timer.Tick([weakText,weakGrid,weakButton,attempt=0](Windows::Foundation::IInspectable const& sender,Windows::Foundation::IInspectable const&) mutable {
+        auto clock=sender.as<DispatcherTimer>();
+        ++attempt;
+        if(attempt>=8)clock.Stop();
+        try{
+            auto t=weakText.get();auto g=weakGrid.get();auto b=weakButton.get();
+            if(!t||!g||!b){clock.Stop();Log(L"P1 layout: target removed");return;}
+            auto w=t.ActualWidth(),h=t.ActualHeight();
+            bool size=layout::validSize(w,h),visible=true,clip=false;
+            bool attached=false;
+            for(DependencyObject node=t;node;node=Media::VisualTreeHelper::GetParent(node)){
+                if(node==b)attached=true;
+                if(auto ui=node.try_as<UIElement>()){
+                    visible=visible&&ui.Visibility()==Visibility::Visible&&ui.Opacity()>0;
+                    clip=clip||static_cast<bool>(ui.Clip());
+                }
+            }
+            bool inGrid=false,inButton=false;
+            if(size&&attached){
+                Windows::Foundation::Rect rect{0,0,static_cast<float>(w),static_cast<float>(h)};
+                auto rg=t.TransformToVisual(g).TransformBounds(rect);
+                auto rb=t.TransformToVisual(b).TransformBounds(rect);
+                inGrid=layout::inside(rg.X,rg.Y,rg.Width,rg.Height,g.ActualWidth(),g.ActualHeight());
+                inButton=layout::inside(rb.X,rb.Y,rb.Width,rb.Height,b.ActualWidth(),b.ActualHeight());
+            }
+            bool candidate=size&&visible&&attached&&inGrid&&inButton&&!clip;
+            std::wostringstream s;s<<L"P1 layout attempt="<<attempt<<L" ";Describe(t,s);
+            s<<L" grid="<<g.ActualWidth()<<L"x"<<g.ActualHeight()
+             <<L" button="<<b.ActualWidth()<<L"x"<<b.ActualHeight()
+             <<L" validSize="<<size<<L" ancestorVisible="<<visible<<L" attached="<<attached
+             <<L" insideGrid="<<inGrid<<L" insideButton="<<inButton<<L" ancestorClip="<<clip
+             <<L" visibilityCandidate="<<candidate<<L" visualProof=manual";
+            Log(s.str());TreeLine(s.str());
+        }catch(...){LogException(L"P1 layout observation");}
+    });
+    timer.Start();
+}
 void AddGreeting(FrameworkElement const& button){
     // Only modify the named weather content grid; append a column without replacing children.
     auto scan=[&](auto&& self,DependencyObject const& node)->Grid{
-        if(auto g=node.try_as<Grid>();g && g.Name()==L"AugmentedEntryPointContentGrid")return g;
+        if(auto g=node.try_as<Grid>();g && layout::weatherGrid(g.Name()))return g;
         for(int i=0;i<Media::VisualTreeHelper::GetChildrenCount(node);++i)
             if(auto g=self(self,Media::VisualTreeHelper::GetChild(node,i)))return g;
         return nullptr;
@@ -106,7 +152,14 @@ void AddGreeting(FrameworkElement const& button){
     for(auto const& child:children)
         if(auto e=child.try_as<FrameworkElement>();e && e.Name()==Marker){Log(L"TextBlock already present");return;}
     auto cols=grid.ColumnDefinitions();
-    if(!cols.Size()){Log(L"WeatherGrid has zero explicit columns; original insertion policy skipped");return;} // Unknown template: leave it untouched.
+    const auto originalCount=cols.Size();
+    for(auto const& child:children){
+        if(!layout::preservesColumn(originalCount,Grid::GetColumn(child),Grid::GetColumnSpan(child))){
+            Log(L"P1 skip: existing child column/span would change meaning");return;
+        }
+    }
+    if(!children.Size()){Log(L"P1 skip: weather content not constructed");return;}
+    Log(L"P1 weather Grid original columns="+std::to_wstring(originalCount)+L" children="+std::to_wstring(children.Size()));
     TextBlock text;
     text.Name(Marker);text.Text(Greeting);
     text.Margin(Thickness{6,0,0,0});
@@ -114,25 +167,66 @@ void AddGreeting(FrameworkElement const& button){
     text.IsHitTestVisible(false);
     ColumnDefinition column;
     column.Width(GridLength{1,GridUnitType::Auto});
-    auto index=cols.Size();
+    auto index=originalCount?originalCount:1u;
     Grid::SetColumn(text,index);
     Grid::SetRowSpan(text,static_cast<int>(grid.RowDefinitions().Size()?grid.RowDefinitions().Size():1));
-    cols.Append(column);
-    try{children.Append(text);}catch(...){cols.RemoveAt(index);throw;}
+    try{
+        if(!originalCount){
+            ColumnDefinition implicit;
+            implicit.Width(GridLength{1,GridUnitType::Star});
+            cols.Append(implicit);
+        }
+        cols.Append(column);
+        children.Append(text);
+    }catch(...){
+        while(cols.Size()>originalCount)cols.RemoveAtEnd();
+        throw;
+    }
     OutputDebugStringW(L"JinJuXaml: greeting appended\n");
     Log(L"TextBlock appended; actual size pending layout");
-    try{
-        auto weak=make_weak(text);
-        text.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak](){
-            try{
-                if(auto t=weak.get()){
-                    std::wostringstream s;s<<L"TextBlock post-dispatch ";Describe(t,s);
-                    s<<L" nonzeroSize="<<(t.ActualWidth()>0 && t.ActualHeight()>0);
-                    Log(s.str());TreeLine(s.str());
-                }
-            }catch(...){LogException(L"TextBlock layout");}
-        });
-    }catch(...){LogException(L"Queue layout observation");}
+    try{ObserveGreeting(text,grid,button);}catch(...){LogException(L"Queue P1 layout observation");}
+}
+void QueueWeather(FrameworkElement const& element){
+    auto weak=make_weak(element);
+    element.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak](){
+        try{if(auto b=weak.get()){DumpWeather(b,L"before");AddGreeting(b);DumpWeather(b,L"after");}}
+        catch(...){LogException(L"AddGreeting");}
+    });
+}
+// Scan an observed visual root once, including non-FrameworkElement nodes.
+// Descendant notifications still handle templates created later.
+void ScanRoot(DependencyObject const& node,unsigned depth,unsigned& budget){
+    if(!node||!budget||depth>80)return;
+    --budget;
+    if(auto e=node.try_as<FrameworkElement>();e&&WeatherButton(get_class_name(e))){
+        Log(L"P1 WeatherButton found by root scan");QueueWeather(e);return;
+    }
+    for(int i=0;i<Media::VisualTreeHelper::GetChildrenCount(node)&&budget;++i)
+        ScanRoot(Media::VisualTreeHelper::GetChild(node,i),depth+1,budget);
+}
+void QueueRoot(DependencyObject const& node,FrameworkElement const& dispatcherSource){
+    static thread_local std::vector<weak_ref<DependencyObject>> roots;
+    auto root=node;
+    for(unsigned i=0;i<80;++i){
+        auto parent=Media::VisualTreeHelper::GetParent(root);
+        if(!parent)break;
+        root=parent;
+    }
+    for(auto it=roots.begin();it!=roots.end();){
+        auto old=it->get();
+        if(!old)it=roots.erase(it);
+        else{if(old==root)return;++it;}
+    }
+    if(roots.size()>=128){Log(L"P1 root scan limit reached");return;}
+    auto weak=make_weak(root);roots.push_back(weak);
+    dispatcherSource.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak](){
+        try{if(auto r=weak.get()){
+            unsigned budget=4096;
+            Log(L"P1 observed root class="+std::wstring(get_class_name(r).c_str()));
+            ScanRoot(r,0,budget);
+            if(!budget)Log(L"P1 root scan truncated");
+        }}catch(...){LogException(L"P1 root scan");}
+    });
 }
 struct Watcher:implements<Watcher,IVisualTreeServiceCallback,non_agile>{
     com_ptr<IXamlDiagnostics> diag;
@@ -156,20 +250,13 @@ struct Watcher:implements<Watcher,IVisualTreeServiceCallback,non_agile>{
             auto element=obj.try_as<FrameworkElement>();
             if(!element){Log(L"Not a FrameworkElement");return S_OK;}
             try{std::wostringstream s;s<<L"handle="<<e.Handle<<L" ";Describe(element,s);TreeLine(s.str());}catch(...){LogException(L"Describe element");}
-            // A descendant notification can arrive after the weather template is constructed.
-            for(auto current=element;current;){
-                if(WeatherButton(get_class_name(current))){
-                    Log(L"WeatherButton found");
-                    auto dispatcher=current.Dispatcher();
-                    auto weak=make_weak(current);
-                    dispatcher.RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak](){
-                        try{if(auto b=weak.get()){DumpWeather(b,L"before");AddGreeting(b);DumpWeather(b,L"after");}}catch(...){LogException(L"AddGreeting");}
-                    });
-                    break;
+            // Walk through non-FrameworkElement parents too.
+            for(DependencyObject current=element;current;current=Media::VisualTreeHelper::GetParent(current)){
+                if(auto f=current.try_as<FrameworkElement>();f&&WeatherButton(get_class_name(f))){
+                    Log(L"WeatherButton found");QueueWeather(f);break;
                 }
-                auto p=Media::VisualTreeHelper::GetParent(current);
-                current=p?p.try_as<FrameworkElement>():nullptr;
             }
+            QueueRoot(element,element);
         }catch(...){LogException(L"OnVisualTreeChange");}
         return S_OK;
     }

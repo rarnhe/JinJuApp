@@ -32,14 +32,17 @@ int wmain(int argc,wchar_t** argv){
         if(!GetSystemDirectoryW(system,32768))return 7;
         auto xaml=std::filesystem::path(system)/L"Windows.UI.Xaml.dll";
         HRESULT hr=E_FAIL;
+        unsigned connected=0;
         for(int i=1;i<=20;++i){
             auto endpoint=L"VisualDiagConnection"+std::to_wstring(i);
             hr=init(endpoint.c_str(),pid,xaml.c_str(),dll.c_str(),TapId,L"");
             diagnostics::append(dir,L"JinJuXaml.log",endpoint+L" HRESULT="+diagnostics::hr(hr));
-            if(SUCCEEDED(hr))break;
-            if(hr!=HRESULT_FROM_WIN32(ERROR_NOT_FOUND))break;
+            if(SUCCEEDED(hr))++connected;
+            // Other names may refer to separate XAML diagnostic endpoints.
+            // Keep the search bounded; log every result, not just the first success.
         }
-        std::wcout<<L"Diagnostics HRESULT: 0x"<<std::hex<<static_cast<unsigned>(hr)<<L"\n";
-        return FAILED(hr)?8:0;
+        std::wcout<<L"Last endpoint HRESULT: 0x"<<std::hex<<static_cast<unsigned>(hr)<<L"\n";
+        std::wcout<<L"Successful endpoints: "<<std::dec<<connected<<L"/20 (not proof of target discovery)\n";
+        return connected?0:8;
     }catch(winrt::hresult_error const& e){diagnostics::append(diagnostics::directory(),L"JinJuXaml.log",L"Launcher exception HRESULT="+diagnostics::hr(e.code())+L" "+e.message().c_str());return 9;}catch(...){diagnostics::append(diagnostics::directory(),L"JinJuXaml.log",L"Launcher unknown exception");return 9;}
 }
