@@ -1797,7 +1797,7 @@ bool TestWindowPixelOrder()
         output[7] != top[2])
         return false;
     std::fill(output.begin(), output.end(), 0xffffffffu);
-    std::fill(claimed.begin(), claimed.end(), 0);
+    std::fill(claimed.begin(), claimed.end(), uint8_t{0});
     HRGN region = CreateRectRgn(0, 0, 1, 1);
     if (!region)
         return false;

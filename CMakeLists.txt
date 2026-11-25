@@ -11,9 +11,25 @@ function(jinju_target name)
   target_compile_options(${name} PRIVATE /utf-8 /W4 /permissive-)
   target_link_libraries(${name} PRIVATE user32 gdi32 shell32 ole32 oleaut32 uiautomationcore dwmapi gdiplus uuid advapi32 windowscodecs)
 endfunction()
-add_executable(JinJuApp WIN32 main.cpp main.h)
-jinju_target(JinJuApp)
+add_executable(JinJuMarquee WIN32 main.cpp main.h)
+jinju_target(JinJuMarquee)
 include(CTest)
+add_subdirectory(xaml_experiment)
 if(BUILD_TESTING)
   add_subdirectory(tests)
+  find_program(JINJU_POWERSHELL NAMES pwsh powershell REQUIRED)
+  add_test(NAME security_report_self_test COMMAND "${JINJU_POWERSHELL}" -NoProfile -File "${CMAKE_SOURCE_DIR}/tests/JinJuSecurityReport.ps1" -SelfTest)
 endif()
+
+# Always synchronize the visual-test delivery directory after a successful build.
+set(JINJU_DELIVERY_DIR "${CMAKE_SOURCE_DIR}/tests")
+add_custom_target(jinju_delivery ALL
+  COMMAND "${CMAKE_COMMAND}" -E make_directory "${JINJU_DELIVERY_DIR}"
+  COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:JinJuApp>" "${JINJU_DELIVERY_DIR}/JinJuApp.exe"
+  COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:JinJuXaml>" "${JINJU_DELIVERY_DIR}/JinJuXaml.dll"
+  COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:JinJuXamlUnload>" "${JINJU_DELIVERY_DIR}/JinJuXamlUnload.exe"
+  COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:JinJuMarquee>" "${JINJU_DELIVERY_DIR}/JinJuMarquee.exe"
+  COMMAND "${CMAKE_COMMAND}" "-DDELIVERY_DIR=${JINJU_DELIVERY_DIR}" -P "${CMAKE_SOURCE_DIR}/tests/hash_delivery.cmake"
+  DEPENDS JinJuApp JinJuXaml JinJuXamlUnload JinJuMarquee
+  VERBATIM
+)
