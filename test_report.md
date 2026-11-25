@@ -1,9 +1,9 @@
 # Native XAML test report
 
 Build: success
-CTest: failure
-Security diagnostic self-test: skipped
-Copy: skipped
-Source: bb7a8de04ba338223c7c381ad89cbcb889a70d02
-Run: https://github.com/rarnhe/JinJuApp/actions/runs/45677564347
+CTest: success
+Security diagnostic self-test: success
+Copy: success
+Source: dac615882bb597bff61759d28a88e15ee3b9d5cb
+Run: https://github.com/rarnhe/JinJuApp/actions/runs/45678120171
 Live Explorer visual test: not performed
