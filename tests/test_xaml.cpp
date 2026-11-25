@@ -23,9 +23,7 @@ int wmain(int argc,wchar_t** argv){
     }
     if(argc!=2 || !WeatherButton(L"Taskbar.AugmentedEntryPointButton") ||
        WeatherButton(L"Taskbar.TaskListButton") || std::wstring_view(Greeting)!=L"你好。")return 1;
-    if(!layout::preservesColumn(0,0,1)||layout::preservesColumn(0,1,1)||
-       layout::preservesColumn(1,0,2)||!layout::preservesColumn(2,1,1)||
-       !layout::validSize(30,20)||layout::validSize(0,20)||
+    if(!layout::validSize(30,20)||layout::validSize(0,20)||
        layout::validSize(std::numeric_limits<double>::infinity(),20)||
        !layout::inside(60,0,30,20,100,40)||layout::inside(90,0,30,20,100,40)||
        !layout::weatherGrid(L"AugmentedEntryPointContentGrid")||layout::weatherGrid(L"OverflowRootGrid"))return 11;
