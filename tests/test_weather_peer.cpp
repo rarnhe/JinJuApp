@@ -9,26 +9,31 @@ int testRebuild() {
     button.Children().Append(first);
     first.Children().Append(weather);
     Attachment attached;
-    if (!attached.install(first,weather) || !attached.intact(button)) return 10;
+    auto intact=[&](Grid const& expectedWeather) {
+        auto current=button.Children().GetAt(0).as<Panel>();
+        return attached.intact(current,expectedWeather);
+    };
+    if (!attached.install(first,weather)) return 10;
+    if (!intact(weather)) return 18;
     auto original=attached.text();
     if (attached.install(first,weather) || attached.text()!=original) return 11;
 
     first.Children().RemoveAt(0); // Same panel, new weather ContentGrid.
     first.Children().Append(replacement);
-    if (attached.intact(button) || !attached.install(first,replacement)) return 12;
+    if (intact(replacement) || !attached.install(first,replacement)) return 12;
     uint32_t index{};
-    if (first.Children().IndexOf(original,index) || !attached.intact(button)) return 13;
+    if (first.Children().IndexOf(original,index) || !intact(replacement)) return 13;
 
     auto removed=attached.text();
     if (!first.Children().IndexOf(removed,index)) return 14;
     first.Children().RemoveAt(index); // Only the greeting was recycled.
-    if (attached.intact(button) || !attached.install(first,replacement) || first.Children().Size()!=2) return 15;
+    if (intact(replacement) || !attached.install(first,replacement) || first.Children().Size()!=2) return 15;
 
     button.Children().Clear(); // Entire root panel was rebuilt.
     button.Children().Append(second);
     second.Children().Append(weather);
-    if (attached.intact(button) || !attached.install(second,weather) ||
-        first.Children().Size()!=1 || !attached.intact(button)) return 16;
+    if (intact(weather) || !attached.install(second,weather) ||
+        first.Children().Size()!=1 || !intact(weather)) return 16;
     for (int i=0;i<20;++i)
         if (attached.install(second,weather) || second.Children().Size()!=2) return 17;
     return 0;

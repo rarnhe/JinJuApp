@@ -41,10 +41,8 @@ public:
         owned=static_cast<bool>(text);
         return owned;
     }
-    bool intact(FrameworkElement const& button) const {
-        auto panel=parent.get();
-        auto grid=content.get();
-        if (!panel || !grid || Media::VisualTreeHelper::GetParent(panel)!=button) return false;
+    bool intact(Panel const& panel, Grid const& grid) const {
+        if (!panel || !grid || parent.get()!=panel || content.get()!=grid) return false;
         uint32_t index{};
         return panel.Children().IndexOf(grid,index) && present(panel,grid);
     }

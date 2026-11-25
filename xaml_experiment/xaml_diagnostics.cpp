@@ -218,7 +218,8 @@ private:
         if (!target) return;
         {
             Change guard(changing);
-            if (attachment.intact(target)) { updatePosition(target); return; }
+            auto current=FindWeatherParts(target);
+            if (attachment.intact(current.panel,current.grid)) { updatePosition(target); return; }
             resetLayout();
             Log(L"Weather template or peer replaced; waiting for stable layout");
         }
