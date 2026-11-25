@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "weather_state.h"
 #include "greeting.h"
+#include "cleanup_runtime.h"
 #include <memory>
 #include <chrono>
 #include <vector>
@@ -134,7 +135,8 @@ layout::WeatherSample SampleWeather(FrameworkElement const& button, WeatherParts
 }
 class WeatherWatch : public std::enable_shared_from_this<WeatherWatch> {
 public:
-    explicit WeatherWatch(FrameworkElement const& target) : button(make_weak(target)) {}
+    WeatherWatch(FrameworkElement const& target,std::shared_ptr<cleanup::Runtime> const& owner)
+        : button(make_weak(target)), runtime(owner) {}
     weak_ref<FrameworkElement> button;
 
     void listen(FrameworkElement const& target) {
@@ -166,13 +168,29 @@ public:
         });
         start();
     }
+    void close() {
+        suspended=true;
+        if (auto target=button.get()) {
+            if (layoutToken.value) { target.LayoutUpdated(layoutToken); layoutToken={}; }
+            if (loadToken.value) { target.Loaded(loadToken); loadToken={}; }
+            if (unloadToken.value) { target.Unloaded(unloadToken); unloadToken={}; }
+        }
+        if (tickToken.value) { timer.Tick(tickToken); tickToken={}; }
+        resetLayout();
+    }
     void start() {
+        if (!active()) return;
         if (!suspended && !running && !installed && !changing) {
             timer.Start();
             running=true;
         }
     }
 private:
+    std::weak_ptr<cleanup::Runtime> runtime;
+    bool active() const {
+        auto owner=runtime.lock();
+        return owner && !owner->stopping();
+    }
     DispatcherTimer timer;
     event_token tickToken{}, layoutToken{}, unloadToken{}, loadToken{};
     weak_ref<Grid> sampledGrid;
@@ -212,7 +230,7 @@ private:
         } catch (...) { text.Opacity(0); LogException(L"Weather peer placement"); }
     }
     void layoutChanged() {
-        if (suspended || changing) return;
+        if (!active() || suspended || changing) return;
         if (!installed) { start(); return; }
         auto target=button.get();
         if (!target) return;
@@ -227,7 +245,7 @@ private:
     }
     void tick() {
         auto target=button.get();
-        if (!target || suspended || installed) { pause(); return; }
+        if (!active() || !target || suspended || installed) { pause(); return; }
         if (changing) return;
         Change guard(changing);
         auto parts=FindWeatherParts(target);
@@ -256,28 +274,55 @@ private:
         }
     }
 };
-void QueueWeather(FrameworkElement const& target) {
-    static thread_local std::vector<std::shared_ptr<WeatherWatch>> watches;
+struct ThreadWeather {
+    std::vector<std::shared_ptr<WeatherWatch>> watches;
+    std::vector<weak_ref<DependencyObject>> roots;
+    bool observedRoot=false;
+};
+ThreadWeather& LocalWeather() {
+    static thread_local ThreadWeather state;
+    return state;
+}
+Windows::Foundation::IAsyncAction ClearDispatcher(Windows::UI::Core::CoreDispatcher dispatcher) {
+    HRESULT cleared=E_PENDING;
+    co_await dispatcher.RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal,[&cleared]() {
+        auto& state=LocalWeather();
+        cleared=S_OK;
+        std::erase_if(state.watches,[&](auto const& watch) {
+            try { watch->close(); return true; }
+            catch (...) { cleared=to_hresult(); LogException(L"Weather teardown"); return false; }
+        });
+        state.roots.clear();
+        state.observedRoot=false;
+    });
+    LogHr(L"Weather UI cleanup",cleared);
+    check_hresult(cleared);
+}
+void QueueWeather(FrameworkElement const& target,std::shared_ptr<cleanup::Runtime> const& runtime) {
+    if (runtime->stopping()) return;
+    auto& watches=LocalWeather().watches;
     std::erase_if(watches, [](auto const& watch) { return !watch->button.get(); });
     for (auto const& watch : watches)
         if (watch->button.get()==target) { watch->start(); return; }
-    auto watch=std::make_shared<WeatherWatch>(target);
-    watch->listen(target);
-    watches.push_back(std::move(watch));
+    auto watch=std::make_shared<WeatherWatch>(target,runtime);
+    watches.push_back(watch);
+    try { watch->listen(target); }
+    catch (...) { watch->close(); std::erase(watches,watch); throw; }
 }
 // Scan an observed visual root once, including non-FrameworkElement nodes.
 // Descendant notifications still handle templates created later.
-void ScanRoot(DependencyObject const& node,unsigned depth,unsigned& budget){
+void ScanRoot(DependencyObject const& node,unsigned depth,unsigned& budget,std::shared_ptr<cleanup::Runtime> const& runtime){
     if(!node||!budget||depth>80)return;
     --budget;
     if(auto e=node.try_as<FrameworkElement>();e&&WeatherButton(get_class_name(e))){
-        Log(L"P1 WeatherButton found by root scan");QueueWeather(e);return;
+        Log(L"P1 WeatherButton found by root scan");QueueWeather(e,runtime);return;
     }
     for(int i=0;i<Media::VisualTreeHelper::GetChildrenCount(node)&&budget;++i)
-        ScanRoot(Media::VisualTreeHelper::GetChild(node,i),depth+1,budget);
+        ScanRoot(Media::VisualTreeHelper::GetChild(node,i),depth+1,budget,runtime);
 }
-void QueueRoot(DependencyObject const& node,FrameworkElement const& dispatcherSource){
-    static thread_local std::vector<weak_ref<DependencyObject>> roots;
+void QueueRoot(DependencyObject const& node,FrameworkElement const& dispatcherSource,
+               std::shared_ptr<cleanup::Runtime> const& runtime){
+    auto& roots=LocalWeather().roots;
     auto root=node;
     for(unsigned i=0;i<80;++i){
         auto parent=Media::VisualTreeHelper::GetParent(root);
@@ -291,72 +336,140 @@ void QueueRoot(DependencyObject const& node,FrameworkElement const& dispatcherSo
     }
     if(roots.size()>=128){Log(L"P1 root scan limit reached");return;}
     auto weak=make_weak(root);roots.push_back(weak);
-    dispatcherSource.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak](){
+    dispatcherSource.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,[weak,owner=std::weak_ptr(runtime)](){
+        auto runtime=owner.lock();
+        if (!runtime || runtime->stopping()) return;
         try{if(auto r=weak.get()){
             unsigned budget=4096;
             Log(L"P1 observed root class="+std::wstring(get_class_name(r).c_str()));
-            ScanRoot(r,0,budget);
+            ScanRoot(r,0,budget,runtime);
             if(!budget)Log(L"P1 root scan truncated");
         }}catch(...){LogException(L"P1 root scan");}
     });
 }
+void ObserveElement(FrameworkElement const& element,bool candidate,bool rootEvent,
+                    std::shared_ptr<cleanup::Runtime> const& runtime) {
+    if (runtime->stopping()) return;
+    auto& seen=LocalWeather().observedRoot;
+    if (seen && !rootEvent && !candidate) return;
+    auto dispatcher=element.Dispatcher();
+    if (!runtime->trackUi(GetCurrentThreadId(),[dispatcher] { return ClearDispatcher(dispatcher); })) return;
+    if (candidate) {
+        for (DependencyObject node=element; node; node=Media::VisualTreeHelper::GetParent(node)) {
+            if (auto f=node.try_as<FrameworkElement>(); f && WeatherButton(get_class_name(f))) {
+                QueueWeather(f,runtime); break;
+            }
+        }
+    }
+    if (!seen || rootEvent) { QueueRoot(element,element,runtime); seen=true; }
+}
 struct Watcher:implements<Watcher,IVisualTreeServiceCallback,non_agile>{
     com_ptr<IXamlDiagnostics> diag;
-    explicit Watcher(com_ptr<IXamlDiagnostics> d):diag(std::move(d)){}
+    std::weak_ptr<cleanup::Runtime> owner;
+    Watcher(com_ptr<IXamlDiagnostics> d,std::shared_ptr<cleanup::Runtime> const& runtime)
+        :diag(std::move(d)),owner(runtime){}
     HRESULT STDMETHODCALLTYPE OnVisualTreeChange(ParentChildRelation relation,VisualElement e,VisualMutationType mutation) noexcept override{
-        if (mutation != Add) return S_OK;
+        auto runtime=owner.lock();
+        if (!runtime || runtime->stopping() || mutation!=Add) return S_OK;
         try {
-            // Root and named template notifications suffice. Describe the weather
-            // subtree only, rather than walking ancestors for every unrelated icon.
-            std::wstring_view type = e.Type ? e.Type : L"";
-            std::wstring_view name = e.Name ? e.Name : L"";
-            const bool candidate = WeatherButton(type) || layout::weatherGrid(name);
-            static thread_local bool observedRoot = false;
-            if (observedRoot && relation.Parent && !candidate) return S_OK;
+            std::wstring_view type=e.Type ? e.Type : L"";
+            std::wstring_view name=e.Name ? e.Name : L"";
+            const bool candidate=WeatherButton(type) || layout::weatherGrid(name);
+            const bool rootEvent=relation.Parent==0;
+            if (LocalWeather().observedRoot && !rootEvent && !candidate) return S_OK;
             com_ptr<::IInspectable> raw;
-            auto result = diag->GetIInspectableFromHandle(e.Handle, raw.put());
-            if (FAILED(result)) { LogHr(L"GetIInspectableFromHandle", result); return S_OK; }
+            auto hr=diag->GetIInspectableFromHandle(e.Handle,raw.put());
+            if (FAILED(hr)) { LogHr(L"GetIInspectableFromHandle",hr); return S_OK; }
             Windows::Foundation::IInspectable obj{nullptr};
-            copy_from_abi(obj, raw.get());
-            auto element = obj.try_as<FrameworkElement>();
+            copy_from_abi(obj,raw.get());
+            auto element=obj.try_as<FrameworkElement>();
             if (!element) return S_OK;
-            if (candidate) {
-                for (DependencyObject node=element; node; node=Media::VisualTreeHelper::GetParent(node)) {
-                    if (auto f=node.try_as<FrameworkElement>(); f && WeatherButton(get_class_name(f))) {
-                        QueueWeather(f); break;
-                    }
-                }
+            auto dispatcher=element.Dispatcher();
+            if (dispatcher.HasThreadAccess()) {
+                ObserveElement(element,candidate,rootEvent,runtime);
+            } else {
+                dispatcher.RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low,
+                    [weak=make_weak(element),owner=owner,candidate,rootEvent] {
+                        try {
+                            if (auto active=owner.lock(); active && !active->stopping())
+                                if (auto target=weak.get()) ObserveElement(target,candidate,rootEvent,active);
+                        } catch (...) { LogException(L"Observe dispatched layout"); }
+                    });
             }
-            if (!observedRoot || !relation.Parent) { QueueRoot(element,element); observedRoot=true; }
-        }catch(...){LogException(L"OnVisualTreeChange");}
+        } catch (...) { LogException(L"OnVisualTreeChange"); }
         return S_OK;
     }
 };
-struct Tap:implements<Tap,IObjectWithSite,non_agile>{
+struct Binding {
+    apartment_context home;
+    std::mutex mutex;
     com_ptr<IUnknown> site;
     com_ptr<IVisualTreeService> service;
     com_ptr<Watcher> watcher;
+    bool advised=false;
+
+    HRESULT detach() {
+        std::lock_guard lock(mutex);
+        if (advised) {
+            auto result=service->UnadviseVisualTreeChange(watcher.get());
+            LogHr(L"UnadviseVisualTreeChange",result);
+            if (FAILED(result)) return result;
+        }
+        advised=false; watcher=nullptr; service=nullptr; site=nullptr;
+        return S_OK;
+    }
+    static Windows::Foundation::IAsyncAction closeOnOwner(std::shared_ptr<Binding> binding) {
+        co_await binding->home;
+        check_hresult(binding->detach());
+    }
+};
+struct Tap:implements<Tap,IObjectWithSite,non_agile>{
+    std::shared_ptr<Binding> binding;
+    std::shared_ptr<cleanup::Runtime> runtime;
+    HRESULT release(bool closeWhenEmpty) {
+        if (!binding) return S_OK;
+        auto hr=binding->detach();
+        if (FAILED(hr)) return hr;
+        if (runtime) runtime->forget(reinterpret_cast<uintptr_t>(binding.get()),closeWhenEmpty);
+        binding.reset(); runtime.reset();
+        return S_OK;
+    }
     HRESULT STDMETHODCALLTYPE SetSite(IUnknown* value) noexcept override{
         Log(value?L"SetSite(non-null)":L"SetSite(null)");
         try{
-            if(service && watcher)LogHr(L"UnadviseVisualTreeChange",service->UnadviseVisualTreeChange(watcher.get()));
-            watcher=nullptr;service=nullptr;site=nullptr;
-            if(!value){LogHr(L"SetSite",S_OK);return S_OK;}
-            site.copy_from(value);
-            auto d=site.as<IXamlDiagnostics>();LogHr(L"QueryInterface IXamlDiagnostics",S_OK);
-            service=site.as<IVisualTreeService>();LogHr(L"QueryInterface IVisualTreeService",S_OK);
-            watcher=make_self<Watcher>(d);
-            // Keep module resident while queued UI callbacks exist.
+            check_hresult(release(!value));
+            if (!value) { LogHr(L"SetSite",S_OK); return S_OK; }
+            binding=std::make_shared<Binding>();
+            binding->site.copy_from(value);
+            auto d=binding->site.as<IXamlDiagnostics>();
+            binding->service=binding->site.as<IVisualTreeService>();
             HMODULE pinned{};
-            GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_PIN,
-                reinterpret_cast<LPCWSTR>(&QueueWeather),&pinned);
-            auto result=service->AdviseVisualTreeChange(watcher.get());
-            LogHr(L"AdviseVisualTreeChange",result);LogHr(L"SetSite",result);return result;
-        }catch(...){auto result=to_hresult();LogException(L"SetSite");LogHr(L"SetSite",result);return result;}
+            check_bool(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_PIN,
+                reinterpret_cast<LPCWSTR>(&QueueWeather),&pinned));
+            {
+                std::lock_guard lock(binding->mutex);
+                runtime=cleanup::Runtime::subscribe(reinterpret_cast<uintptr_t>(binding.get()),
+                    [b=binding] { return Binding::closeOnOwner(b); });
+                binding->watcher=make_self<Watcher>(d,runtime);
+                auto result=binding->service->AdviseVisualTreeChange(binding->watcher.get());
+                LogHr(L"AdviseVisualTreeChange",result);
+                check_hresult(result);
+                binding->advised=true;
+            }
+            LogHr(L"SetSite",S_OK); return S_OK;
+        } catch (...) {
+            auto result=to_hresult();
+            LogException(L"SetSite");
+            release(true);
+            return result;
+        }
     }
     HRESULT STDMETHODCALLTYPE GetSite(REFIID iid,void** out) noexcept override{
-        if(!out)return E_POINTER;*out=nullptr;
-        return site?site->QueryInterface(iid,out):E_FAIL;
+        if(!out)return E_POINTER;
+        *out=nullptr;
+        if (!binding) return E_FAIL;
+        std::lock_guard lock(binding->mutex);
+        return binding->site ? binding->site->QueryInterface(iid,out) : E_FAIL;
     }
 };
 struct Factory:implements<Factory,IClassFactory>{

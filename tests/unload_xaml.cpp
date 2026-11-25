@@ -1,4 +1,4 @@
-#include <windows.h>
+#include "../xaml_experiment/cleanup_request.h"
 #include <restartmanager.h>
 #include <iostream>
 #include <string_view>
@@ -34,6 +34,12 @@ int wmain(int argc,wchar_t** argv)
         DWORD result=RmStartSession(&session,0,key);
         if(result!=ERROR_SUCCESS)return 1;
         return RmEndSession(session)==ERROR_SUCCESS?0:2;
+    }
+    if (argc==1 || (argc==2 && std::wstring_view(argv[1])==L"--remove"))
+        return cleanup::removeCurrentGreeting();
+    if (argc!=2 || std::wstring_view(argv[1])!=L"--restart-explorer") {
+        std::wcerr << L"Usage: JinJuXamlUnload.exe [--remove | --restart-explorer]\n";
+        return 2;
     }
     auto tray=FindWindowW(L"Shell_TrayWnd",nullptr);
     DWORD pid=0;

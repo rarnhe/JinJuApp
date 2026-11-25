@@ -1,10 +1,12 @@
 #include "shared.h"
 #include "diagnostics.h"
+#include "cleanup_request.h"
 #include <filesystem>
 #include <iostream>
 #include <winrt/base.h>
 #include <xamlom.h>
 int wmain(int argc,wchar_t** argv){
+    if(argc==2 && std::wstring_view(argv[1])==L"--remove") return cleanup::removeCurrentGreeting();
     if(argc==2 && std::wstring_view(argv[1])==L"--self-test"){
         auto h=LoadLibraryExW(L"Windows.UI.Xaml.dll",nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);
         if(!h)return 1;

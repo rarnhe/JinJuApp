@@ -39,14 +39,38 @@ int testRebuild() {
     return 0;
 }
 
+int testRemoval() {
+    using namespace greeting;
+    Grid panel, weather;
+    Border card;
+    ColumnDefinition column;
+    weather.Children().Append(card);
+    weather.ColumnDefinitions().Append(column);
+    panel.Children().Append(weather);
+    Attachment owned;
+    if (!owned.install(panel,weather)) return 20;
+    // An element with an identical name must survive removal of our instance.
+    TextBlock foreign;
+    foreign.Name(Marker);
+    panel.Children().Append(foreign);
+    owned.remove();
+    owned.remove();
+    if (panel.Children().Size()!=2 || panel.Children().GetAt(0)!=weather ||
+        panel.Children().GetAt(1)!=foreign || weather.Children().GetAt(0)!=card ||
+        weather.ColumnDefinitions().GetAt(0)!=column) return 21;
+    if (owned.install(panel,weather)) return 22;
+    owned.remove();
+    return panel.Children().Size()==2 && panel.Children().GetAt(1)==foreign ? 0 : 23;
+}
+
 int main(int argc, char** argv) {
     using namespace greeting;
     winrt::init_apartment(winrt::apartment_type::single_threaded);
     try {
         auto manager=Hosting::WindowsXamlManager::InitializeForCurrentThread();
-        if (argc==2 && std::string_view(argv[1])=="rebuild") {
-            auto result=testRebuild();
-            if (result) std::cerr<<"Template rebuild assertion "<<result<<" failed\n";
+        if (argc==2) {
+            auto result=std::string_view(argv[1])=="rebuild" ? testRebuild() : testRemoval();
+            if (result) std::cerr<<"Weather lifecycle assertion "<<result<<" failed\n";
             manager.Close();
             return result;
         }
