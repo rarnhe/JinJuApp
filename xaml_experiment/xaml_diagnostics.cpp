@@ -154,7 +154,10 @@ void AddGreeting(FrameworkElement const& button){
     auto cols=grid.ColumnDefinitions();
     const auto originalCount=cols.Size();
     for(auto const& child:children){
-        if(!layout::preservesColumn(originalCount,Grid::GetColumn(child),Grid::GetColumnSpan(child))){
+        // UIElementCollection returns UIElement; the SDK Grid getters require FrameworkElement.
+        auto element=child.try_as<FrameworkElement>();
+        if(!element){Log(L"P1 skip: existing Grid child is not a FrameworkElement");return;}
+        if(!layout::preservesColumn(originalCount,Grid::GetColumn(element),Grid::GetColumnSpan(element))){
             Log(L"P1 skip: existing child column/span would change meaning");return;
         }
     }
