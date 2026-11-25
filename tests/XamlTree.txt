@@ -1,0 +1,844 @@
+2026-11-25T16:49:1.935Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=126495096 parent=0 child=0 index=0
+2026-11-25T16:49:1.935Z pid=13224 tid=2776 handle=126495096 class=Windows.UI.Xaml.Controls.Canvas name= actual=32768x32768 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:1.943Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=419888584 parent=0 child=0 index=0
+2026-11-25T16:49:1.943Z pid=13224 tid=2776 handle=419888584 class=Windows.UI.Xaml.Controls.Panel name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:1.943Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=66118456 parent=0 child=0 index=0
+2026-11-25T16:49:1.943Z pid=13224 tid=2776 handle=66118456 class=Windows.UI.Xaml.Controls.ScrollViewer name= actual=32767.5x32767.5 width=32767.5 height=32767.5 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:49:1.943Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=416972872 parent=66118456 child=416972872 index=0
+2026-11-25T16:49:1.943Z pid=13224 tid=2776 handle=416972872 class=Windows.UI.Xaml.Controls.ScrollContentPresenter name= actual=32767.5x32767.5 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=1 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:49:1.943Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=125370680 parent=416972872 child=125370680 index=0
+2026-11-25T16:49:1.943Z pid=13224 tid=2776 handle=125370680 class=Windows.UI.Xaml.Controls.Border name= actual=32767.5x32767.5 width=32767.5 height=32767.5 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:49:1.958Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=417194024 parent=125370680 child=417194024 index=0
+2026-11-25T16:49:1.958Z pid=13224 tid=2776 handle=417194024 class=Windows.UI.Xaml.Controls.Grid name= actual=32767.5x32767.5 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0 columns=0 rows=0 children=0
+2026-11-25T16:49:5.119Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076780832 parent=0 child=0 index=0
+2026-11-25T16:49:5.121Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076539288 parent=1076780832 child=1076539288 index=0
+2026-11-25T16:49:5.125Z pid=13224 tid=2776 handle=1076539288 class=Windows.UI.Xaml.Controls.Canvas name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.126Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076539288 parent=1076780832 child=1076539288 index=0
+2026-11-25T16:49:5.129Z pid=13224 tid=2776 handle=1076539288 class=Windows.UI.Xaml.Controls.Canvas name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.131Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076812600 parent=1078019080 child=1076812600 index=0
+2026-11-25T16:49:5.133Z pid=13224 tid=2776 handle=1076812600 class=SystemTray.NotificationAreaOverflow name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.142Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078019080 parent=1076724296 child=1078019080 index=0
+2026-11-25T16:49:5.142Z pid=13224 tid=2776 handle=1078019080 class=Windows.UI.Xaml.Controls.Border name= actual=0x0 width=0 height=0 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:49:5.142Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076724296 parent=1034102792 child=1076724296 index=0
+2026-11-25T16:49:5.142Z pid=13224 tid=2776 handle=1076724296 class=Windows.UI.Xaml.Controls.ScrollContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:49:5.153Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1034102792 parent=1076780832 child=1034102792 index=0
+2026-11-25T16:49:5.153Z pid=13224 tid=2776 handle=1034102792 class=Windows.UI.Xaml.Controls.ScrollViewer name= actual=0x0 width=0 height=0 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:49:5.159Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078020072 parent=1077881896 child=1078020072 index=0
+2026-11-25T16:49:5.159Z pid=13224 tid=2776 handle=1078020072 class=Windows.UI.Xaml.Controls.Border name=OverflowFlyoutBackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.159Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=133315608 parent=1077881896 child=133315608 index=1
+2026-11-25T16:49:5.159Z pid=13224 tid=2776 handle=133315608 class=Windows.UI.Xaml.Controls.ItemsControl name=OverflowItemsControl actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.159Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077881896 parent=1076812600 child=1077881896 index=0
+2026-11-25T16:49:5.159Z pid=13224 tid=2776 handle=1077881896 class=Windows.UI.Xaml.Controls.Grid name=OverflowRootGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.159Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1034659304 parent=133315608 child=1034659304 index=0
+2026-11-25T16:49:5.159Z pid=13224 tid=2776 handle=1034659304 class=Windows.UI.Xaml.Controls.ItemsPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.170Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=958597464 parent=133315608 child=958597464 index=0
+2026-11-25T16:49:5.172Z pid=13224 tid=2776 handle=958597464 class=Windows.UI.Xaml.Controls.WrapGrid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.174Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=958597464 parent=1034659304 child=958597464 index=0
+2026-11-25T16:49:5.174Z pid=13224 tid=2776 handle=958597464 class=Windows.UI.Xaml.Controls.WrapGrid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.176Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=134312488 parent=1034659304 child=134312488 index=0
+2026-11-25T16:49:5.176Z pid=13224 tid=2776 handle=134312488 class=Windows.UI.Xaml.Controls.ContentControl name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.176Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=427663336 parent=1034659304 child=427663336 index=2
+2026-11-25T16:49:5.176Z pid=13224 tid=2776 handle=427663336 class=Windows.UI.Xaml.Controls.ContentControl name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.176Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077985672 parent=958597464 child=1077985672 index=0
+2026-11-25T16:49:5.176Z pid=13224 tid=2776 handle=1077985672 class=Windows.UI.Xaml.Controls.ContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1029696312 parent=1077985672 child=1029696312 index=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 handle=1029696312 class=SystemTray.NotifyIconView name= actual=0x0 width=-nan(ind) height=40 minWidth=40 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1031476104 parent=956164264 child=1031476104 index=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 handle=1031476104 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076416648 parent=956164264 child=1076416648 index=1
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 handle=1076416648 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1031477592 parent=1078166824 child=1031477592 index=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 handle=1031477592 class=Windows.UI.Xaml.Shapes.Rectangle name=LeftDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=956184920 parent=1078166824 child=956184920 index=1
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 handle=956184920 class=Windows.UI.Xaml.Shapes.Rectangle name=RightDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.188Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078166824 parent=956164264 child=1078166824 index=2
+2026-11-25T16:49:5.203Z pid=13224 tid=2776 handle=1078166824 class=Windows.UI.Xaml.Controls.Grid name=InsertionMarkerContainer actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.204Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=956164264 parent=1029696312 child=956164264 index=0
+2026-11-25T16:49:5.206Z pid=13224 tid=2776 handle=956164264 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:49:5.220Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077843256 parent=956164824 child=1077843256 index=0
+2026-11-25T16:49:5.220Z pid=13224 tid=2776 handle=1077843256 class=SystemTray.ImageIconContent name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.220Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=956164824 parent=1076416648 child=956164824 index=0
+2026-11-25T16:49:5.220Z pid=13224 tid=2776 handle=956164824 class=Windows.UI.Xaml.Controls.Grid name=ContentGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.220Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171298184 parent=1078164584 child=171298184 index=0
+2026-11-25T16:49:5.220Z pid=13224 tid=2776 handle=171298184 class=Windows.UI.Xaml.Controls.Image name= actual=0x0 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.220Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078164584 parent=1077843256 child=1078164584 index=0
+2026-11-25T16:49:5.220Z pid=13224 tid=2776 handle=1078164584 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.236Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076537176 parent=958597464 child=1076537176 index=1
+2026-11-25T16:49:5.236Z pid=13224 tid=2776 handle=1076537176 class=Windows.UI.Xaml.Controls.ContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.236Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078215992 parent=1076537176 child=1078215992 index=0
+2026-11-25T16:49:5.236Z pid=13224 tid=2776 handle=1078215992 class=SystemTray.NotifyIconView name= actual=0x0 width=-nan(ind) height=40 minWidth=40 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.236Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077046552 parent=1077054968 child=1077046552 index=0
+2026-11-25T16:49:5.236Z pid=13224 tid=2776 handle=1077046552 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.236Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077988840 parent=1077054968 child=1077988840 index=1
+2026-11-25T16:49:5.236Z pid=13224 tid=2776 handle=1077988840 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.249Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077044568 parent=1077047688 child=1077044568 index=0
+2026-11-25T16:49:5.249Z pid=13224 tid=2776 handle=1077044568 class=Windows.UI.Xaml.Shapes.Rectangle name=LeftDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.251Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077047048 parent=1077047688 child=1077047048 index=1
+2026-11-25T16:49:5.252Z pid=13224 tid=2776 handle=1077047048 class=Windows.UI.Xaml.Shapes.Rectangle name=RightDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.253Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077047688 parent=1077054968 child=1077047688 index=2
+2026-11-25T16:49:5.254Z pid=13224 tid=2776 handle=1077047688 class=Windows.UI.Xaml.Controls.Grid name=InsertionMarkerContainer actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.254Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077054968 parent=1078215992 child=1077054968 index=0
+2026-11-25T16:49:5.256Z pid=13224 tid=2776 handle=1077054968 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:49:5.259Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077879240 parent=958708472 child=1077879240 index=0
+2026-11-25T16:49:5.259Z pid=13224 tid=2776 handle=1077879240 class=SystemTray.ImageIconContent name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.259Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=958708472 parent=1077988840 child=958708472 index=0
+2026-11-25T16:49:5.259Z pid=13224 tid=2776 handle=958708472 class=Windows.UI.Xaml.Controls.Grid name=ContentGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.259Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171301256 parent=1077048808 child=171301256 index=0
+2026-11-25T16:49:5.259Z pid=13224 tid=2776 handle=171301256 class=Windows.UI.Xaml.Controls.Image name= actual=0x0 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.259Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077048808 parent=1077879240 child=1077048808 index=0
+2026-11-25T16:49:5.268Z pid=13224 tid=2776 handle=1077048808 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.270Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077111976 parent=958597464 child=1077111976 index=2
+2026-11-25T16:49:5.270Z pid=13224 tid=2776 handle=1077111976 class=Windows.UI.Xaml.Controls.ContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.275Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078220408 parent=1077111976 child=1078220408 index=0
+2026-11-25T16:49:5.275Z pid=13224 tid=2776 handle=1078220408 class=SystemTray.NotifyIconView name= actual=0x0 width=-nan(ind) height=40 minWidth=40 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.277Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077120408 parent=1077140744 child=1077120408 index=0
+2026-11-25T16:49:5.279Z pid=13224 tid=2776 handle=1077120408 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.281Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077107752 parent=1077140744 child=1077107752 index=1
+2026-11-25T16:49:5.281Z pid=13224 tid=2776 handle=1077107752 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.283Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077118424 parent=1077145224 child=1077118424 index=0
+2026-11-25T16:49:5.284Z pid=13224 tid=2776 handle=1077118424 class=Windows.UI.Xaml.Shapes.Rectangle name=LeftDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.286Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077119912 parent=1077145224 child=1077119912 index=1
+2026-11-25T16:49:5.288Z pid=13224 tid=2776 handle=1077119912 class=Windows.UI.Xaml.Shapes.Rectangle name=RightDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.288Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077145224 parent=1077140744 child=1077145224 index=2
+2026-11-25T16:49:5.290Z pid=13224 tid=2776 handle=1077145224 class=Windows.UI.Xaml.Controls.Grid name=InsertionMarkerContainer actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.290Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077140744 parent=1078220408 child=1077140744 index=0
+2026-11-25T16:49:5.290Z pid=13224 tid=2776 handle=1077140744 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:49:5.290Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077876776 parent=1077050488 child=1077876776 index=0
+2026-11-25T16:49:5.290Z pid=13224 tid=2776 handle=1077876776 class=SystemTray.ImageIconContent name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.290Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077050488 parent=1077107752 child=1077050488 index=0
+2026-11-25T16:49:5.290Z pid=13224 tid=2776 handle=1077050488 class=Windows.UI.Xaml.Controls.Grid name=ContentGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.299Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171304840 parent=1077143544 child=171304840 index=0
+2026-11-25T16:49:5.301Z pid=13224 tid=2776 handle=171304840 class=Windows.UI.Xaml.Controls.Image name= actual=0x0 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.301Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077143544 parent=1077876776 child=1077143544 index=0
+2026-11-25T16:49:5.301Z pid=13224 tid=2776 handle=1077143544 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.301Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077112504 parent=958597464 child=1077112504 index=3
+2026-11-25T16:49:5.307Z pid=13224 tid=2776 handle=1077112504 class=Windows.UI.Xaml.Controls.ContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.307Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078221144 parent=1077112504 child=1078221144 index=0
+2026-11-25T16:49:5.307Z pid=13224 tid=2776 handle=1078221144 class=SystemTray.NotifyIconView name= actual=0x0 width=-nan(ind) height=40 minWidth=40 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.307Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077117928 parent=1077210328 child=1077117928 index=0
+2026-11-25T16:49:5.313Z pid=13224 tid=2776 handle=1077117928 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.315Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077105640 parent=1077210328 child=1077105640 index=1
+2026-11-25T16:49:5.316Z pid=13224 tid=2776 handle=1077105640 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.318Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077118920 parent=1077206968 child=1077118920 index=0
+2026-11-25T16:49:5.318Z pid=13224 tid=2776 handle=1077118920 class=Windows.UI.Xaml.Shapes.Rectangle name=LeftDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.319Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077213800 parent=1077206968 child=1077213800 index=1
+2026-11-25T16:49:5.321Z pid=13224 tid=2776 handle=1077213800 class=Windows.UI.Xaml.Shapes.Rectangle name=RightDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.323Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077206968 parent=1077210328 child=1077206968 index=2
+2026-11-25T16:49:5.324Z pid=13224 tid=2776 handle=1077206968 class=Windows.UI.Xaml.Controls.Grid name=InsertionMarkerContainer actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.324Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077210328 parent=1078221144 child=1077210328 index=0
+2026-11-25T16:49:5.326Z pid=13224 tid=2776 handle=1077210328 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:49:5.327Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=958678184 parent=1077140184 child=958678184 index=0
+2026-11-25T16:49:5.329Z pid=13224 tid=2776 handle=958678184 class=SystemTray.ImageIconContent name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.330Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077140184 parent=1077105640 child=1077140184 index=0
+2026-11-25T16:49:5.332Z pid=13224 tid=2776 handle=1077140184 class=Windows.UI.Xaml.Controls.Grid name=ContentGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.332Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171308424 parent=1077207528 child=171308424 index=0
+2026-11-25T16:49:5.332Z pid=13224 tid=2776 handle=171308424 class=Windows.UI.Xaml.Controls.Image name= actual=0x0 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.332Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077207528 parent=958678184 child=1077207528 index=0
+2026-11-25T16:49:5.332Z pid=13224 tid=2776 handle=1077207528 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.332Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077110920 parent=958597464 child=1077110920 index=4
+2026-11-25T16:49:5.332Z pid=13224 tid=2776 handle=1077110920 class=Windows.UI.Xaml.Controls.ContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.344Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077255928 parent=1077110920 child=1077255928 index=0
+2026-11-25T16:49:5.344Z pid=13224 tid=2776 handle=1077255928 class=SystemTray.NotifyIconView name= actual=0x0 width=-nan(ind) height=40 minWidth=40 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.346Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077215288 parent=1077283096 child=1077215288 index=0
+2026-11-25T16:49:5.346Z pid=13224 tid=2776 handle=1077215288 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.346Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077108808 parent=1077283096 child=1077108808 index=1
+2026-11-25T16:49:5.346Z pid=13224 tid=2776 handle=1077108808 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.346Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077213304 parent=1077283656 child=1077213304 index=0
+2026-11-25T16:49:5.346Z pid=13224 tid=2776 handle=1077213304 class=Windows.UI.Xaml.Shapes.Rectangle name=LeftDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.346Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077211816 parent=1077283656 child=1077211816 index=1
+2026-11-25T16:49:5.346Z pid=13224 tid=2776 handle=1077211816 class=Windows.UI.Xaml.Shapes.Rectangle name=RightDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.359Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077283656 parent=1077283096 child=1077283656 index=2
+2026-11-25T16:49:5.359Z pid=13224 tid=2776 handle=1077283656 class=Windows.UI.Xaml.Controls.Grid name=InsertionMarkerContainer actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.362Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077283096 parent=1077255928 child=1077283096 index=0
+2026-11-25T16:49:5.362Z pid=13224 tid=2776 handle=1077283096 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:49:5.362Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077268312 parent=1077209208 child=1077268312 index=0
+2026-11-25T16:49:5.366Z pid=13224 tid=2776 handle=1077268312 class=SystemTray.ImageIconContent name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.366Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077209208 parent=1077108808 child=1077209208 index=0
+2026-11-25T16:49:5.366Z pid=13224 tid=2776 handle=1077209208 class=Windows.UI.Xaml.Controls.Grid name=ContentGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.371Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171301768 parent=1077281976 child=171301768 index=0
+2026-11-25T16:49:5.371Z pid=13224 tid=2776 handle=171301768 class=Windows.UI.Xaml.Controls.Image name= actual=0x0 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.373Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077281976 parent=1077268312 child=1077281976 index=0
+2026-11-25T16:49:5.373Z pid=13224 tid=2776 handle=1077281976 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.375Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077106168 parent=958597464 child=1077106168 index=5
+2026-11-25T16:49:5.377Z pid=13224 tid=2776 handle=1077106168 class=Windows.UI.Xaml.Controls.ContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.379Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077250040 parent=1077106168 child=1077250040 index=0
+2026-11-25T16:49:5.381Z pid=13224 tid=2776 handle=1077250040 class=SystemTray.NotifyIconView name= actual=0x0 width=-nan(ind) height=40 minWidth=40 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.381Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077339032 parent=1077382856 child=1077339032 index=0
+2026-11-25T16:49:5.381Z pid=13224 tid=2776 handle=1077339032 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.381Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077108280 parent=1077382856 child=1077108280 index=1
+2026-11-25T16:49:5.381Z pid=13224 tid=2776 handle=1077108280 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.381Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077342504 parent=1077393496 child=1077342504 index=0
+2026-11-25T16:49:5.381Z pid=13224 tid=2776 handle=1077342504 class=Windows.UI.Xaml.Shapes.Rectangle name=LeftDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.392Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077339528 parent=1077393496 child=1077339528 index=1
+2026-11-25T16:49:5.394Z pid=13224 tid=2776 handle=1077339528 class=Windows.UI.Xaml.Shapes.Rectangle name=RightDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.396Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077393496 parent=1077382856 child=1077393496 index=2
+2026-11-25T16:49:5.396Z pid=13224 tid=2776 handle=1077393496 class=Windows.UI.Xaml.Controls.Grid name=InsertionMarkerContainer actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.398Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077382856 parent=1077250040 child=1077382856 index=0
+2026-11-25T16:49:5.398Z pid=13224 tid=2776 handle=1077382856 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:49:5.398Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077271672 parent=1077280856 child=1077271672 index=0
+2026-11-25T16:49:5.403Z pid=13224 tid=2776 handle=1077271672 class=SystemTray.ImageIconContent name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.403Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077280856 parent=1077108280 child=1077280856 index=0
+2026-11-25T16:49:5.405Z pid=13224 tid=2776 handle=1077280856 class=Windows.UI.Xaml.Controls.Grid name=ContentGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.407Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171296136 parent=1077383976 child=171296136 index=0
+2026-11-25T16:49:5.407Z pid=13224 tid=2776 handle=171296136 class=Windows.UI.Xaml.Controls.Image name= actual=0x0 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.410Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077383976 parent=1077271672 child=1077383976 index=0
+2026-11-25T16:49:5.410Z pid=13224 tid=2776 handle=1077383976 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.410Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077109864 parent=958597464 child=1077109864 index=6
+2026-11-25T16:49:5.414Z pid=13224 tid=2776 handle=1077109864 class=Windows.UI.Xaml.Controls.ContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.416Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077252248 parent=1077109864 child=1077252248 index=0
+2026-11-25T16:49:5.418Z pid=13224 tid=2776 handle=1077252248 class=SystemTray.NotifyIconView name= actual=0x0 width=-nan(ind) height=40 minWidth=40 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.420Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077436392 parent=1077387336 child=1077436392 index=0
+2026-11-25T16:49:5.422Z pid=13224 tid=2776 handle=1077436392 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.422Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077110392 parent=1077387336 child=1077110392 index=1
+2026-11-25T16:49:5.424Z pid=13224 tid=2776 handle=1077110392 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077436888 parent=1077385096 child=1077436888 index=0
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 handle=1077436888 class=Windows.UI.Xaml.Shapes.Rectangle name=LeftDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077435400 parent=1077385096 child=1077435400 index=1
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 handle=1077435400 class=Windows.UI.Xaml.Shapes.Rectangle name=RightDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077385096 parent=1077387336 child=1077385096 index=2
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 handle=1077385096 class=Windows.UI.Xaml.Controls.Grid name=InsertionMarkerContainer actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077387336 parent=1077252248 child=1077387336 index=0
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 handle=1077387336 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077268088 parent=1077385656 child=1077268088 index=0
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 handle=1077268088 class=SystemTray.ImageIconContent name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077385656 parent=1077110392 child=1077385656 index=0
+2026-11-25T16:49:5.425Z pid=13224 tid=2776 handle=1077385656 class=Windows.UI.Xaml.Controls.Grid name=ContentGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.441Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171306376 parent=1077388456 child=171306376 index=0
+2026-11-25T16:49:5.441Z pid=13224 tid=2776 handle=171306376 class=Windows.UI.Xaml.Controls.Image name= actual=0x0 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.441Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077388456 parent=1077268088 child=1077388456 index=0
+2026-11-25T16:49:5.441Z pid=13224 tid=2776 handle=1077388456 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.441Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077107224 parent=958597464 child=1077107224 index=7
+2026-11-25T16:49:5.441Z pid=13224 tid=2776 handle=1077107224 class=Windows.UI.Xaml.Controls.ContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.441Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077252984 parent=1077107224 child=1077252984 index=0
+2026-11-25T16:49:5.441Z pid=13224 tid=2776 handle=1077252984 class=SystemTray.NotifyIconView name= actual=0x0 width=-nan(ind) height=40 minWidth=40 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.457Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077434904 parent=1077382296 child=1077434904 index=0
+2026-11-25T16:49:5.460Z pid=13224 tid=2776 handle=1077434904 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.460Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077494952 parent=1077382296 child=1077494952 index=1
+2026-11-25T16:49:5.463Z pid=13224 tid=2776 handle=1077494952 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.465Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077434408 parent=1077541176 child=1077434408 index=0
+2026-11-25T16:49:5.467Z pid=13224 tid=2776 handle=1077434408 class=Windows.UI.Xaml.Shapes.Rectangle name=LeftDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.467Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077557944 parent=1077541176 child=1077557944 index=1
+2026-11-25T16:49:5.469Z pid=13224 tid=2776 handle=1077557944 class=Windows.UI.Xaml.Shapes.Rectangle name=RightDropInsertionMarker actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.469Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077541176 parent=1077382296 child=1077541176 index=2
+2026-11-25T16:49:5.469Z pid=13224 tid=2776 handle=1077541176 class=Windows.UI.Xaml.Controls.Grid name=InsertionMarkerContainer actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077382296 parent=1077252984 child=1077382296 index=0
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 handle=1077382296 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077570568 parent=1077391256 child=1077570568 index=0
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 handle=1077570568 class=SystemTray.ImageIconContent name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077391256 parent=1077494952 child=1077391256 index=0
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 handle=1077391256 class=Windows.UI.Xaml.Controls.Grid name=ContentGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171312008 parent=1077551816 child=171312008 index=0
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 handle=171312008 class=Windows.UI.Xaml.Controls.Image name= actual=0x0 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077551816 parent=1077570568 child=1077551816 index=0
+2026-11-25T16:49:5.473Z pid=13224 tid=2776 handle=1077551816 class=Windows.UI.Xaml.Controls.Grid name=ContainerGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1 columns=0 rows=0 children=1
+2026-11-25T16:49:8.719Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076957768 parent=64639576 child=1076957768 index=8
+2026-11-25T16:49:8.719Z pid=13224 tid=2776 handle=1076957768 class=Taskbar.TaskListButton name=TaskListButton actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:8.724Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1037849784 parent=1076800984 child=1037849784 index=0
+2026-11-25T16:49:8.729Z pid=13224 tid=2776 handle=1037849784 class=Windows.UI.Xaml.Shapes.Rectangle name=MostRecentlyUsedDivider actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:8.729Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1037850280 parent=1076800984 child=1037850280 index=1
+2026-11-25T16:49:8.731Z pid=13224 tid=2776 handle=1037850280 class=Windows.UI.Xaml.Controls.Border name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:8.731Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1037847304 parent=1076800984 child=1037847304 index=2
+2026-11-25T16:49:8.733Z pid=13224 tid=2776 handle=1037847304 class=Windows.UI.Xaml.Controls.Border name=BackgroundElement actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:8.734Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171313544 parent=1076800984 child=171313544 index=3
+2026-11-25T16:49:8.734Z pid=13224 tid=2776 handle=171313544 class=Windows.UI.Xaml.Controls.Image name=Icon actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:8.734Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076800984 parent=1076957768 child=1076800984 index=0
+2026-11-25T16:49:8.734Z pid=13224 tid=2776 handle=1076800984 class=Windows.UI.Xaml.Controls.Grid name=IconPanel actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=4 columns=2 rows=0 children=4 [column width=1 unit=2 actual=0] [column width=1 unit=2 actual=0]
+2026-11-25T16:49:8.739Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1037847800 parent=1076800984 child=1037847800 index=4
+2026-11-25T16:49:8.739Z pid=13224 tid=2776 handle=1037847800 class=Windows.UI.Xaml.Shapes.Rectangle name=DefaultIcon actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:49:8.743Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1037849288 parent=1076800984 child=1037849288 index=3
+2026-11-25T16:49:8.743Z pid=13224 tid=2776 handle=1037849288 class=Windows.UI.Xaml.Shapes.Rectangle name=RunningIndicator actual=0x3 width=-nan(ind) height=3 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.484Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=123112392 parent=431151440 child=123112392 index=0
+2026-11-25T16:50:38.484Z pid=13224 tid=2776 handle=123112392 class=Windows.UI.Xaml.Controls.Canvas name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.492Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1030909608 parent=170971128 child=1030909608 index=0
+2026-11-25T16:50:38.492Z pid=13224 tid=2776 handle=1030909608 class=Taskbar.FlyoutFrame name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.492Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170971128 parent=1076723544 child=170971128 index=0
+2026-11-25T16:50:38.492Z pid=13224 tid=2776 handle=170971128 class=Windows.UI.Xaml.Controls.Border name= actual=0x0 width=1440 height=900 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:50:38.492Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1076723544 parent=1034109768 child=1076723544 index=0
+2026-11-25T16:50:38.492Z pid=13224 tid=2776 handle=1076723544 class=Windows.UI.Xaml.Controls.ScrollContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:50:38.499Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1034109768 parent=431151440 child=1034109768 index=1
+2026-11-25T16:50:38.501Z pid=13224 tid=2776 handle=1034109768 class=Windows.UI.Xaml.Controls.ScrollViewer name= actual=0x0 width=1440 height=900 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:50:38.510Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170973608 parent=1074076648 child=170973608 index=0
+2026-11-25T16:50:38.512Z pid=13224 tid=2776 handle=170973608 class=Windows.UI.Xaml.Controls.Border name=HoverFlyoutBackgroundShadowReceiver actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.512Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1074119928 parent=170974104 child=1074119928 index=0
+2026-11-25T16:50:38.513Z pid=13224 tid=2776 handle=1074119928 class=Taskbar.TaskbarBackground name=HoverFlyoutBackgroundControl actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.515Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170974104 parent=1074076648 child=170974104 index=1
+2026-11-25T16:50:38.516Z pid=13224 tid=2776 handle=170974104 class=Windows.UI.Xaml.Controls.Border name=HoverFlyoutBackground actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:50:38.518Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1034022824 parent=1074076648 child=1034022824 index=2
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 handle=1034022824 class=Windows.UI.Xaml.Controls.ContentPresenter name=HoverFlyoutContent actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1074076648 parent=1034022296 child=1074076648 index=0
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 handle=1074076648 class=Windows.UI.Xaml.Controls.Grid name=HoverFlyoutGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1034022296 parent=1030909608 child=1034022296 index=0
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 handle=1034022296 class=Windows.UI.Xaml.Controls.Canvas name=HoverFlyoutCanvas actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170973112 parent=170621960 child=170973112 index=0
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 handle=170973112 class=Windows.UI.Xaml.Shapes.Rectangle name=BackgroundFill actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170974600 parent=170621960 child=170974600 index=1
+2026-11-25T16:50:38.519Z pid=13224 tid=2776 handle=170974600 class=Windows.UI.Xaml.Shapes.Rectangle name=BackgroundStroke actual=0x1 width=-nan(ind) height=1 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.531Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170621960 parent=1074119928 child=170621960 index=0
+2026-11-25T16:50:38.531Z pid=13224 tid=2776 handle=170621960 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:50:38.533Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1029579736 parent=1034022824 child=1029579736 index=0
+2026-11-25T16:50:38.533Z pid=13224 tid=2776 handle=1029579736 class=Taskbar.TaskItemThumbnailList name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.533Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027105864 parent=1029579736 child=1027105864 index=0
+2026-11-25T16:50:38.538Z pid=13224 tid=2776 handle=1027105864 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=TaskItemThumbnailListRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.542Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170971624 parent=1077966648 child=170971624 index=0
+2026-11-25T16:50:38.542Z pid=13224 tid=2776 handle=170971624 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:50:38.542Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=964376168 parent=1025610008 child=964376168 index=0
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 handle=964376168 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1025610008 parent=1077966648 child=1025610008 index=1
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 handle=1025610008 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077983560 parent=1077966648 child=1077983560 index=2
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 handle=1077983560 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=78x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1075390696 parent=1077966648 child=1075390696 index=3
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 handle=1075390696 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=32x32 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040070128 parent=1040071280 child=1040070128 index=1
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040071280 parent=1031478088 child=1040071280 index=0
+2026-11-25T16:50:38.546Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1031478088 parent=1031479080 child=1031478088 index=0
+2026-11-25T16:50:38.562Z pid=13224 tid=2776 handle=1031478088 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=200x103.1 width=200 height=103.1 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.563Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1031479080 parent=1077967208 child=1031479080 index=0
+2026-11-25T16:50:38.563Z pid=13224 tid=2776 handle=1031479080 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=216 height=103.1 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:50:38.563Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077967208 parent=1077966648 child=1077967208 index=4
+2026-11-25T16:50:38.563Z pid=13224 tid=2776 handle=1077967208 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=111] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:50:38.563Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077966648 parent=426133528 child=1077966648 index=0
+2026-11-25T16:50:38.563Z pid=13224 tid=2776 handle=1077966648 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=32] [column width=1 unit=2 actual=184] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=40] [row height=1 unit=2 actual=111]
+2026-11-25T16:50:38.563Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=426133528 parent=1027105864 child=426133528 index=0
+2026-11-25T16:50:38.563Z pid=13224 tid=2776 handle=426133528 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:50:38.575Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040070128 parent=1040071280 child=1040070128 index=0
+2026-11-25T16:50:38.575Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040071280 parent=0 child=1040071280 index=0
+2026-11-25T16:50:38.578Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959736800 parent=959737184 child=959736800 index=1
+2026-11-25T16:50:38.578Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959737184 parent=1031478088 child=959737184 index=0
+2026-11-25T16:50:38.892Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=424371736 parent=419890168 child=424371736 index=0
+2026-11-25T16:50:38.898Z pid=13224 tid=2776 handle=424371736 class=Windows.UI.Xaml.Controls.ToolTip name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=320 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.898Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040088968 parent=424371736 child=1040088968 index=0
+2026-11-25T16:50:38.898Z pid=13224 tid=2776 handle=1040088968 class=Windows.UI.Xaml.Controls.ContentPresenter name=LayoutRoot actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.905Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040090552 parent=421672136 child=1040090552 index=0
+2026-11-25T16:50:38.907Z pid=13224 tid=2776 handle=1040090552 class=Windows.UI.Xaml.Controls.TextBlock name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:50:38.907Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=421672136 parent=1040088968 child=421672136 index=0
+2026-11-25T16:50:38.910Z pid=13224 tid=2776 handle=421672136 class=Windows.UI.Xaml.Controls.StackPanel name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:51:12.974Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040090552 parent=0 child=1040090552 index=0
+2026-11-25T16:51:12.974Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=421672136 parent=0 child=421672136 index=0
+2026-11-25T16:51:12.974Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040088968 parent=0 child=1040088968 index=0
+2026-11-25T16:51:12.974Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=424371736 parent=0 child=424371736 index=0
+2026-11-25T16:51:13.2Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959898584 parent=1075390696 child=959898584 index=0
+2026-11-25T16:51:13.2Z pid=13224 tid=2776 handle=959898584 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:13.2Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959893832 parent=959898584 child=959893832 index=0
+2026-11-25T16:51:13.11Z pid=13224 tid=2776 handle=959893832 class=Windows.UI.Xaml.Controls.TextBlock name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.363Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=957579608 parent=1027105864 child=957579608 index=1
+2026-11-25T16:51:14.363Z pid=13224 tid=2776 handle=957579608 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.363Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1029798232 parent=1078778840 child=1029798232 index=0
+2026-11-25T16:51:14.363Z pid=13224 tid=2776 handle=1029798232 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:51:14.363Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027110760 parent=1078778840 child=1027110760 index=1
+2026-11-25T16:51:14.363Z pid=13224 tid=2776 handle=1027110760 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1032467064 parent=1078778840 child=1032467064 index=2
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 handle=1032467064 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1075394824 parent=1078778840 child=1075394824 index=3
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 handle=1075394824 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=0x0 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1029799224 parent=1029798728 child=1029799224 index=0
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 handle=1029799224 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1029798728 parent=1078781080 child=1029798728 index=0
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 handle=1029798728 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078781080 parent=1078778840 child=1078781080 index=4
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 handle=1078781080 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=0] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:51:14.372Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078778840 parent=957579608 child=1078778840 index=0
+2026-11-25T16:51:14.388Z pid=13224 tid=2776 handle=1078778840 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=0] [column width=1 unit=2 actual=0] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=0] [row height=1 unit=2 actual=0]
+2026-11-25T16:51:14.388Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171308936 parent=1027110760 child=171308936 index=0
+2026-11-25T16:51:14.388Z pid=13224 tid=2776 handle=171308936 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.388Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=957582744 parent=1027105864 child=957582744 index=2
+2026-11-25T16:51:14.388Z pid=13224 tid=2776 handle=957582744 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.388Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1029800216 parent=1078782200 child=1029800216 index=0
+2026-11-25T16:51:14.388Z pid=13224 tid=2776 handle=1029800216 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:51:14.388Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027111576 parent=1078782200 child=1027111576 index=1
+2026-11-25T16:51:14.403Z pid=13224 tid=2776 handle=1027111576 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.403Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1032979496 parent=1078782200 child=1032979496 index=2
+2026-11-25T16:51:14.405Z pid=13224 tid=2776 handle=1032979496 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1075389320 parent=1078782200 child=1075389320 index=3
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 handle=1075389320 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=0x0 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040105720 parent=1040105224 child=1040105720 index=0
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 handle=1040105720 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040105224 parent=1078782760 child=1040105224 index=0
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 handle=1040105224 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078782760 parent=1078782200 child=1078782760 index=4
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 handle=1078782760 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=0] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078782200 parent=957582744 child=1078782200 index=0
+2026-11-25T16:51:14.407Z pid=13224 tid=2776 handle=1078782200 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=0] [column width=1 unit=2 actual=0] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=0] [row height=1 unit=2 actual=0]
+2026-11-25T16:51:14.419Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171315080 parent=1027111576 child=171315080 index=0
+2026-11-25T16:51:14.422Z pid=13224 tid=2776 handle=171315080 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.422Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=168854400 parent=168854784 child=168854400 index=1
+2026-11-25T16:51:14.426Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=168854784 parent=1029799224 child=168854784 index=0
+2026-11-25T16:51:14.428Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=168852096 parent=169978048 child=168852096 index=1
+2026-11-25T16:51:14.430Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=169978048 parent=1040105720 child=169978048 index=0
+2026-11-25T16:51:14.995Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=424368280 parent=419890168 child=424368280 index=0
+2026-11-25T16:51:14.995Z pid=13224 tid=2776 handle=424368280 class=Windows.UI.Xaml.Controls.ToolTip name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=320 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.998Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040093192 parent=424368280 child=1040093192 index=0
+2026-11-25T16:51:14.998Z pid=13224 tid=2776 handle=1040093192 class=Windows.UI.Xaml.Controls.ContentPresenter name=LayoutRoot actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.998Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040093720 parent=421672728 child=1040093720 index=0
+2026-11-25T16:51:14.998Z pid=13224 tid=2776 handle=1040093720 class=Windows.UI.Xaml.Controls.TextBlock name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:14.998Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=421672728 parent=1040093192 child=421672728 index=0
+2026-11-25T16:51:14.998Z pid=13224 tid=2776 handle=421672728 class=Windows.UI.Xaml.Controls.StackPanel name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:51:15.513Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=123112392 parent=0 child=123112392 index=0
+2026-11-25T16:51:15.513Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170973608 parent=0 child=170973608 index=0
+2026-11-25T16:51:15.513Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170973112 parent=0 child=170973112 index=0
+2026-11-25T16:51:15.525Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170974600 parent=0 child=170974600 index=0
+2026-11-25T16:51:15.525Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170621960 parent=0 child=170621960 index=0
+2026-11-25T16:51:15.528Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1074119928 parent=0 child=1074119928 index=0
+2026-11-25T16:51:15.528Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170974104 parent=0 child=170974104 index=0
+2026-11-25T16:51:15.528Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170971624 parent=0 child=170971624 index=0
+2026-11-25T16:51:15.528Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=964376168 parent=0 child=964376168 index=0
+2026-11-25T16:51:15.528Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1025610008 parent=0 child=1025610008 index=0
+2026-11-25T16:51:15.528Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1077983560 parent=0 child=1077983560 index=0
+2026-11-25T16:51:15.535Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959893832 parent=0 child=959893832 index=0
+2026-11-25T16:51:15.535Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959898584 parent=0 child=959898584 index=0
+2026-11-25T16:51:15.535Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1075390696 parent=0 child=1075390696 index=0
+2026-11-25T16:51:15.535Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959736800 parent=959737184 child=959736800 index=0
+2026-11-25T16:51:15.540Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959737184 parent=0 child=959737184 index=0
+2026-11-25T16:51:15.540Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1031478088 parent=0 child=1031478088 index=0
+2026-11-25T16:51:15.540Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1031479080 parent=0 child=1031479080 index=0
+2026-11-25T16:51:15.544Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1077967208 parent=0 child=1077967208 index=0
+2026-11-25T16:51:15.545Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1077966648 parent=0 child=1077966648 index=0
+2026-11-25T16:51:15.547Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=426133528 parent=0 child=426133528 index=0
+2026-11-25T16:51:15.547Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1029798232 parent=0 child=1029798232 index=0
+2026-11-25T16:51:15.550Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=171308936 parent=0 child=171308936 index=0
+2026-11-25T16:51:15.550Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027110760 parent=0 child=1027110760 index=0
+2026-11-25T16:51:15.550Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1032467064 parent=0 child=1032467064 index=0
+2026-11-25T16:51:15.550Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1075394824 parent=0 child=1075394824 index=0
+2026-11-25T16:51:15.550Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=168854400 parent=168854784 child=168854400 index=0
+2026-11-25T16:51:15.550Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=168854784 parent=0 child=168854784 index=0
+2026-11-25T16:51:15.550Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1029799224 parent=0 child=1029799224 index=0
+2026-11-25T16:51:15.550Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1029798728 parent=0 child=1029798728 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078781080 parent=0 child=1078781080 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078778840 parent=0 child=1078778840 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=957579608 parent=0 child=957579608 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1029800216 parent=0 child=1029800216 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=171315080 parent=0 child=171315080 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027111576 parent=0 child=1027111576 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1032979496 parent=0 child=1032979496 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1075389320 parent=0 child=1075389320 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=168852096 parent=169978048 child=168852096 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=169978048 parent=0 child=169978048 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040105720 parent=0 child=1040105720 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040105224 parent=0 child=1040105224 index=0
+2026-11-25T16:51:15.560Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078782760 parent=0 child=1078782760 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078782200 parent=0 child=1078782200 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=957582744 parent=0 child=957582744 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027105864 parent=0 child=1027105864 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1029579736 parent=0 child=1029579736 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1034022824 parent=0 child=1034022824 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1074076648 parent=0 child=1074076648 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1034022296 parent=0 child=1034022296 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1030909608 parent=0 child=1030909608 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170971128 parent=0 child=170971128 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1076723544 parent=0 child=1076723544 index=0
+2026-11-25T16:51:15.576Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1034109768 parent=0 child=1034109768 index=0
+2026-11-25T16:51:15.900Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078308536 parent=64639576 child=1078308536 index=9
+2026-11-25T16:51:15.900Z pid=13224 tid=2776 handle=1078308536 class=Taskbar.TaskListButton name=TaskListButton actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:15.909Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959443016 parent=1078396696 child=959443016 index=0
+2026-11-25T16:51:15.912Z pid=13224 tid=2776 handle=959443016 class=Windows.UI.Xaml.Shapes.Rectangle name=MostRecentlyUsedDivider actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:15.914Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959445000 parent=1078396696 child=959445000 index=1
+2026-11-25T16:51:15.914Z pid=13224 tid=2776 handle=959445000 class=Windows.UI.Xaml.Controls.Border name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:15.914Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959443512 parent=1078396696 child=959443512 index=2
+2026-11-25T16:51:15.914Z pid=13224 tid=2776 handle=959443512 class=Windows.UI.Xaml.Controls.Border name=BackgroundElement actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:15.919Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=171316104 parent=1078396696 child=171316104 index=3
+2026-11-25T16:51:15.920Z pid=13224 tid=2776 handle=171316104 class=Windows.UI.Xaml.Controls.Image name=Icon actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:15.922Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078396696 parent=1078308536 child=1078396696 index=0
+2026-11-25T16:51:15.923Z pid=13224 tid=2776 handle=1078396696 class=Windows.UI.Xaml.Controls.Grid name=IconPanel actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=4 columns=2 rows=0 children=4 [column width=1 unit=2 actual=0] [column width=1 unit=2 actual=0]
+2026-11-25T16:51:15.925Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959442024 parent=1078396696 child=959442024 index=4
+2026-11-25T16:51:15.926Z pid=13224 tid=2776 handle=959442024 class=Windows.UI.Xaml.Shapes.Rectangle name=DefaultIcon actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:15.929Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959444008 parent=1078396696 child=959444008 index=3
+2026-11-25T16:51:15.931Z pid=13224 tid=2776 handle=959444008 class=Windows.UI.Xaml.Shapes.Rectangle name=RunningIndicator actual=0x3 width=-nan(ind) height=3 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:16.142Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040093720 parent=0 child=1040093720 index=0
+2026-11-25T16:51:16.143Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=421672728 parent=0 child=421672728 index=0
+2026-11-25T16:51:16.145Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040093192 parent=0 child=1040093192 index=0
+2026-11-25T16:51:16.147Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=424368280 parent=0 child=424368280 index=0
+2026-11-25T16:51:29.622Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1127495176 parent=64639576 child=1127495176 index=10
+2026-11-25T16:51:29.624Z pid=13224 tid=2776 handle=1127495176 class=Taskbar.TaskListButton name=TaskListButton actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1154522616 parent=1160061848 child=1154522616 index=0
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 handle=1154522616 class=Windows.UI.Xaml.Shapes.Rectangle name=MostRecentlyUsedDivider actual=1x0 width=1 height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1154519640 parent=1160061848 child=1154519640 index=1
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 handle=1154519640 class=Windows.UI.Xaml.Controls.Border name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1154521624 parent=1160061848 child=1154521624 index=2
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 handle=1154521624 class=Windows.UI.Xaml.Controls.Border name=BackgroundElement actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=2 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1136013304 parent=1160061848 child=1136013304 index=3
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 handle=1136013304 class=Windows.UI.Xaml.Controls.Image name=Icon actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:29.626Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1160061848 parent=1127495176 child=1160061848 index=0
+2026-11-25T16:51:29.639Z pid=13224 tid=2776 handle=1160061848 class=Windows.UI.Xaml.Controls.Grid name=IconPanel actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=4 columns=2 rows=0 children=4 [column width=1 unit=2 actual=0] [column width=1 unit=2 actual=0]
+2026-11-25T16:51:29.641Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1127478504 parent=1160061848 child=1127478504 index=4
+2026-11-25T16:51:29.642Z pid=13224 tid=2776 handle=1127478504 class=Windows.UI.Xaml.Shapes.Rectangle name=DefaultIcon actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:29.642Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1159878728 parent=1160061848 child=1159878728 index=3
+2026-11-25T16:51:29.642Z pid=13224 tid=2776 handle=1159878728 class=Windows.UI.Xaml.Shapes.Rectangle name=RunningIndicator actual=0x3 width=-nan(ind) height=3 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:51:47.2Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1159878728 parent=0 child=1159878728 index=0
+2026-11-25T16:51:58.213Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1157004408 parent=1160061848 child=1157004408 index=3
+2026-11-25T16:51:58.213Z pid=13224 tid=2776 handle=1157004408 class=Windows.UI.Xaml.Shapes.Rectangle name=RunningIndicator actual=0x3 width=-nan(ind) height=3 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.935Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=123112392 parent=431151440 child=123112392 index=0
+2026-11-25T16:52:31.935Z pid=13224 tid=2776 handle=123112392 class=Windows.UI.Xaml.Controls.Canvas name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.939Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1157737496 parent=1158584120 child=1157737496 index=0
+2026-11-25T16:52:31.939Z pid=13224 tid=2776 handle=1157737496 class=Taskbar.FlyoutFrame name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.939Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158584120 parent=1141741944 child=1158584120 index=0
+2026-11-25T16:52:31.939Z pid=13224 tid=2776 handle=1158584120 class=Windows.UI.Xaml.Controls.Border name= actual=0x0 width=1440 height=900 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:31.939Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1141741944 parent=1156777928 child=1141741944 index=0
+2026-11-25T16:52:31.939Z pid=13224 tid=2776 handle=1141741944 class=Windows.UI.Xaml.Controls.ScrollContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:31.939Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1156777928 parent=431151440 child=1156777928 index=1
+2026-11-25T16:52:31.939Z pid=13224 tid=2776 handle=1156777928 class=Windows.UI.Xaml.Controls.ScrollViewer name= actual=0x0 width=1440 height=900 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:31.960Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1132672056 parent=1079984648 child=1132672056 index=0
+2026-11-25T16:52:31.960Z pid=13224 tid=2776 handle=1132672056 class=Windows.UI.Xaml.Controls.Border name=HoverFlyoutBackgroundShadowReceiver actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.960Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1139872904 parent=1159031624 child=1139872904 index=0
+2026-11-25T16:52:31.960Z pid=13224 tid=2776 handle=1139872904 class=Taskbar.TaskbarBackground name=HoverFlyoutBackgroundControl actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.960Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1159031624 parent=1079984648 child=1159031624 index=1
+2026-11-25T16:52:31.960Z pid=13224 tid=2776 handle=1159031624 class=Windows.UI.Xaml.Controls.Border name=HoverFlyoutBackground actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:31.970Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1082729720 parent=1079984648 child=1082729720 index=2
+2026-11-25T16:52:31.970Z pid=13224 tid=2776 handle=1082729720 class=Windows.UI.Xaml.Controls.ContentPresenter name=HoverFlyoutContent actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.970Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1079984648 parent=1032468120 child=1079984648 index=0
+2026-11-25T16:52:31.970Z pid=13224 tid=2776 handle=1079984648 class=Windows.UI.Xaml.Controls.Grid name=HoverFlyoutGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:52:31.970Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1032468120 parent=1157737496 child=1032468120 index=0
+2026-11-25T16:52:31.970Z pid=13224 tid=2776 handle=1032468120 class=Windows.UI.Xaml.Controls.Canvas name=HoverFlyoutCanvas actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:31.970Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1159033112 parent=1078323864 child=1159033112 index=0
+2026-11-25T16:52:31.983Z pid=13224 tid=2776 handle=1159033112 class=Windows.UI.Xaml.Shapes.Rectangle name=BackgroundFill actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.983Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1159034104 parent=1078323864 child=1159034104 index=1
+2026-11-25T16:52:31.986Z pid=13224 tid=2776 handle=1159034104 class=Windows.UI.Xaml.Shapes.Rectangle name=BackgroundStroke actual=0x1 width=-nan(ind) height=1 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.989Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078323864 parent=1139872904 child=1078323864 index=0
+2026-11-25T16:52:31.989Z pid=13224 tid=2776 handle=1078323864 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:52:31.989Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1081369336 parent=1082729720 child=1081369336 index=0
+2026-11-25T16:52:31.994Z pid=13224 tid=2776 handle=1081369336 class=Taskbar.TaskItemThumbnailList name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:31.994Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027108312 parent=1081369336 child=1027108312 index=0
+2026-11-25T16:52:31.998Z pid=13224 tid=2776 handle=1027108312 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=TaskItemThumbnailListRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:32.2Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170971624 parent=1077966648 child=170971624 index=0
+2026-11-25T16:52:32.2Z pid=13224 tid=2776 handle=170971624 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:52:32.2Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=964376168 parent=1025610008 child=964376168 index=0
+2026-11-25T16:52:32.2Z pid=13224 tid=2776 handle=964376168 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1025610008 parent=1077966648 child=1025610008 index=1
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 handle=1025610008 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077983560 parent=1077966648 child=1077983560 index=2
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 handle=1077983560 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=166.58x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959893832 parent=959898584 child=959893832 index=0
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 handle=959893832 class=Windows.UI.Xaml.Controls.TextBlock name= actual=10x10 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959898584 parent=1075390696 child=959898584 index=0
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 handle=959898584 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1075390696 parent=1077966648 child=1075390696 index=3
+2026-11-25T16:52:32.11Z pid=13224 tid=2776 handle=1075390696 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=0x0 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:32.26Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959736800 parent=959737184 child=959736800 index=1
+2026-11-25T16:52:32.26Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959737184 parent=1031478088 child=959737184 index=0
+2026-11-25T16:52:32.26Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1031478088 parent=1031479080 child=1031478088 index=0
+2026-11-25T16:52:32.26Z pid=13224 tid=2776 handle=1031478088 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=185.915x110 width=185.915 height=110 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:32.26Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1031479080 parent=1077967208 child=1031479080 index=0
+2026-11-25T16:52:32.26Z pid=13224 tid=2776 handle=1031479080 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=201.915 height=110 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:32.26Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077967208 parent=1077966648 child=1077967208 index=4
+2026-11-25T16:52:32.42Z pid=13224 tid=2776 handle=1077967208 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=118] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:52:32.42Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1077966648 parent=426133528 child=1077966648 index=0
+2026-11-25T16:52:32.45Z pid=13224 tid=2776 handle=1077966648 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=32] [column width=1 unit=2 actual=170] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=40] [row height=1 unit=2 actual=118]
+2026-11-25T16:52:32.45Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=426133528 parent=1027108312 child=426133528 index=0
+2026-11-25T16:52:32.45Z pid=13224 tid=2776 handle=426133528 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:32.45Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959736800 parent=959737184 child=959736800 index=0
+2026-11-25T16:52:32.45Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959737184 parent=0 child=959737184 index=0
+2026-11-25T16:52:32.45Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1137666288 parent=1137667440 child=1137666288 index=1
+2026-11-25T16:52:32.58Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1137667440 parent=1031478088 child=1137667440 index=0
+2026-11-25T16:52:32.350Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1084391192 parent=421672136 child=1084391192 index=0
+2026-11-25T16:52:32.350Z pid=13224 tid=2776 handle=1084391192 class=Windows.UI.Xaml.Controls.TextBlock name= actual=73.5645x15.9609 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:32.350Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=421672136 parent=1040088968 child=421672136 index=0
+2026-11-25T16:52:32.350Z pid=13224 tid=2776 handle=421672136 class=Windows.UI.Xaml.Controls.StackPanel name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:32.350Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040088968 parent=424371736 child=1040088968 index=0
+2026-11-25T16:52:32.350Z pid=13224 tid=2776 handle=1040088968 class=Windows.UI.Xaml.Controls.ContentPresenter name=LayoutRoot actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=320 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:32.350Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=424371736 parent=419890168 child=424371736 index=0
+2026-11-25T16:52:32.350Z pid=13224 tid=2776 handle=424371736 class=Windows.UI.Xaml.Controls.ToolTip name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=320 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:33.890Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1084391192 parent=0 child=1084391192 index=0
+2026-11-25T16:52:33.890Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=421672136 parent=0 child=421672136 index=0
+2026-11-25T16:52:33.890Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040088968 parent=0 child=1040088968 index=0
+2026-11-25T16:52:33.897Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=424371736 parent=0 child=424371736 index=0
+2026-11-25T16:52:33.915Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158364984 parent=1027108312 child=1158364984 index=1
+2026-11-25T16:52:33.917Z pid=13224 tid=2776 handle=1158364984 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.917Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135342216 parent=1156670136 child=1135342216 index=0
+2026-11-25T16:52:33.924Z pid=13224 tid=2776 handle=1135342216 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:52:33.924Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027111576 parent=1156670136 child=1027111576 index=1
+2026-11-25T16:52:33.929Z pid=13224 tid=2776 handle=1027111576 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.929Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134682472 parent=1156670136 child=1134682472 index=2
+2026-11-25T16:52:33.929Z pid=13224 tid=2776 handle=1134682472 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.934Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135913640 parent=1156670136 child=1135913640 index=3
+2026-11-25T16:52:33.936Z pid=13224 tid=2776 handle=1135913640 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=0x0 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.936Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135342712 parent=1135344200 child=1135342712 index=0
+2026-11-25T16:52:33.936Z pid=13224 tid=2776 handle=1135342712 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.936Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135344200 parent=1153381256 child=1135344200 index=0
+2026-11-25T16:52:33.936Z pid=13224 tid=2776 handle=1135344200 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:33.944Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1153381256 parent=1156670136 child=1153381256 index=4
+2026-11-25T16:52:33.944Z pid=13224 tid=2776 handle=1153381256 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=0] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:52:33.944Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1156670136 parent=1158364984 child=1156670136 index=0
+2026-11-25T16:52:33.944Z pid=13224 tid=2776 handle=1156670136 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=0] [column width=1 unit=2 actual=0] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=0] [row height=1 unit=2 actual=0]
+2026-11-25T16:52:33.944Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1136014328 parent=1027111576 child=1136014328 index=0
+2026-11-25T16:52:33.944Z pid=13224 tid=2776 handle=1136014328 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.944Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158365880 parent=1027108312 child=1158365880 index=2
+2026-11-25T16:52:33.960Z pid=13224 tid=2776 handle=1158365880 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.960Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135345192 parent=1153384616 child=1135345192 index=0
+2026-11-25T16:52:33.960Z pid=13224 tid=2776 handle=1135345192 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:52:33.960Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027116472 parent=1153384616 child=1027116472 index=1
+2026-11-25T16:52:33.960Z pid=13224 tid=2776 handle=1027116472 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.960Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134683000 parent=1153384616 child=1134683000 index=2
+2026-11-25T16:52:33.960Z pid=13224 tid=2776 handle=1134683000 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.960Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135907448 parent=1153384616 child=1135907448 index=3
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 handle=1135907448 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=0x0 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135348168 parent=1135345688 child=1135348168 index=0
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 handle=1135348168 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135345688 parent=1153386296 child=1135345688 index=0
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 handle=1135345688 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1153386296 parent=1153384616 child=1153386296 index=4
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 handle=1153386296 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=0] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1153384616 parent=1158365880 child=1153384616 index=0
+2026-11-25T16:52:33.976Z pid=13224 tid=2776 handle=1153384616 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=0] [column width=1 unit=2 actual=0] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=0] [row height=1 unit=2 actual=0]
+2026-11-25T16:52:33.992Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1136016888 parent=1027116472 child=1136016888 index=0
+2026-11-25T16:52:33.995Z pid=13224 tid=2776 handle=1136016888 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:33.995Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134758080 parent=1135342712 child=1134758080 index=0
+2026-11-25T16:52:33.995Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134759616 parent=1134758080 child=1134759616 index=1
+2026-11-25T16:52:33.995Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134758848 parent=1134760768 child=1134758848 index=1
+2026-11-25T16:52:34.8Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134760768 parent=1135348168 child=1134760768 index=0
+2026-11-25T16:52:34.183Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078921400 parent=1027108312 child=1078921400 index=3
+2026-11-25T16:52:34.187Z pid=13224 tid=2776 handle=1078921400 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.191Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158584616 parent=1160738248 child=1158584616 index=0
+2026-11-25T16:52:34.191Z pid=13224 tid=2776 handle=1158584616 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:52:34.197Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027117288 parent=1160738248 child=1027117288 index=1
+2026-11-25T16:52:34.199Z pid=13224 tid=2776 handle=1027117288 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.199Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1034022824 parent=1160738248 child=1034022824 index=2
+2026-11-25T16:52:34.199Z pid=13224 tid=2776 handle=1034022824 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.199Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135910888 parent=1160738248 child=1135910888 index=3
+2026-11-25T16:52:34.206Z pid=13224 tid=2776 handle=1135910888 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=0x0 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.208Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158582136 parent=1158581144 child=1158582136 index=0
+2026-11-25T16:52:34.212Z pid=13224 tid=2776 handle=1158582136 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.212Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158581144 parent=1160736568 child=1158581144 index=0
+2026-11-25T16:52:34.215Z pid=13224 tid=2776 handle=1158581144 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:34.217Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1160736568 parent=1160738248 child=1160736568 index=4
+2026-11-25T16:52:34.220Z pid=13224 tid=2776 handle=1160736568 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=0] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:52:34.221Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1160738248 parent=1078921400 child=1160738248 index=0
+2026-11-25T16:52:34.223Z pid=13224 tid=2776 handle=1160738248 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=0] [column width=1 unit=2 actual=0] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=0] [row height=1 unit=2 actual=0]
+2026-11-25T16:52:34.228Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1136003576 parent=1027117288 child=1136003576 index=0
+2026-11-25T16:52:34.228Z pid=13224 tid=2776 handle=1136003576 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.235Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078920504 parent=1027108312 child=1078920504 index=4
+2026-11-25T16:52:34.235Z pid=13224 tid=2776 handle=1078920504 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.240Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158582632 parent=1160741608 child=1158582632 index=0
+2026-11-25T16:52:34.241Z pid=13224 tid=2776 handle=1158582632 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:52:34.241Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027118920 parent=1160741608 child=1027118920 index=1
+2026-11-25T16:52:34.241Z pid=13224 tid=2776 handle=1027118920 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.241Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1040087912 parent=1160741608 child=1040087912 index=2
+2026-11-25T16:52:34.249Z pid=13224 tid=2776 handle=1040087912 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.249Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135902632 parent=1160741608 child=1135902632 index=3
+2026-11-25T16:52:34.249Z pid=13224 tid=2776 handle=1135902632 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=0x0 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.249Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134180968 parent=170973112 child=1134180968 index=0
+2026-11-25T16:52:34.256Z pid=13224 tid=2776 handle=1134180968 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.257Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=170973112 parent=1160737688 child=170973112 index=0
+2026-11-25T16:52:34.257Z pid=13224 tid=2776 handle=170973112 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:34.257Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1160737688 parent=1160741608 child=1160737688 index=4
+2026-11-25T16:52:34.257Z pid=13224 tid=2776 handle=1160737688 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=0] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:52:34.265Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1160741608 parent=1078920504 child=1160741608 index=0
+2026-11-25T16:52:34.265Z pid=13224 tid=2776 handle=1160741608 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=0] [column width=1 unit=2 actual=0] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=0] [row height=1 unit=2 actual=0]
+2026-11-25T16:52:34.271Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1136011256 parent=1027118920 child=1136011256 index=0
+2026-11-25T16:52:34.273Z pid=13224 tid=2776 handle=1136011256 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.274Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=959737952 parent=1078114992 child=959737952 index=1
+2026-11-25T16:52:34.300Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078114992 parent=1158582136 child=1078114992 index=0
+2026-11-25T16:52:34.306Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=422591024 parent=1134180968 child=422591024 index=0
+2026-11-25T16:52:34.307Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078113840 parent=422591024 child=1078113840 index=1
+2026-11-25T16:52:34.540Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1167409464 parent=1135902632 child=1167409464 index=0
+2026-11-25T16:52:34.542Z pid=13224 tid=2776 handle=1167409464 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.546Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1167413160 parent=1167409464 child=1167413160 index=0
+2026-11-25T16:52:34.548Z pid=13224 tid=2776 handle=1167413160 class=Windows.UI.Xaml.Controls.TextBlock name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:34.723Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=123112392 parent=0 child=123112392 index=0
+2026-11-25T16:52:34.723Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1132672056 parent=0 child=1132672056 index=0
+2026-11-25T16:52:34.727Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1159033112 parent=0 child=1159033112 index=0
+2026-11-25T16:52:34.727Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1159034104 parent=0 child=1159034104 index=0
+2026-11-25T16:52:34.727Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078323864 parent=0 child=1078323864 index=0
+2026-11-25T16:52:34.731Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1139872904 parent=0 child=1139872904 index=0
+2026-11-25T16:52:34.731Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1159031624 parent=0 child=1159031624 index=0
+2026-11-25T16:52:34.731Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170971624 parent=0 child=170971624 index=0
+2026-11-25T16:52:34.731Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=964376168 parent=0 child=964376168 index=0
+2026-11-25T16:52:34.731Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1025610008 parent=0 child=1025610008 index=0
+2026-11-25T16:52:34.731Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1077983560 parent=0 child=1077983560 index=0
+2026-11-25T16:52:34.731Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959893832 parent=0 child=959893832 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959898584 parent=0 child=959898584 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1075390696 parent=0 child=1075390696 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1137666288 parent=1137667440 child=1137666288 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1137667440 parent=0 child=1137667440 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1031478088 parent=0 child=1031478088 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1031479080 parent=0 child=1031479080 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1077967208 parent=0 child=1077967208 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1077966648 parent=0 child=1077966648 index=0
+2026-11-25T16:52:34.742Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=426133528 parent=0 child=426133528 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135342216 parent=0 child=1135342216 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1136014328 parent=0 child=1136014328 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027111576 parent=0 child=1027111576 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134682472 parent=0 child=1134682472 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135913640 parent=0 child=1135913640 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134758080 parent=0 child=1134758080 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134759616 parent=1134758080 child=1134759616 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135342712 parent=0 child=1135342712 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135344200 parent=0 child=1135344200 index=0
+2026-11-25T16:52:34.758Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1153381256 parent=0 child=1153381256 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1156670136 parent=0 child=1156670136 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158364984 parent=0 child=1158364984 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135345192 parent=0 child=1135345192 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1136016888 parent=0 child=1136016888 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027116472 parent=0 child=1027116472 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134683000 parent=0 child=1134683000 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135907448 parent=0 child=1135907448 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134758848 parent=1134760768 child=1134758848 index=0
+2026-11-25T16:52:34.774Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134760768 parent=0 child=1134760768 index=0
+2026-11-25T16:52:34.790Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135348168 parent=0 child=1135348168 index=0
+2026-11-25T16:52:34.791Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135345688 parent=0 child=1135345688 index=0
+2026-11-25T16:52:34.791Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1153386296 parent=0 child=1153386296 index=0
+2026-11-25T16:52:34.791Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1153384616 parent=0 child=1153384616 index=0
+2026-11-25T16:52:34.791Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158365880 parent=0 child=1158365880 index=0
+2026-11-25T16:52:34.791Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158584616 parent=0 child=1158584616 index=0
+2026-11-25T16:52:34.791Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1136003576 parent=0 child=1136003576 index=0
+2026-11-25T16:52:34.791Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027117288 parent=0 child=1027117288 index=0
+2026-11-25T16:52:34.791Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1034022824 parent=0 child=1034022824 index=0
+2026-11-25T16:52:34.805Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135910888 parent=0 child=1135910888 index=0
+2026-11-25T16:52:34.805Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=959737952 parent=1078114992 child=959737952 index=0
+2026-11-25T16:52:34.805Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078114992 parent=0 child=1078114992 index=0
+2026-11-25T16:52:34.805Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158582136 parent=0 child=1158582136 index=0
+2026-11-25T16:52:34.805Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158581144 parent=0 child=1158581144 index=0
+2026-11-25T16:52:34.805Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1160736568 parent=0 child=1160736568 index=0
+2026-11-25T16:52:34.805Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1160738248 parent=0 child=1160738248 index=0
+2026-11-25T16:52:34.818Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078921400 parent=0 child=1078921400 index=0
+2026-11-25T16:52:34.820Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158582632 parent=0 child=1158582632 index=0
+2026-11-25T16:52:34.821Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1136011256 parent=0 child=1136011256 index=0
+2026-11-25T16:52:34.823Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027118920 parent=0 child=1027118920 index=0
+2026-11-25T16:52:34.825Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1040087912 parent=0 child=1040087912 index=0
+2026-11-25T16:52:34.827Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1167413160 parent=0 child=1167413160 index=0
+2026-11-25T16:52:34.827Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1167409464 parent=0 child=1167409464 index=0
+2026-11-25T16:52:34.829Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135902632 parent=0 child=1135902632 index=0
+2026-11-25T16:52:34.831Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=422591024 parent=0 child=422591024 index=0
+2026-11-25T16:52:34.833Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078113840 parent=422591024 child=1078113840 index=0
+2026-11-25T16:52:34.835Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134180968 parent=0 child=1134180968 index=0
+2026-11-25T16:52:34.837Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=170973112 parent=0 child=170973112 index=0
+2026-11-25T16:52:34.837Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1160737688 parent=0 child=1160737688 index=0
+2026-11-25T16:52:34.841Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1160741608 parent=0 child=1160741608 index=0
+2026-11-25T16:52:34.841Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078920504 parent=0 child=1078920504 index=0
+2026-11-25T16:52:34.841Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027108312 parent=0 child=1027108312 index=0
+2026-11-25T16:52:34.841Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1081369336 parent=0 child=1081369336 index=0
+2026-11-25T16:52:34.841Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1082729720 parent=0 child=1082729720 index=0
+2026-11-25T16:52:34.841Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1079984648 parent=0 child=1079984648 index=0
+2026-11-25T16:52:34.841Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1032468120 parent=0 child=1032468120 index=0
+2026-11-25T16:52:34.853Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1157737496 parent=0 child=1157737496 index=0
+2026-11-25T16:52:34.855Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158584120 parent=0 child=1158584120 index=0
+2026-11-25T16:52:34.855Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1141741944 parent=0 child=1141741944 index=0
+2026-11-25T16:52:34.857Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1156777928 parent=0 child=1156777928 index=0
+2026-11-25T16:52:35.525Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=123112392 parent=431151440 child=123112392 index=0
+2026-11-25T16:52:35.527Z pid=13224 tid=2776 handle=123112392 class=Windows.UI.Xaml.Controls.Canvas name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.527Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1157737496 parent=1134178488 child=1157737496 index=0
+2026-11-25T16:52:35.532Z pid=13224 tid=2776 handle=1157737496 class=Taskbar.FlyoutFrame name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.532Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134178488 parent=1141745704 child=1134178488 index=0
+2026-11-25T16:52:35.532Z pid=13224 tid=2776 handle=1134178488 class=Windows.UI.Xaml.Controls.Border name= actual=0x0 width=1440 height=900 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.532Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1141745704 parent=1156779672 child=1141745704 index=0
+2026-11-25T16:52:35.532Z pid=13224 tid=2776 handle=1141745704 class=Windows.UI.Xaml.Controls.ScrollContentPresenter name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.532Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1156779672 parent=431151440 child=1156779672 index=1
+2026-11-25T16:52:35.532Z pid=13224 tid=2776 handle=1156779672 class=Windows.UI.Xaml.Controls.ScrollViewer name= actual=0x0 width=1440 height=900 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.550Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078322616 parent=1131848184 child=1078322616 index=0
+2026-11-25T16:52:35.552Z pid=13224 tid=2776 handle=1078322616 class=Windows.UI.Xaml.Controls.Border name=HoverFlyoutBackgroundShadowReceiver actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.552Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1136309784 parent=1078327080 child=1136309784 index=0
+2026-11-25T16:52:35.554Z pid=13224 tid=2776 handle=1136309784 class=Taskbar.TaskbarBackground name=HoverFlyoutBackgroundControl actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.556Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078327080 parent=1131848184 child=1078327080 index=1
+2026-11-25T16:52:35.556Z pid=13224 tid=2776 handle=1078327080 class=Windows.UI.Xaml.Controls.Border name=HoverFlyoutBackground actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.556Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1160728920 parent=1131848184 child=1160728920 index=2
+2026-11-25T16:52:35.556Z pid=13224 tid=2776 handle=1160728920 class=Windows.UI.Xaml.Controls.ContentPresenter name=HoverFlyoutContent actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.564Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1131848184 parent=1160729448 child=1131848184 index=0
+2026-11-25T16:52:35.564Z pid=13224 tid=2776 handle=1131848184 class=Windows.UI.Xaml.Controls.Grid name=HoverFlyoutGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=3 columns=0 rows=0 children=3
+2026-11-25T16:52:35.564Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1160729448 parent=1157737496 child=1160729448 index=0
+2026-11-25T16:52:35.569Z pid=13224 tid=2776 handle=1160729448 class=Windows.UI.Xaml.Controls.Canvas name=HoverFlyoutCanvas actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.569Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078326584 parent=1139784984 child=1078326584 index=0
+2026-11-25T16:52:35.569Z pid=13224 tid=2776 handle=1078326584 class=Windows.UI.Xaml.Shapes.Rectangle name=BackgroundFill actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.569Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078322120 parent=1139784984 child=1078322120 index=1
+2026-11-25T16:52:35.569Z pid=13224 tid=2776 handle=1078322120 class=Windows.UI.Xaml.Shapes.Rectangle name=BackgroundStroke actual=0x1 width=-nan(ind) height=1 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.569Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1139784984 parent=1136309784 child=1139784984 index=0
+2026-11-25T16:52:35.580Z pid=13224 tid=2776 handle=1139784984 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=2 columns=0 rows=0 children=2
+2026-11-25T16:52:35.580Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1081370536 parent=1160728920 child=1081370536 index=0
+2026-11-25T16:52:35.580Z pid=13224 tid=2776 handle=1081370536 class=Taskbar.TaskItemThumbnailList name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.580Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1025611640 parent=1081370536 child=1025611640 index=0
+2026-11-25T16:52:35.580Z pid=13224 tid=2776 handle=1025611640 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=TaskItemThumbnailListRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.590Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078323112 parent=1156670136 child=1078323112 index=0
+2026-11-25T16:52:35.590Z pid=13224 tid=2776 handle=1078323112 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:52:35.590Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1136014328 parent=1027111576 child=1136014328 index=0
+2026-11-25T16:52:35.594Z pid=13224 tid=2776 handle=1136014328 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.595Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027111576 parent=1156670136 child=1027111576 index=1
+2026-11-25T16:52:35.595Z pid=13224 tid=2776 handle=1027111576 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.595Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134682472 parent=1156670136 child=1134682472 index=2
+2026-11-25T16:52:35.595Z pid=13224 tid=2776 handle=1134682472 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=180.259x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.595Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135913640 parent=1156670136 child=1135913640 index=3
+2026-11-25T16:52:35.595Z pid=13224 tid=2776 handle=1135913640 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=32x32 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.595Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134758080 parent=1135342712 child=1134758080 index=0
+2026-11-25T16:52:35.595Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134759616 parent=1134758080 child=1134759616 index=1
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135342712 parent=1135344200 child=1135342712 index=0
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 handle=1135342712 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=200x104.255 width=200 height=104.255 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135344200 parent=1153381256 child=1135344200 index=0
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 handle=1135344200 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=216 height=104.255 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1153381256 parent=1156670136 child=1153381256 index=4
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 handle=1153381256 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=112.5] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1156670136 parent=1158364984 child=1156670136 index=0
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 handle=1156670136 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=32] [column width=1 unit=2 actual=184] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=40] [row height=1 unit=2 actual=112.5]
+2026-11-25T16:52:35.611Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158364984 parent=1025611640 child=1158364984 index=0
+2026-11-25T16:52:35.627Z pid=13224 tid=2776 handle=1158364984 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.627Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1078325592 parent=1153384616 child=1078325592 index=0
+2026-11-25T16:52:35.627Z pid=13224 tid=2776 handle=1078325592 class=Windows.UI.Xaml.Controls.Border name=BackgroundBorder actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=0 rowSpan=2 visualChildren=0
+2026-11-25T16:52:35.627Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1136016888 parent=1027116472 child=1136016888 index=0
+2026-11-25T16:52:35.627Z pid=13224 tid=2776 handle=1136016888 class=Windows.UI.Xaml.Controls.Image name= actual=16x16 width=16 height=16 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.627Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1027116472 parent=1153384616 child=1027116472 index=1
+2026-11-25T16:52:35.627Z pid=13224 tid=2776 handle=1027116472 class=Microsoft.UI.Xaml.Controls.ItemsRepeater name=IconsRepeater actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.627Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134683000 parent=1153384616 child=1134683000 index=2
+2026-11-25T16:52:35.643Z pid=13224 tid=2776 handle=1134683000 class=Windows.UI.Xaml.Controls.TextBlock name=DisplayNameTextBlock actual=180.259x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.645Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135907448 parent=1153384616 child=1135907448 index=3
+2026-11-25T16:52:35.645Z pid=13224 tid=2776 handle=1135907448 class=Windows.UI.Xaml.Controls.Button name=CloseButton actual=32x32 width=32 height=32 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=1 opacity=1 clip=0 column=2 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.645Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134758848 parent=1134760768 child=1134758848 index=1
+2026-11-25T16:52:35.645Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1134760768 parent=1135348168 child=1134760768 index=0
+2026-11-25T16:52:35.645Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135348168 parent=1135345688 child=1135348168 index=0
+2026-11-25T16:52:35.645Z pid=13224 tid=2776 handle=1135348168 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHost actual=200x104.255 width=200 height=104.255 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:35.645Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1135345688 parent=1153386296 child=1135345688 index=0
+2026-11-25T16:52:35.659Z pid=13224 tid=2776 handle=1135345688 class=Windows.UI.Xaml.Controls.Border name=ThumbnailVisualHostWrapper actual=0x0 width=216 height=104.255 minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.659Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1153386296 parent=1153384616 child=1153386296 index=4
+2026-11-25T16:52:35.659Z pid=13224 tid=2776 handle=1153386296 class=Windows.UI.Xaml.Controls.Grid name=DetailedViewGrid actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=3 row=1 rowSpan=1 visualChildren=1 columns=0 rows=3 children=1 [row height=1 unit=2 actual=112.5] [row height=1 unit=0 actual=0] [row height=1 unit=0 actual=0]
+2026-11-25T16:52:35.659Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1153384616 parent=1158365880 child=1153384616 index=0
+2026-11-25T16:52:35.659Z pid=13224 tid=2776 handle=1153384616 class=Windows.UI.Xaml.Controls.Grid name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=5 columns=3 rows=2 children=5 [column width=1 unit=0 actual=32] [column width=1 unit=2 actual=184] [column width=1 unit=0 actual=0] [row height=40 unit=1 actual=40] [row height=1 unit=2 actual=112.5]
+2026-11-25T16:52:35.659Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1158365880 parent=1025611640 child=1158365880 index=1
+2026-11-25T16:52:35.659Z pid=13224 tid=2776 handle=1158365880 class=Taskbar.TaskItemThumbnailView name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=100 maxWidth=216 minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=1
+2026-11-25T16:52:35.659Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134758080 parent=0 child=1134758080 index=0
+2026-11-25T16:52:35.674Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134759616 parent=1134758080 child=1134759616 index=0
+2026-11-25T16:52:35.674Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1129450208 parent=1129456352 child=1129450208 index=1
+2026-11-25T16:52:35.674Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1129456352 parent=1135342712 child=1129456352 index=0
+2026-11-25T16:52:35.674Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134758848 parent=1134760768 child=1134758848 index=0
+2026-11-25T16:52:35.674Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134760768 parent=0 child=1134760768 index=0
+2026-11-25T16:52:35.674Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1129450592 parent=1135348168 child=1129450592 index=0
+2026-11-25T16:52:35.690Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1129460192 parent=1129450592 child=1129460192 index=1
+2026-11-25T16:52:36.75Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=958785720 parent=1135913640 child=958785720 index=0
+2026-11-25T16:52:36.75Z pid=13224 tid=2776 handle=958785720 class=Windows.UI.Xaml.Controls.ContentPresenter name=ContentPresenter actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:36.75Z pid=13224 tid=2776 VisualTreeChange mutation=0 handle=1131343112 parent=958785720 child=1131343112 index=0
+2026-11-25T16:52:36.75Z pid=13224 tid=2776 handle=1131343112 class=Windows.UI.Xaml.Controls.TextBlock name= actual=0x0 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=0 columnSpan=1 row=0 rowSpan=1 visualChildren=0
+2026-11-25T16:52:36.965Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=123112392 parent=0 child=123112392 index=0
+2026-11-25T16:52:36.965Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078322616 parent=0 child=1078322616 index=0
+2026-11-25T16:52:36.965Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078326584 parent=0 child=1078326584 index=0
+2026-11-25T16:52:36.965Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078322120 parent=0 child=1078322120 index=0
+2026-11-25T16:52:36.965Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1139784984 parent=0 child=1139784984 index=0
+2026-11-25T16:52:36.965Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1136309784 parent=0 child=1136309784 index=0
+2026-11-25T16:52:36.980Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078327080 parent=0 child=1078327080 index=0
+2026-11-25T16:52:36.980Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078323112 parent=0 child=1078323112 index=0
+2026-11-25T16:52:36.980Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1136014328 parent=0 child=1136014328 index=0
+2026-11-25T16:52:36.980Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027111576 parent=0 child=1027111576 index=0
+2026-11-25T16:52:36.980Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134682472 parent=0 child=1134682472 index=0
+2026-11-25T16:52:36.980Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1131343112 parent=0 child=1131343112 index=0
+2026-11-25T16:52:36.980Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=958785720 parent=0 child=958785720 index=0
+2026-11-25T16:52:36.995Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135913640 parent=0 child=1135913640 index=0
+2026-11-25T16:52:36.995Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1129450208 parent=1129456352 child=1129450208 index=0
+2026-11-25T16:52:36.998Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1129456352 parent=0 child=1129456352 index=0
+2026-11-25T16:52:36.998Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135342712 parent=0 child=1135342712 index=0
+2026-11-25T16:52:36.998Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135344200 parent=0 child=1135344200 index=0
+2026-11-25T16:52:36.998Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1153381256 parent=0 child=1153381256 index=0
+2026-11-25T16:52:36.998Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1156670136 parent=0 child=1156670136 index=0
+2026-11-25T16:52:36.998Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158364984 parent=0 child=1158364984 index=0
+2026-11-25T16:52:36.998Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1078325592 parent=0 child=1078325592 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1136016888 parent=0 child=1136016888 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1027116472 parent=0 child=1027116472 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134683000 parent=0 child=1134683000 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135907448 parent=0 child=1135907448 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1129450592 parent=0 child=1129450592 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1129460192 parent=1129450592 child=1129460192 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135348168 parent=0 child=1135348168 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1135345688 parent=0 child=1135345688 index=0
+2026-11-25T16:52:37.11Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1153386296 parent=0 child=1153386296 index=0
+2026-11-25T16:52:37.27Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1153384616 parent=0 child=1153384616 index=0
+2026-11-25T16:52:37.27Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1158365880 parent=0 child=1158365880 index=0
+2026-11-25T16:52:37.27Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1025611640 parent=0 child=1025611640 index=0
+2026-11-25T16:52:37.27Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1081370536 parent=0 child=1081370536 index=0
+2026-11-25T16:52:37.27Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1160728920 parent=0 child=1160728920 index=0
+2026-11-25T16:52:37.27Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1131848184 parent=0 child=1131848184 index=0
+2026-11-25T16:52:37.27Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1160729448 parent=0 child=1160729448 index=0
+2026-11-25T16:52:37.27Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1157737496 parent=0 child=1157737496 index=0
+2026-11-25T16:52:37.43Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1134178488 parent=0 child=1134178488 index=0
+2026-11-25T16:52:37.43Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1141745704 parent=0 child=1141745704 index=0
+2026-11-25T16:52:37.43Z pid=13224 tid=2776 VisualTreeChange mutation=1 handle=1156779672 parent=0 child=1156779672 index=0
