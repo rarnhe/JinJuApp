@@ -2,6 +2,7 @@
 param(
     [ValidateRange(1,168)][int]$Hours = 2,
     [string]$OutputPath = (Join-Path $PSScriptRoot 'JinJuSecurity.log'),
+    [datetime]$Since = [datetime]::MinValue,
     [switch]$SelfTest
 )
 $ErrorActionPreference = 'Stop'
@@ -44,12 +45,36 @@ function Get-ProjectMatches($Records) {
     # Only show events mentioning this product. Do not dump unrelated threats.
     $pattern = '(?i)JinJuApp\.exe|JinJuXaml\.dll|JinJuXamlUnload\.exe|JinJuMarquee\.exe'
     foreach ($record in $Records) {
-        if (($record | Out-String -Width 4096) -match $pattern) { $record }
+        $fields = @($record.Message, $record.ProcessName, $record.Resources) -join ' '
+        if ($fields -match $pattern) { $record }
+    }
+}
+function Read-Events([string]$Channel,[int[]]$Ids,[datetime]$Start) {
+    try {
+        @(Get-WinEvent -FilterHashtable @{LogName=$Channel;Id=$Ids;StartTime=$Start} -ErrorAction Stop)
+    } catch {
+        if ($_.FullyQualifiedErrorId -like 'NoMatchingEventsFound*') { return }
+        throw
+    }
+}
+function Get-XamlRecords([string[]]$Records,[datetime]$Start) {
+    foreach ($line in $Records) {
+        if ($line -match '^(\d{4})-(\d{1,2})-(\d{1,2})T(\d{1,2}):(\d{1,2}):(\d{1,2})\.(\d{1,3})Z ') {
+            try {
+                $time = [datetime]::new([int]$Matches[1],[int]$Matches[2],[int]$Matches[3],[int]$Matches[4],[int]$Matches[5],[int]$Matches[6],[int]$Matches[7],[DateTimeKind]::Utc)
+                if ($time -ge $Start.ToUniversalTime()) { $line }
+            } catch { continue }
+        }
     }
 }
 if ($SelfTest) {
     $sample = @([pscustomobject]@{Message='Detected JinJuXaml.dll'},[pscustomobject]@{Message='Other application'})
     if (@(Get-ProjectMatches $sample).Count -ne 1) { throw 'Project filter test failed' }
+    $resource = [pscustomobject]@{Resources=@('file:_C:\test\JinJuXaml.dll');ProcessName='explorer.exe'}
+    if (@(Get-ProjectMatches @($resource)).Count -ne 1) { throw 'Resource match failed' }
+    $sampleLog = @('2026-11-25T18:1:11.449Z pid=18832 Launcher: Explorer PID=7640','2026-11-25T17:15:41.348Z old')
+    $cutoff = [datetime]::new(2026,11,25,18,0,0,[DateTimeKind]::Utc)
+    if (@(Get-XamlRecords $sampleLog $cutoff).Count -ne 1) { throw 'Time filter failed' }
     $temp = Join-Path ([IO.Path]::GetTempPath()) ([guid]::NewGuid().ToString())
     try {
         New-Item -ItemType Directory -Path $temp | Out-Null
@@ -60,7 +85,8 @@ if ($SelfTest) {
     Write-Output 'Security report self-test passed (no Defender settings accessed or changed).'
     return
 }
-$start = (Get-Date).AddHours(-$Hours)
+$start = if ($Since -eq [datetime]::MinValue) { (Get-Date).AddHours(-$Hours) } else { $Since }
+if ($start -gt (Get-Date)) { throw 'Since must not be in the future.' }
 Add-Line 'JinJu security diagnostic report (read-only)'
 Add-Line ("Generated UTC: " + [DateTime]::UtcNow.ToString('o'))
 Add-Line ("Event window start UTC: " + $start.ToUniversalTime().ToString('o'))
@@ -87,23 +113,34 @@ Add-Section 'Recent product-related threat detections' {
     }
 }
 Add-Section 'Recent product-related Defender events' {
-    $events = @(Get-WinEvent -FilterHashtable @{
-        LogName='Microsoft-Windows-Windows Defender/Operational'
-        Id=1116,1117,1121,1122
-        StartTime=$start
-    } -ErrorAction Stop)
+    $events = @(Read-Events 'Microsoft-Windows-Windows Defender/Operational' @(1116,1117,1121,1122) $start)
+    "Total events in selected categories: $($events.Count)"
+    Get-ProjectMatches ($events | Select-Object TimeCreated,Id,Message) | Format-List
+}
+Add-Section 'Defender protection state changes (historical)' {
+    Read-Events 'Microsoft-Windows-Windows Defender/Operational' @(5000,5001) $start |
+        Select-Object TimeCreated,Id,Message | Format-List
+}
+Add-Section 'Recent product-related Code Integrity events' {
+    $events = @(Read-Events 'Microsoft-Windows-CodeIntegrity/Operational' @(3033,3034,3076,3077,3089) $start)
+    "Total events in selected categories: $($events.Count)"
+    Get-ProjectMatches ($events | Select-Object TimeCreated,Id,Message) | Format-List
+}
+Add-Section 'Recent product-related AppLocker events' {
+    $events = @(Read-Events 'Microsoft-Windows-AppLocker/EXE and DLL' @(8002,8003,8004) $start)
+    "Total events in selected categories: $($events.Count)"
     Get-ProjectMatches ($events | Select-Object TimeCreated,Id,Message) | Format-List
 }
 Add-Section 'Recent XAML initialization and error milestones (UTC in source)' {
     $path = Join-Path $PSScriptRoot 'JinJuXaml.log'
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { 'XAML log missing.' }
     else {
-        Get-Content -LiteralPath $path -Tail 2000 |
+        Get-XamlRecords @(Get-Content -LiteralPath $path -Tail 20000) $start |
             Where-Object { $_ -match 'Launcher:|VisualDiagConnection\d+|DllGetClassObject|SetSite|AdviseVisualTreeChange|TextBlock appended|exception|P1 layout attempt=' } |
             Select-Object -Last 100
     }
 }
 Add-Line ''
-Add-Line 'No matching events does not prove that Defender allowed the operation. Review paths and messages before sharing.'
+Add-Line 'No matching events does not prove that Defender allowed the operation. Current Defender status is not historical status. Keep protection enabled. Review paths and messages before sharing.'
 $lines | Set-Content -LiteralPath $OutputPath -Encoding UTF8
 Write-Output "Report: $OutputPath"
