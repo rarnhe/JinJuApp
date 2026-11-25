@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <thread>
 
 namespace cleanup {
@@ -25,14 +26,14 @@ public:
             current=active;
         }
         if (active->closing) throw winrt::hresult_error(HRESULT_FROM_WIN32(ERROR_BUSY));
-        active->sites.emplace(key,std::move(disconnect));
+        active->sites.emplace(key,Registration{std::move(disconnect),{}});
         return active;
     }
     bool stopping() const { return closing.load(); }
-    bool trackUi(DWORD thread, Action clear) {
+    bool trackUi(uintptr_t dispatcher, std::weak_ptr<void> owner, Action clear) {
         std::lock_guard lock(mutex);
         if (closing) return false;
-        dispatchers.try_emplace(thread,std::move(clear));
+        dispatchers.try_emplace(dispatcher,Registration{std::move(clear),std::move(owner)});
         return true;
     }
     void forget(uintptr_t key, bool closeWhenEmpty) {
@@ -42,7 +43,13 @@ public:
             PostMessageW(window,removeMessage,0,0);
     }
 private:
-    using Actions=std::map<uintptr_t,Action>;
+    struct Registration {
+        Action close;
+        std::optional<std::weak_ptr<void>> owner;
+        bool expired() const { return owner && owner->expired(); }
+    };
+    using Actions=std::map<uintptr_t,Registration>;
+    inline static std::mutex classMutex;
     inline static std::mutex mutex;
     inline static std::weak_ptr<Runtime> current;
     Actions sites,dispatchers;
@@ -57,7 +64,13 @@ private:
         }
         if (msg==removeMessage && w==0 && l==0) {
             auto runtime=reinterpret_cast<Runtime*>(GetWindowLongPtrW(hwnd,GWLP_USERDATA));
-            try { return runtime && runtime->clean() ? 1 : 0; } catch (...) { return 0; }
+            try {
+                if (!runtime || !runtime->clean()) return 0;
+                // Retire the receiver before the sender can start the next session.
+                DestroyWindow(hwnd);
+                PostQuitMessage(0);
+                return 1;
+            } catch (...) { return 0; }
         }
         // End this worker only after the owned resources have been released.
         if (msg==WM_CLOSE) return 0;
@@ -75,19 +88,25 @@ private:
                 initialized=true;
                 winrt::check_bool(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|
                     GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,reinterpret_cast<LPCWSTR>(&windowProc),&module));
-                WNDCLASSW wc{};
-                wc.hInstance=module; wc.lpfnWndProc=windowProc; wc.lpszClassName=windowClass;
-                if (!RegisterClassW(&wc) && GetLastError()!=ERROR_CLASS_ALREADY_EXISTS) winrt::throw_last_error();
-                hwnd=CreateWindowExW(0,windowClass,L"",0,0,0,0,0,HWND_MESSAGE,nullptr,module,self.get());
-                winrt::check_bool(hwnd!=nullptr);
+                {
+                    std::lock_guard classLock(classMutex);
+                    WNDCLASSW wc{};
+                    wc.hInstance=module; wc.lpfnWndProc=windowProc; wc.lpszClassName=windowClass;
+                    if (!RegisterClassW(&wc) && GetLastError()!=ERROR_CLASS_ALREADY_EXISTS) winrt::throw_last_error();
+                    hwnd=CreateWindowExW(0,windowClass,L"",0,0,0,0,0,HWND_MESSAGE,nullptr,module,self.get());
+                    winrt::check_bool(hwnd!=nullptr);
+                }
                 ready.set_value(hwnd);
                 MSG msg{};
                 while (GetMessageW(&msg,nullptr,0,0)>0) DispatchMessageW(&msg);
             } catch (...) {
                 if (!hwnd) ready.set_exception(std::current_exception());
             }
-            if (hwnd) DestroyWindow(hwnd);
-            if (module) UnregisterClassW(windowClass,module);
+            {
+                std::lock_guard classLock(classMutex);
+                if (hwnd && GetWindowThreadProcessId(hwnd,nullptr)==GetCurrentThreadId()) DestroyWindow(hwnd);
+                if (module) UnregisterClassW(windowClass,module);
+            }
             if (initialized) winrt::uninit_apartment();
         }).detach();
         window=opened.get();
@@ -95,9 +114,11 @@ private:
     void drain(Actions& registered) {
         Actions pending;
         { std::lock_guard lock(mutex); pending=registered; }
-        for (auto const& [key,close] : pending) {
-            try { close().get(); }
-            catch (...) { continue; } // Keep this entry for the next request.
+        for (auto const& [key,registration] : pending) {
+            if (!registration.expired()) {
+                try { registration.close().get(); }
+                catch (...) { if (!registration.expired()) continue; }
+            }
             std::lock_guard lock(mutex);
             registered.erase(key);
         }
@@ -109,7 +130,6 @@ private:
         std::lock_guard lock(mutex);
         if (!sites.empty() || !dispatchers.empty()) return false;
         retired=true;
-        PostQuitMessage(0);
         return true;
     }
 };

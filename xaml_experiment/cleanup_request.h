@@ -19,12 +19,13 @@ inline Result request(DWORD ownerPid) {
     for (auto receiver : receivers) {
         DWORD_PTR acknowledged=0;
         SetLastError(ERROR_SUCCESS);
-        if (!SendMessageTimeoutW(receiver,removeMessage,0,0,SMTO_BLOCK|SMTO_ABORTIFHUNG,
-                                 15000,&acknowledged)) {
-            if (!IsWindow(receiver)) continue;
+        auto sent=SendMessageTimeoutW(receiver,removeMessage,0,0,SMTO_BLOCK|SMTO_ABORTIFHUNG,
+                                      15000,&acknowledged);
+        if (!sent || acknowledged!=1) {
+            DWORD pid{};
+            if (!GetWindowThreadProcessId(receiver,&pid) || pid!=ownerPid) continue;
             return Result::failed;
         }
-        if (acknowledged!=1) return Result::failed;
     }
     return receivers.empty() ? Result::absent : Result::removed;
 }

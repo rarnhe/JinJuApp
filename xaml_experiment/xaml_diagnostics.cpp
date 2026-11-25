@@ -279,14 +279,14 @@ struct ThreadWeather {
     std::vector<weak_ref<DependencyObject>> roots;
     bool observedRoot=false;
 };
-ThreadWeather& LocalWeather() {
-    static thread_local ThreadWeather state;
+std::shared_ptr<ThreadWeather> const& LocalWeather() {
+    static thread_local auto state=std::make_shared<ThreadWeather>();
     return state;
 }
 Windows::Foundation::IAsyncAction ClearDispatcher(Windows::UI::Core::CoreDispatcher dispatcher) {
     HRESULT cleared=E_PENDING;
     co_await dispatcher.RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal,[&cleared]() {
-        auto& state=LocalWeather();
+        auto& state=*LocalWeather();
         cleared=S_OK;
         std::erase_if(state.watches,[&](auto const& watch) {
             try { watch->close(); return true; }
@@ -300,7 +300,7 @@ Windows::Foundation::IAsyncAction ClearDispatcher(Windows::UI::Core::CoreDispatc
 }
 void QueueWeather(FrameworkElement const& target,std::shared_ptr<cleanup::Runtime> const& runtime) {
     if (runtime->stopping()) return;
-    auto& watches=LocalWeather().watches;
+    auto& watches=LocalWeather()->watches;
     std::erase_if(watches, [](auto const& watch) { return !watch->button.get(); });
     for (auto const& watch : watches)
         if (watch->button.get()==target) { watch->start(); return; }
@@ -322,7 +322,7 @@ void ScanRoot(DependencyObject const& node,unsigned depth,unsigned& budget,std::
 }
 void QueueRoot(DependencyObject const& node,FrameworkElement const& dispatcherSource,
                std::shared_ptr<cleanup::Runtime> const& runtime){
-    auto& roots=LocalWeather().roots;
+    auto& roots=LocalWeather()->roots;
     auto root=node;
     for(unsigned i=0;i<80;++i){
         auto parent=Media::VisualTreeHelper::GetParent(root);
@@ -350,10 +350,10 @@ void QueueRoot(DependencyObject const& node,FrameworkElement const& dispatcherSo
 void ObserveElement(FrameworkElement const& element,bool candidate,bool rootEvent,
                     std::shared_ptr<cleanup::Runtime> const& runtime) {
     if (runtime->stopping()) return;
-    auto& seen=LocalWeather().observedRoot;
+    auto& seen=LocalWeather()->observedRoot;
     if (seen && !rootEvent && !candidate) return;
     auto dispatcher=element.Dispatcher();
-    if (!runtime->trackUi(GetCurrentThreadId(),[dispatcher] { return ClearDispatcher(dispatcher); })) return;
+    if (!runtime->trackUi(reinterpret_cast<uintptr_t>(get_abi(dispatcher)),LocalWeather(),[dispatcher] { return ClearDispatcher(dispatcher); })) return;
     if (candidate) {
         for (DependencyObject node=element; node; node=Media::VisualTreeHelper::GetParent(node)) {
             if (auto f=node.try_as<FrameworkElement>(); f && WeatherButton(get_class_name(f))) {
@@ -376,7 +376,7 @@ struct Watcher:implements<Watcher,IVisualTreeServiceCallback,non_agile>{
             std::wstring_view name=e.Name ? e.Name : L"";
             const bool candidate=WeatherButton(type) || layout::weatherGrid(name);
             const bool rootEvent=relation.Parent==0;
-            if (LocalWeather().observedRoot && !rootEvent && !candidate) return S_OK;
+            if (LocalWeather()->observedRoot && !rootEvent && !candidate) return S_OK;
             com_ptr<::IInspectable> raw;
             auto hr=diag->GetIInspectableFromHandle(e.Handle,raw.put());
             if (FAILED(hr)) { LogHr(L"GetIInspectableFromHandle",hr); return S_OK; }
