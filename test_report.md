@@ -1,3 +1,8 @@
 # Native XAML test report
 
-P1: pending Windows build and CTest. Target weather Grid absent in prior real capture; visual verification pending.
+Build: failure
+CTest: skipped
+Copy: skipped
+Source: 887d599b0e954d88e4466120b8c8698c26e26393
+Run: https://github.com/rarnhe/JinJuApp/actions/runs/45659892727
+Live Explorer visual test: not performed
