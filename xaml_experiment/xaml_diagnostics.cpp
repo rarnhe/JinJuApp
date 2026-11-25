@@ -1,7 +1,8 @@
 #include "shared.h"
 #include "async_log.h"
 #include <algorithm>
-#include "layout_policy.h"
+#include "weather_state.h"
+#include <memory>
 #include <chrono>
 #include <vector>
 #include <cstring>
@@ -137,30 +138,57 @@ void ObserveGreeting(TextBlock const& text,Grid const& grid,FrameworkElement con
     });
     timer.Start();
 }
-void AddGreeting(FrameworkElement const& button){
-    // Only modify the named weather content grid; append a column without replacing children.
-    auto scan=[&](auto&& self,DependencyObject const& node)->Grid{
-        if(auto g=node.try_as<Grid>();g && layout::weatherGrid(g.Name()))return g;
-        for(int i=0;i<Media::VisualTreeHelper::GetChildrenCount(node);++i)
-            if(auto g=self(self,Media::VisualTreeHelper::GetChild(node,i)))return g;
-        return nullptr;
-    };
-    auto grid=scan(scan,button);
-    if(!grid){Log(L"WeatherGrid not found");return;}
+struct WeatherParts {
+    Panel panel{nullptr};
+    Grid grid{nullptr};
+};
+WeatherParts FindWeatherParts(FrameworkElement const& button) {
+    for (int i=0; i<Media::VisualTreeHelper::GetChildrenCount(button); ++i) {
+        auto panel=Media::VisualTreeHelper::GetChild(button,i).try_as<Panel>();
+        if (!panel || panel.Name()!=L"ExperienceToggleButtonRootPanel") continue;
+        for (auto const& child : panel.Children())
+            if (auto g=child.try_as<Grid>(); g && layout::weatherGrid(g.Name())) return {panel,g};
+    }
+    return {};
+}
+void CountCards(DependencyObject const& node, unsigned depth, unsigned& budget, layout::WeatherSample& sample) {
+    if (!budget || depth>24) return;
+    --budget;
+    if (get_class_name(node)==L"AdaptiveCards.Rendering.Uwp.WholeItemsPanel") {
+        ++sample.cards;
+        if (auto card=node.try_as<FrameworkElement>(); card && card.Visibility()==Visibility::Visible &&
+            layout::validSize(card.ActualWidth(),card.ActualHeight())) ++sample.measuredCards;
+        return; // Nested WholeItemsPanels belong to the same card.
+    }
+    for (int i=0; i<Media::VisualTreeHelper::GetChildrenCount(node) && budget; ++i)
+        CountCards(Media::VisualTreeHelper::GetChild(node,i),depth+1,budget,sample);
+}
+layout::WeatherSample SampleWeather(FrameworkElement const& button, WeatherParts const& parts) {
+    if (!parts.grid) return {};
+    auto const& g=parts.grid;
+    layout::WeatherSample result{button.ActualWidth(),button.ActualHeight(),
+        parts.panel.ActualWidth(),parts.panel.ActualHeight(),g.ActualWidth(),g.ActualHeight(),
+        g.Children().Size(),g.RowDefinitions().Size(),g.ColumnDefinitions().Size(),0,0};
+    unsigned budget=256;
+    CountCards(g,0,budget,result);
+    if (!budget) return {};
+    return result;
+}
+bool AddGreeting(FrameworkElement const& button, Grid const& grid){
     auto children=grid.Children();
     for(auto const& child:children)
-        if(auto e=child.try_as<FrameworkElement>();e && e.Name()==Marker){Log(L"TextBlock already present");return;}
+        if(auto e=child.try_as<FrameworkElement>();e && e.Name()==Marker){Log(L"TextBlock already present");return true;}
     auto cols=grid.ColumnDefinitions();
     const auto originalCount=cols.Size();
     for(auto const& child:children){
         // UIElementCollection returns UIElement; the SDK Grid getters require FrameworkElement.
         auto element=child.try_as<FrameworkElement>();
-        if(!element){Log(L"P1 skip: existing Grid child is not a FrameworkElement");return;}
+        if(!element){Log(L"P1 skip: existing Grid child is not a FrameworkElement");return false;}
         if(!layout::preservesColumn(originalCount,Grid::GetColumn(element),Grid::GetColumnSpan(element))){
-            Log(L"P1 skip: existing child column/span would change meaning");return;
+            Log(L"P1 skip: existing child column/span would change meaning");return false;
         }
     }
-    if(!children.Size()){Log(L"P1 skip: weather content not constructed");return;}
+    if(!children.Size()){Log(L"P1 skip: weather content not constructed");return false;}
     Log(L"P1 weather Grid original columns="+std::to_wstring(originalCount)+L" children="+std::to_wstring(children.Size()));
     TextBlock text;
     text.Name(Marker);text.Text(Greeting);
@@ -187,23 +215,74 @@ void AddGreeting(FrameworkElement const& button){
     OutputDebugStringW(L"JinJuXaml: greeting appended\n");
     Log(L"TextBlock appended; actual size pending layout");
     try{ObserveGreeting(text,grid,button);}catch(...){LogException(L"Queue P1 layout observation");}
+    return true;
 }
-void QueueWeather(FrameworkElement const& element){
-    // Coalesce the button and its children's notifications on this UI dispatcher.
-    static thread_local std::vector<weak_ref<FrameworkElement>> pending;
-    std::erase_if(pending, [](auto const& item) { return !item.get(); });
-    for (auto const& item : pending) if (item.get() == element) return;
-    auto weak = make_weak(element);
-    pending.push_back(weak);
-    try {
-        element.Dispatcher().RunAsync(Windows::UI::Core::CoreDispatcherPriority::Low, [weak]() {
-            auto button = weak.get();
-            try {
-                if (button) { DumpWeather(button, L"candidate"); AddGreeting(button); }
-            } catch (...) { LogException(L"AddGreeting"); }
-            std::erase_if(pending, [&](auto const& item) { auto e=item.get(); return !e || e==button; });
+class WeatherWatch : public std::enable_shared_from_this<WeatherWatch> {
+public:
+    explicit WeatherWatch(FrameworkElement const& target) : button(make_weak(target)) {}
+    weak_ref<FrameworkElement> button;
+
+    void listen(FrameworkElement const& target) {
+        auto weak=weak_from_this();
+        timer.Interval(std::chrono::milliseconds(250));
+        timer.Tick([weak](auto const&, auto const&) {
+            if (auto watch=weak.lock()) {
+                try { watch->tick(); } catch (...) {
+                    watch->stability.reset();
+                    watch->pause();
+                    LogException(L"Weather layout tick");
+                }
+            }
         });
-    } catch (...) { pending.pop_back(); throw; }
+        target.LayoutUpdated([weak](auto const&, auto const&) {
+            try { if (auto watch=weak.lock()) watch->start(); }
+            catch (...) { LogException(L"Weather layout update"); }
+        });
+        start();
+    }
+    void start() {
+        if (!running && !installed) { running=true; timer.Start(); }
+    }
+private:
+    DispatcherTimer timer;
+    weak_ref<Grid> sampledGrid;
+    layout::Stability stability;
+    std::optional<layout::Readiness> lastState;
+    bool running=false, installed=false;
+    void pause() { timer.Stop(); running=false; }
+    void tick() {
+        auto target=button.get();
+        if (!target || installed) { pause(); return; }
+        auto parts=FindWeatherParts(target);
+        if (sampledGrid.get()!=parts.grid) {
+            stability.reset();
+            sampledGrid=parts.grid ? make_weak(parts.grid) : weak_ref<Grid>{};
+        }
+        auto state=stability.observe(SampleWeather(target,parts));
+        if (lastState!=state) {
+            lastState=state;
+            switch (state) {
+            case layout::Readiness::waiting: Log(L"Weather waiting for measured cards"); break;
+            case layout::Readiness::measuring: Log(L"Weather measuring stable layout"); break;
+            case layout::Readiness::ready: Log(L"Weather layout stable (4 samples)"); break;
+            }
+        }
+        if (state==layout::Readiness::waiting) { pause(); return; }
+        if (state==layout::Readiness::ready) {
+            pause();
+            DumpWeather(target,L"stable");
+            installed=AddGreeting(target,parts.grid);
+        }
+    }
+};
+void QueueWeather(FrameworkElement const& target) {
+    static thread_local std::vector<std::shared_ptr<WeatherWatch>> watches;
+    std::erase_if(watches, [](auto const& watch) { return !watch->button.get(); });
+    for (auto const& watch : watches)
+        if (watch->button.get()==target) { watch->start(); return; }
+    auto watch=std::make_shared<WeatherWatch>(target);
+    watch->listen(target);
+    watches.push_back(std::move(watch));
 }
 // Scan an observed visual root once, including non-FrameworkElement nodes.
 // Descendant notifications still handle templates created later.
