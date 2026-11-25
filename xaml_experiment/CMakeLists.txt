@@ -12,3 +12,7 @@ add_executable(test_xaml ../tests/test_xaml.cpp)
 target_link_libraries(test_xaml PRIVATE ole32)
 add_test(NAME com_factory COMMAND test_xaml $<TARGET_FILE:JinJuXaml>)
 add_test(NAME sdk_export COMMAND JinJuApp --self-test)
+
+add_executable(JinJuXamlUnload ../tests/unload_xaml.cpp)
+target_link_libraries(JinJuXamlUnload PRIVATE Rstrtmgr user32)
+add_test(NAME unload_self_test COMMAND JinJuXamlUnload --self-test)

@@ -2,7 +2,7 @@ name: Native XAML experiment
 on:
   pull_request:
     branches: [main]
-    paths: ['xaml_experiment/**', 'tests/test_xaml.cpp', '.github/workflows/test_xaml.yml']
+    paths: ['xaml_experiment/**', 'tests/test_xaml.cpp', 'tests/unload_xaml.cpp', 'main.cpp', '.github/workflows/test_xaml.yml']
 permissions:
   contents: write
 jobs:
@@ -14,13 +14,22 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Clean previous binaries
-        run: Remove-Item tests/JinJuApp.exe,tests/JinJuXaml.dll,tests/JinJuApp.exe.sha256,tests/JinJuXaml.dll.sha256 -Force -ErrorAction SilentlyContinue
+        run: Remove-Item tests/JinJuApp.exe,tests/JinJuXaml.dll,tests/JinJuApp.exe.sha256,tests/JinJuXaml.dll.sha256,tests/JinJuXamlUnload.exe,tests/JinJuXamlUnload.exe.sha256 -Force -ErrorAction SilentlyContinue
       - name: Configure and compile
         id: build
         run: |
           cmake -S xaml_experiment -B out/build/xaml-release -A x64
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           cmake --build out/build/xaml-release --config Release
+          exit $LASTEXITCODE
+      - name: Build original Win32 application
+        id: win32
+        run: |
+          cmake -S . -B out/build/win32-check -A x64 -DBUILD_TESTING=ON
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cmake --build out/build/win32-check --config Release
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          ctest --test-dir out/build/win32-check -C Release --output-on-failure
           exit $LASTEXITCODE
       - name: Test
         id: test
@@ -31,8 +40,8 @@ jobs:
         id: copy
         if: success()
         run: |
-          Copy-Item out/build/xaml-release/Release/JinJuApp.exe, out/build/xaml-release/Release/JinJuXaml.dll tests/ -Force
-          foreach ($name in @('JinJuApp.exe','JinJuXaml.dll')) {
+          Copy-Item out/build/xaml-release/Release/JinJuApp.exe, out/build/xaml-release/Release/JinJuXaml.dll, out/build/xaml-release/Release/JinJuXamlUnload.exe tests/ -Force
+          foreach ($name in @('JinJuApp.exe','JinJuXaml.dll','JinJuXamlUnload.exe')) {
             $source = (Get-FileHash "out/build/xaml-release/Release/$name").Hash
             $dest = (Get-FileHash "tests/$name").Hash
             if ($source -ne $dest) { throw "Copy hash mismatch: $name" }
@@ -41,7 +50,7 @@ jobs:
       - name: Report
         if: always()
         run: |
-          @('# Native XAML test report','', 'Build: ${{ steps.build.outcome }}','CTest: ${{ steps.test.outcome }}','Copy: ${{ steps.copy.outcome }}','Source: ${{ github.event.pull_request.head.sha }}','Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}','Live Explorer visual test: not performed') | Set-Content test_report.md
+          @('# Native XAML test report','', 'Build: ${{ steps.build.outcome }}','Original Win32 build and tests: ${{ steps.win32.outcome }}','CTest: ${{ steps.test.outcome }}','Copy: ${{ steps.copy.outcome }}','Source: ${{ github.event.pull_request.head.sha }}','Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}','Live Explorer visual test: not performed') | Set-Content test_report.md
           Get-Content test_report.md >> $env:GITHUB_STEP_SUMMARY
       - uses: actions/upload-artifact@v5
         if: success()
@@ -50,6 +59,7 @@ jobs:
           path: |
             tests/JinJuApp.exe
             tests/JinJuXaml.dll
+            tests/JinJuXamlUnload.exe
             tests/*.sha256
             test_report.md
       - name: Publish report and binaries
@@ -65,9 +75,9 @@ jobs:
           git reset --soft $env:SOURCE
           git add test_report.md
           if ($env:TEST -eq 'success' -and $env:COPY -eq 'success') {
-            git add -f tests/JinJuApp.exe tests/JinJuXaml.dll tests/JinJuApp.exe.sha256 tests/JinJuXaml.dll.sha256
+            git add -f tests/JinJuApp.exe tests/JinJuXaml.dll tests/JinJuApp.exe.sha256 tests/JinJuXaml.dll.sha256 tests/JinJuXamlUnload.exe tests/JinJuXamlUnload.exe.sha256
           } else {
-            git rm -f --ignore-unmatch tests/JinJuApp.exe tests/JinJuXaml.dll tests/JinJuApp.exe.sha256 tests/JinJuXaml.dll.sha256
+            git rm -f --ignore-unmatch tests/JinJuApp.exe tests/JinJuXaml.dll tests/JinJuApp.exe.sha256 tests/JinJuXaml.dll.sha256 tests/JinJuXamlUnload.exe tests/JinJuXamlUnload.exe.sha256
           }
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
