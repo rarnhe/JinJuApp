@@ -1,0 +1,170 @@
+﻿JinJu security diagnostic report (read-only)
+Generated UTC: 2026-11-25T18:07:21.0400944Z
+Event window start UTC: 2026-11-25T16:07:21.0249821Z
+No protection settings, exclusions or threat actions are changed.
+
+=== Windows version ===
+
+
+Caption     : Microsoft Windows 11 家庭版 中文版
+Version     : 10.0.26300
+BuildNumber : 26300
+
+=== Defender status ===
+
+
+AMRunningMode                 : Normal
+AMServiceEnabled              : True
+AntivirusEnabled              : True
+RealTimeProtectionEnabled     : True
+BehaviorMonitorEnabled        : True
+IoavProtectionEnabled         : True
+AntivirusSignatureVersion     : 1.463.467.0
+AntivirusSignatureLastUpdated : 2026/11/25 19:26:30
+AMProductVersion              : 4.18.26100.4
+AMEngineVersion               : 1.1.26100.4
+
+=== Binary integrity and Authenticode ===
+
+
+File         : JinJuApp.exe
+State        : Present
+SHA256       : 386F33E09AF24D10CFFFDE1D46CF9B58DC86545DE119B399B32192EBB41837EB
+Manifest     : Match
+Signature    : NotSigned
+Signer       : 
+LastWriteUtc : 2026-11-25T17:59:53.3067434Z
+
+File         : JinJuXaml.dll
+State        : Present
+SHA256       : D7DF3644F5CFDE15D249B94A79AC938825D5A4B788CE9AEF2BD367ABCF34E79F
+Manifest     : Match
+Signature    : NotSigned
+Signer       : 
+LastWriteUtc : 2026-11-25T17:59:53.3340124Z
+
+File         : JinJuXamlUnload.exe
+State        : Present
+SHA256       : AF7A8B0CD98BFB395E12CB8974098098F3CB28A897074A70F26B2D76957F4484
+Manifest     : Match
+Signature    : NotSigned
+Signer       : 
+LastWriteUtc : 2026-11-25T17:59:53.3381346Z
+
+File         : JinJuMarquee.exe
+State        : Present
+SHA256       : 410968D7BA6EA509FD649FE89247F36227A0BA967D45623080276BF0CB5A27AD
+Manifest     : Match
+Signature    : NotSigned
+Signer       : 
+LastWriteUtc : 2026-11-25T17:59:53.3263516Z
+
+=== Recent product-related threat detections ===
+No matching detection in the requested time window.
+
+=== Recent product-related Defender events ===
+Unavailable: 找不到任何与指定的选择条件匹配的事件。
+
+=== Recent XAML initialization and error milestones (UTC in source) ===
+2026-11-25T16:49:1.927Z pid=13224 tid=2776 DllGetClassObject HRESULT=0x00000000
+2026-11-25T16:49:1.927Z pid=13224 tid=2776 SetSite(non-null)
+2026-11-25T16:49:1.958Z pid=13224 tid=2776 AdviseVisualTreeChange HRESULT=0x00000000
+2026-11-25T16:49:1.958Z pid=13224 tid=2776 SetSite HRESULT=0x00000000
+2026-11-25T17:15:41.332Z pid=5028 tid=17280 Launcher: Explorer PID=10288
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection1 HRESULT=0x00000000
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection2 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection3 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection4 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=10288 tid=27188 DLL active: DllGetClassObject
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection5 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection6 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection7 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection8 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection9 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection10 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection11 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection12 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection13 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection14 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection15 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection16 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection17 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection18 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection19 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=5028 tid=17280 VisualDiagConnection20 HRESULT=0x80070490
+2026-11-25T17:15:41.348Z pid=10288 tid=27188 DllGetClassObject HRESULT=0x00000000
+2026-11-25T17:15:41.380Z pid=10288 tid=27188 SetSite(non-null)
+2026-11-25T17:15:41.681Z pid=10288 tid=27188 AdviseVisualTreeChange HRESULT=0x00000000
+2026-11-25T17:15:41.681Z pid=10288 tid=27188 SetSite HRESULT=0x00000000
+2026-11-25T17:15:50.942Z pid=10288 tid=27188 TextBlock appended; actual size pending layout
+2026-11-25T17:15:51.484Z pid=10288 tid=27188 P1 layout attempt=1 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:52.457Z pid=10288 tid=27188 P1 layout attempt=2 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:52.729Z pid=10288 tid=27188 P1 layout attempt=3 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:53.26Z pid=10288 tid=27188 P1 layout attempt=4 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:53.301Z pid=10288 tid=27188 P1 layout attempt=5 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:53.574Z pid=10288 tid=27188 P1 layout attempt=6 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:53.864Z pid=10288 tid=27188 P1 layout attempt=7 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:15:54.145Z pid=10288 tid=27188 P1 layout attempt=8 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T17:16:1.730Z pid=3928 tid=20916 Launcher: Explorer PID=10288
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection1 HRESULT=0x00000000
+2026-11-25T17:16:1.746Z pid=10288 tid=27188 DLL active: DllGetClassObject
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection2 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection3 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection4 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection5 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection6 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection7 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection8 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection9 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection10 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection11 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection12 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection13 HRESULT=0x80070490
+2026-11-25T17:16:1.746Z pid=3928 tid=20916 VisualDiagConnection14 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection15 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection16 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection17 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection18 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection19 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=3928 tid=20916 VisualDiagConnection20 HRESULT=0x80070490
+2026-11-25T17:16:1.761Z pid=10288 tid=27188 DllGetClassObject HRESULT=0x00000000
+2026-11-25T17:16:1.792Z pid=10288 tid=27188 SetSite(non-null)
+2026-11-25T17:16:2.146Z pid=10288 tid=27188 AdviseVisualTreeChange HRESULT=0x00000000
+2026-11-25T17:16:2.158Z pid=10288 tid=27188 SetSite HRESULT=0x00000000
+2026-11-25T18:1:11.442Z pid=18832 tid=27472 Launcher: Explorer PID=7640
+2026-11-25T18:1:11.449Z pid=18832 tid=27472 VisualDiagConnection1 HRESULT=0x00000000
+2026-11-25T18:1:11.449Z pid=18832 tid=27472 VisualDiagConnection2 HRESULT=0x80070490
+2026-11-25T18:1:11.449Z pid=18832 tid=27472 VisualDiagConnection3 HRESULT=0x80070490
+2026-11-25T18:1:11.460Z pid=18832 tid=27472 VisualDiagConnection4 HRESULT=0x80070490
+2026-11-25T18:1:11.461Z pid=18832 tid=27472 VisualDiagConnection5 HRESULT=0x80070490
+2026-11-25T18:1:11.461Z pid=18832 tid=27472 VisualDiagConnection6 HRESULT=0x80070490
+2026-11-25T18:1:11.461Z pid=18832 tid=27472 VisualDiagConnection7 HRESULT=0x80070490
+2026-11-25T18:1:11.461Z pid=18832 tid=27472 VisualDiagConnection8 HRESULT=0x80070490
+2026-11-25T18:1:11.461Z pid=18832 tid=27472 VisualDiagConnection9 HRESULT=0x80070490
+2026-11-25T18:1:11.461Z pid=18832 tid=27472 VisualDiagConnection10 HRESULT=0x80070490
+2026-11-25T18:1:11.465Z pid=18832 tid=27472 VisualDiagConnection11 HRESULT=0x80070490
+2026-11-25T18:1:11.466Z pid=18832 tid=27472 VisualDiagConnection12 HRESULT=0x80070490
+2026-11-25T18:1:11.466Z pid=18832 tid=27472 VisualDiagConnection13 HRESULT=0x80070490
+2026-11-25T18:1:11.466Z pid=18832 tid=27472 VisualDiagConnection14 HRESULT=0x80070490
+2026-11-25T18:1:11.466Z pid=18832 tid=27472 VisualDiagConnection15 HRESULT=0x80070490
+2026-11-25T18:1:11.468Z pid=18832 tid=27472 VisualDiagConnection16 HRESULT=0x80070490
+2026-11-25T18:1:11.468Z pid=18832 tid=27472 VisualDiagConnection17 HRESULT=0x80070490
+2026-11-25T18:1:11.468Z pid=18832 tid=27472 VisualDiagConnection18 HRESULT=0x80070490
+2026-11-25T18:1:11.470Z pid=18832 tid=27472 VisualDiagConnection19 HRESULT=0x80070490
+2026-11-25T18:1:11.470Z pid=18832 tid=27472 VisualDiagConnection20 HRESULT=0x80070490
+2026-11-25T18:1:11.497Z pid=7640 tid=5356 DLL active: DllGetClassObject
+2026-11-25T18:1:11.506Z pid=7640 tid=5356 DllGetClassObject HRESULT=0x00000000
+2026-11-25T18:1:11.506Z pid=7640 tid=5356 SetSite(non-null)
+2026-11-25T18:1:11.524Z pid=7640 tid=5356 AdviseVisualTreeChange HRESULT=0x00000000
+2026-11-25T18:1:11.524Z pid=7640 tid=5356 SetSite HRESULT=0x00000000
+2026-11-25T18:1:35.778Z pid=7640 tid=5356 TextBlock appended; actual size pending layout
+2026-11-25T18:1:36.36Z pid=7640 tid=5356 P1 layout attempt=1 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T18:1:36.287Z pid=7640 tid=5356 P1 layout attempt=2 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T18:1:36.563Z pid=7640 tid=5356 P1 layout attempt=3 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T18:1:36.817Z pid=7640 tid=5356 P1 layout attempt=4 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T18:1:37.101Z pid=7640 tid=5356 P1 layout attempt=5 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T18:1:37.377Z pid=7640 tid=5356 P1 layout attempt=6 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T18:1:37.644Z pid=7640 tid=5356 P1 layout attempt=7 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+2026-11-25T18:1:37.921Z pid=7640 tid=5356 P1 layout attempt=8 class=Windows.UI.Xaml.Controls.TextBlock name=JinJuWeatherHello actual=42x18.6211 width=-nan(ind) height=-nan(ind) minWidth=0 maxWidth=inf minHeight=0 maxHeight=inf visibility=0 opacity=1 clip=0 column=1 columnSpan=1 row=0 rowSpan=1 visualChildren=0 grid=144x40 button=216x48 validSize=1 ancestorVisible=1 attached=1 insideGrid=1 insideButton=1 ancestorClip=1 visibilityCandidate=0 visualProof=manual
+
+No matching events does not prove that Defender allowed the operation. Review paths and messages before sharing.
