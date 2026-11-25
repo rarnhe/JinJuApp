@@ -28,6 +28,50 @@ inline TextBlock appendPeer(Panel const& panel, Grid const& weather) {
     panel.Children().Append(text);
     return text;
 }
+class Attachment {
+public:
+    bool install(Panel const& panel, Grid const& weather) {
+        if (auto existing=parent.get(); existing && existing==panel && content.get()==weather &&
+            present(panel,weather)) return false;
+        remove();
+        auto text=appendPeer(panel,weather);
+        parent=winrt::make_weak(panel);
+        content=winrt::make_weak(weather);
+        if (text) peer=winrt::make_weak(text);
+        owned=static_cast<bool>(text);
+        return owned;
+    }
+    bool intact(FrameworkElement const& button) const {
+        auto panel=parent.get();
+        auto grid=content.get();
+        if (!panel || !grid || Media::VisualTreeHelper::GetParent(panel)!=button) return false;
+        uint32_t index{};
+        return panel.Children().IndexOf(grid,index) && present(panel,grid);
+    }
+    void remove() {
+        if (auto text=peer.get()) {
+            auto p=Media::VisualTreeHelper::GetParent(text);
+            auto panel=p ? p.try_as<Panel>() : parent.get();
+            uint32_t index{};
+            if (panel && panel.Children().IndexOf(text,index)) panel.Children().RemoveAt(index);
+        }
+        peer={}; parent={}; content={}; owned=false;
+    }
+    TextBlock text() const { return peer.get(); }
+    Panel panel() const { return parent.get(); }
+    Grid grid() const { return content.get(); }
+private:
+    winrt::weak_ref<Panel> parent;
+    winrt::weak_ref<Grid> content;
+    winrt::weak_ref<TextBlock> peer;
+    bool owned=false;
+    bool present(Panel const& panel, Grid const& grid) const {
+        if (!owned) return hasMarker(panel) || hasMarker(grid);
+        auto text=peer.get();
+        uint32_t index{};
+        return text && panel.Children().IndexOf(text,index);
+    }
+};
 inline layout::Box bounds(FrameworkElement const& element, UIElement const& relative) {
     winrt::Windows::Foundation::Rect local{0,0,static_cast<float>(element.ActualWidth()),
                                               static_cast<float>(element.ActualHeight())};

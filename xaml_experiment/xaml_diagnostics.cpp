@@ -140,7 +140,7 @@ public:
     void listen(FrameworkElement const& target) {
         auto weak=weak_from_this();
         timer.Interval(std::chrono::milliseconds(250));
-        timer.Tick([weak](auto const&, auto const&) {
+        tickToken=timer.Tick([weak](auto const&, auto const&) {
             if (auto watch=weak.lock()) {
                 try { watch->tick(); } catch (...) {
                     watch->stability.reset();
@@ -149,55 +149,91 @@ public:
                 }
             }
         });
-        target.LayoutUpdated([weak](auto const&, auto const&) {
+        layoutToken=target.LayoutUpdated([weak](auto const&, auto const&) {
             try { if (auto watch=weak.lock()) watch->layoutChanged(); }
             catch (...) { LogException(L"Weather layout update"); }
+        });
+        unloadToken=target.Unloaded([weak](auto const&, auto const&) {
+            try { if (auto watch=weak.lock()) {
+                watch->suspended=true;
+                watch->resetLayout();
+                Log(L"Weather button unloaded");
+            }} catch (...) { LogException(L"Weather button unload"); }
+        });
+        loadToken=target.Loaded([weak](auto const&, auto const&) {
+            try { if (auto watch=weak.lock()) { watch->suspended=false; watch->start(); } }
+            catch (...) { LogException(L"Weather button load"); }
         });
         start();
     }
     void start() {
-        if (!running && !installed) { running=true; timer.Start(); }
+        if (!suspended && !running && !installed && !changing) {
+            timer.Start();
+            running=true;
+        }
     }
 private:
     DispatcherTimer timer;
+    event_token tickToken{}, layoutToken{}, unloadToken{}, loadToken{};
     weak_ref<Grid> sampledGrid;
-    weak_ref<Panel> host;
-    weak_ref<TextBlock> peer;
+    weak_ref<Panel> sampledPanel;
+    greeting::Attachment attachment;
+    layout::Stability stability;
     std::optional<greeting::Placement> lastPlacement;
-    bool placing=false;
-    void layoutChanged() {
-        if (!installed) { start(); return; }
-        if (placing) return;
-        auto text=peer.get();
-        auto panel=host.get();
-        auto grid=sampledGrid.get();
-        auto target=button.get();
-        if (!text || !panel || !grid || !target) return;
-        placing=true;
+    std::optional<layout::Readiness> lastState;
+    bool running=false, installed=false, suspended=false, changing=false;
+    struct Change {
+        bool& flag;
+        explicit Change(bool& changing) : flag(changing) { flag=true; }
+        ~Change() { flag=false; }
+    };
+
+    void pause() { timer.Stop(); running=false; }
+    void resetLayout() {
+        pause();
+        installed=false;
+        stability.reset();
+        sampledGrid={}; sampledPanel={};
+        lastState.reset(); lastPlacement.reset();
+        attachment.remove();
+    }
+    void updatePosition(FrameworkElement const& target) {
+        auto text=attachment.text();
+        if (!text) return;
         try {
-            auto result=greeting::position(text,panel,grid,target);
-            if (lastPlacement!=result) {
-                lastPlacement=result;
-                switch (result) {
-                case greeting::Placement::pending: Log(L"Weather peer awaiting layout"); break;
-                case greeting::Placement::noSpace: Log(L"Weather peer hidden: insufficient clear space"); break;
-                case greeting::Placement::visible: Log(L"Weather peer fits beside content; visualProof=manual"); break;
-                }
+            auto result=greeting::position(text,attachment.panel(),attachment.grid(),target);
+            if (lastPlacement==result) return;
+            lastPlacement=result;
+            switch (result) {
+            case greeting::Placement::pending: Log(L"Weather peer awaiting layout"); break;
+            case greeting::Placement::noSpace: Log(L"Weather peer hidden: insufficient clear space"); break;
+            case greeting::Placement::visible: Log(L"Weather peer fits beside content; visualProof=manual"); break;
             }
         } catch (...) { text.Opacity(0); LogException(L"Weather peer placement"); }
-        placing=false;
     }
-    layout::Stability stability;
-    std::optional<layout::Readiness> lastState;
-    bool running=false, installed=false;
-    void pause() { timer.Stop(); running=false; }
+    void layoutChanged() {
+        if (suspended || changing) return;
+        if (!installed) { start(); return; }
+        auto target=button.get();
+        if (!target) return;
+        {
+            Change guard(changing);
+            if (attachment.intact(target)) { updatePosition(target); return; }
+            resetLayout();
+            Log(L"Weather template or peer replaced; waiting for stable layout");
+        }
+        start();
+    }
     void tick() {
         auto target=button.get();
-        if (!target || installed) { pause(); return; }
+        if (!target || suspended || installed) { pause(); return; }
+        if (changing) return;
+        Change guard(changing);
         auto parts=FindWeatherParts(target);
-        if (sampledGrid.get()!=parts.grid) {
+        if (sampledGrid.get()!=parts.grid || sampledPanel.get()!=parts.panel) {
             stability.reset();
             sampledGrid=parts.grid ? make_weak(parts.grid) : weak_ref<Grid>{};
+            sampledPanel=parts.panel ? make_weak(parts.panel) : weak_ref<Panel>{};
         }
         auto state=stability.observe(SampleWeather(target,parts));
         if (lastState!=state) {
@@ -212,14 +248,10 @@ private:
         if (state==layout::Readiness::ready) {
             pause();
             DumpWeather(target,L"stable");
-            auto text=greeting::appendPeer(parts.panel,parts.grid);
+            bool added=attachment.install(parts.panel,parts.grid);
             installed=true;
-            if (text) {
-                host=make_weak(parts.panel);
-                peer=make_weak(text);
-                Log(L"Weather peer appended beside ContentGrid");
-                layoutChanged();
-            } else { Log(L"Weather peer skipped: marker already present"); }
+            Log(added ? L"Weather peer appended beside ContentGrid" : L"Weather peer skipped: marker already present");
+            updatePosition(target);
         }
     }
 };
