@@ -1,5 +1,8 @@
 # Native XAML test report
 
-Pending Windows rebuild after fixing P1 Grid attached-property argument types.
-Previous run 45659892727: build failed; CTest and copy skipped.
-Live Explorer visual test: not performed.
+Build: success
+CTest: success
+Copy: success
+Source: 4924ddfcc4d780377276f00aac50baa4f63af8b7
+Run: https://github.com/rarnhe/JinJuApp/actions/runs/45662355825
+Live Explorer visual test: not performed
